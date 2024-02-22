@@ -17,17 +17,16 @@ public class OrderService {
 
     // 주문 생성
     public void createOrder(OrderRequestDto orderRequestDto) {
-//        Orders order = Orders.builder()
-//                .orderDate(orderRequestDto.getOrderDate())
-//                .deliveryDate(orderRequestDto.getDeliveryDate())
-//                .orderProcess(orderRequestDto.getOrderProcess())
-//                .receiver(orderRequestDto.getReceiver())
-//                .address(orderRequestDto.getAddress())
-//                .deliveryProcess(orderRequestDto.getDeliveryProcess())
-//                .request(orderRequestDto.getRequest())
-//                .totalCost(orderRequestDto.getTotalCost())
-//                .build();
-        Orders order = orderRequestDto.toEntity();
+        Orders order = Orders.builder()
+                .orderDate(orderRequestDto.getOrderDate())
+                .deliveryDate(orderRequestDto.getDeliveryDate())
+                .orderProcess(orderRequestDto.getOrderProcess())
+                .receiver(orderRequestDto.getReceiver())
+                .address(orderRequestDto.getAddress())
+                .deliveryProcess(orderRequestDto.getDeliveryProcess())
+                .request(orderRequestDto.getRequest())
+                .totalCost(orderRequestDto.getTotalCost())
+                .build();
         orderRepository.save(order);
     }
 
