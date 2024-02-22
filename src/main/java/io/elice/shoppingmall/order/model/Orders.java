@@ -1,13 +1,13 @@
 package io.elice.shoppingmall.order.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +16,8 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Orders {
 
     @Id
@@ -47,7 +48,7 @@ public class Orders {
 
     @NotNull
     @Min(100)
-    private Long total_cost;
+    private Long totalCost;
 
     // 상세주문과 일대다 매핑
     @OneToMany(mappedBy = "order")
@@ -62,14 +63,26 @@ public class Orders {
     public Orders(Date orderDate, Date deliveryDate,
                  String orderProcess, String receiver,
                  String address, String deliveryProcess,
-                 String request) {
+                 String request, Long totalCost) {
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
-        this.orderDate = orderDate;
         this.orderProcess = orderProcess;
         this.receiver = receiver;
         this.address = address;
         this.deliveryProcess = deliveryProcess;
         this.request = request;
+        this.totalCost = totalCost;
+    }
+
+    public void updateOrder(OrderRequestDto orderRequestDto) {
+        this.orderDate = orderRequestDto.getOrderDate();
+        this.deliveryDate = orderRequestDto.getDeliveryDate();
+        this.orderDate = orderRequestDto.getOrderDate();
+        this.orderProcess = orderRequestDto.getOrderProcess();
+        this.receiver = orderRequestDto.getReceiver();
+        this.address = orderRequestDto.getAddress();
+        this.deliveryProcess = orderRequestDto.getDeliveryProcess();
+        this.request = orderRequestDto.getRequest();
+        this.totalCost = orderRequestDto.getTotalCost();
     }
 }
