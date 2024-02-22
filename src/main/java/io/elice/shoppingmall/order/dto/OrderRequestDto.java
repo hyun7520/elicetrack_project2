@@ -23,5 +23,9 @@ public class OrderRequestDto {
     private String request;
     private Long totalCost;
 
+    public Orders toEntity() {
+        return new Orders(orderDate, deliveryDate, orderProcess,
+                receiver, address, deliveryProcess, request, totalCost);
+    }
 }
 

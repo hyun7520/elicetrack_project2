@@ -17,16 +17,17 @@ public class OrderService {
 
     // 주문 생성
     public void createOrder(OrderRequestDto orderRequestDto) {
-        Orders order = Orders.builder()
-                .orderDate(orderRequestDto.getOrderDate())
-                .deliveryDate(orderRequestDto.getDeliveryDate())
-                .orderProcess(orderRequestDto.getOrderProcess())
-                .receiver(orderRequestDto.getReceiver())
-                .address(orderRequestDto.getAddress())
-                .deliveryProcess(orderRequestDto.getDeliveryProcess())
-                .request(orderRequestDto.getRequest())
-                .totalCost(orderRequestDto.getTotalCost())
-                .build();
+//        Orders order = Orders.builder()
+//                .orderDate(orderRequestDto.getOrderDate())
+//                .deliveryDate(orderRequestDto.getDeliveryDate())
+//                .orderProcess(orderRequestDto.getOrderProcess())
+//                .receiver(orderRequestDto.getReceiver())
+//                .address(orderRequestDto.getAddress())
+//                .deliveryProcess(orderRequestDto.getDeliveryProcess())
+//                .request(orderRequestDto.getRequest())
+//                .totalCost(orderRequestDto.getTotalCost())
+//                .build();
+        Orders order = orderRequestDto.toEntity();
         orderRepository.save(order);
     }
 
@@ -61,6 +62,6 @@ public class OrderService {
 
     // 주문 삭제(관리자 권한만)
     public void deleteOrder(Long id ) {
-
+        orderRepository.deleteById(id);
     }
 }

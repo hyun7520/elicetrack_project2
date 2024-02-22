@@ -34,11 +34,11 @@ public class Orders {
     @Column(name = "order_process")
     private String orderProcess;
 
-    @NotNull(message = "받는 분을 입력해주세요.")
-    @Size(min = 2)
+//    @NotNull(message = "받는 분을 입력해주세요.")
+//    @Size(min = 2)
     private String receiver;
 
-    @NotNull(message = "주소를 입력해주세요")
+//    @NotNull(message = "주소를 입력해주세요")
     private String address;
 
     @Column(name = "delivery_process")
@@ -46,8 +46,8 @@ public class Orders {
 
     private String request = "안전하게 배송해주세요";
 
-    @NotNull
-    @Min(100)
+//    @NotNull
+//    @Min(100)
     private Long totalCost;
 
     // 상세주문과 일대다 매핑
@@ -77,7 +77,6 @@ public class Orders {
     public void updateOrder(OrderRequestDto orderRequestDto) {
         this.orderDate = orderRequestDto.getOrderDate();
         this.deliveryDate = orderRequestDto.getDeliveryDate();
-        this.orderDate = orderRequestDto.getOrderDate();
         this.orderProcess = orderRequestDto.getOrderProcess();
         this.receiver = orderRequestDto.getReceiver();
         this.address = orderRequestDto.getAddress();
