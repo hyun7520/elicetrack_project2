@@ -1,7 +1,7 @@
-package io.elice.shoppingmall.orderItem.controller;
+package io.elice.shoppingmall.product.controller;
 
-import io.elice.shoppingmall.orderItem.entity.Product;
-import io.elice.shoppingmall.orderItem.service.productService;
+import io.elice.shoppingmall.product.entity.Product;
+import io.elice.shoppingmall.product.service.productService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

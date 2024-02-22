@@ -1,7 +1,7 @@
-package io.elice.shoppingmall.orderItem.service;
+package io.elice.shoppingmall.product.service;
 
-import io.elice.shoppingmall.orderItem.entity.Product;
-import io.elice.shoppingmall.orderItem.repository.ProductRepository;
+import io.elice.shoppingmall.product.entity.Product;
+import io.elice.shoppingmall.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

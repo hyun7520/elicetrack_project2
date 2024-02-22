@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.orderItem.entity;
+package io.elice.shoppingmall.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
