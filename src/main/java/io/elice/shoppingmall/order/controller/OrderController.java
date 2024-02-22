@@ -30,7 +30,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping
-    public String createOrder(OrderRequestDto orderRequestDto) {
+    public String createOrder(@RequestBody OrderRequestDto orderRequestDto) {
         orderService.createOrder(orderRequestDto);
         return "redirect:/orders";
     }
@@ -38,7 +38,7 @@ public class OrderController {
     // 주문 수정
     @PutMapping("/{id}")
     public String updateOrder(@PathVariable("id") Long id,
-                              @ModelAttribute("dto") OrderRequestDto orderRequestDto) {
+                              @RequestBody OrderRequestDto orderRequestDto) {
         orderService.updateOrder(id, orderRequestDto);
         return "redirect:/orders";
     }
