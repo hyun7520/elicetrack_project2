@@ -1,5 +1,7 @@
-package io.elice.shoppingmall.user;
+package io.elice.shoppingmall.user.service;
 
+import io.elice.shoppingmall.user.entity.User;
+import io.elice.shoppingmall.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

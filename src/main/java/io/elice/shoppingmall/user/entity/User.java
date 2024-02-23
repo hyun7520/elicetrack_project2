@@ -1,4 +1,4 @@
-package io.elice.shoppingmall.user;
+package io.elice.shoppingmall.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

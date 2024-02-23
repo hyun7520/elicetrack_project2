@@ -1,5 +1,7 @@
-package io.elice.shoppingmall.user;
+package io.elice.shoppingmall.user.controller;
 
+import io.elice.shoppingmall.user.service.UserService;
+import io.elice.shoppingmall.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
