@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.order.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -23,10 +24,6 @@ public class OrderDetail {
     @Column(name = "product_id")
     private Long productId;
 
-    // 판매자
-    @NotNull
-    private String seller;
-
     // 상품 구매 개수
     @NotNull
     @Min(1)
@@ -40,6 +37,7 @@ public class OrderDetail {
     // 주문과 다대일 매핑
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     private Orders order;
     
     // 상품과 1:1 매핑
@@ -48,9 +46,8 @@ public class OrderDetail {
 //    private Product product;
 
     @Builder
-    public OrderDetail(Long productId, String seller, Long quantity, Long price) {
+    public OrderDetail(Long productId, Long quantity, Long price) {
         this.productId = productId;
-        this.seller = seller;
         this.quantity = quantity;
         this.price = price;
     }

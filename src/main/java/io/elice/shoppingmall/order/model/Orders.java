@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import jakarta.persistence.*;
@@ -28,9 +29,11 @@ public class Orders {
     @Column(name = "order_date")
     private Date orderDate;
 
+    // enum으로 수정할 것
     @Column(name = "delivery_date")
     private Date deliveryDate;
 
+    // enum으로 수정할 것
     @Column(name = "order_process")
     private String orderProcess;
 
@@ -52,6 +55,7 @@ public class Orders {
 
     // 상세주문과 일대다 매핑
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     // 회원 정보와 다대일 매핑

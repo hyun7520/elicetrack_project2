@@ -5,7 +5,6 @@ import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,29 +38,39 @@ public class OrderService {
     // 아이디로 특정 주문 조회
     public Orders getOrderById(Long id) {
         Optional<Orders> order = orderRepository.findById(id);
-
         if(!order.isPresent()) {
             throw new IllegalArgumentException();
         }
-
         return order.get();
     }
 
     // 주문 수정
     public void updateOrder(Long id, OrderRequestDto orderRequestDto) {
+
+        if(checkOrder(id)) {
+            Optional<Orders> foundOrder = orderRepository.findById(id);
+            Orders toUpdateOrder = foundOrder.get();
+            toUpdateOrder.updateOrder(orderRequestDto);
+            orderRepository.save(toUpdateOrder);
+        }
+    }
+
+    // 주문 삭제(관리자 권한만)
+    public void deleteOrder(Long id ) {
+
+        if(checkOrder(id)) {
+            orderRepository.deleteById(id);
+        }
+    }
+
+    // 수정, 삭제하고자하는 주문이 존재하는지 확인
+    public boolean checkOrder(Long id) {
         Optional<Orders> foundOrder = orderRepository.findById(id);
 
         if(!foundOrder.isPresent()) {
             throw new IllegalArgumentException();
         }
 
-        Orders toUpdateOrder = foundOrder.get();
-        toUpdateOrder.updateOrder(orderRequestDto);
-        orderRepository.save(toUpdateOrder);
-    }
-
-    // 주문 삭제(관리자 권한만)
-    public void deleteOrder(Long id ) {
-        orderRepository.deleteById(id);
+        return true;
     }
 }

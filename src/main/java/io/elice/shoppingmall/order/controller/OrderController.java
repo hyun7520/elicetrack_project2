@@ -1,9 +1,13 @@
 package io.elice.shoppingmall.order.controller;
 
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
+import io.elice.shoppingmall.order.dto.OrderResponseDto;
+import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.model.Orders;
+import io.elice.shoppingmall.order.service.OrderDetailService;
 import io.elice.shoppingmall.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +19,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderDetailService orderDetailService;
 
     // 모든 주문 조회
     @GetMapping
@@ -22,10 +27,19 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
+    // 모든 주문 상세 내역 조회
+    @GetMapping("/details")
+    public List<OrderDetail> getAllOrderDetails() {
+        return orderDetailService.getAllOrderDetails();
+    }
+
     // 아이디로 주문 조회
     @GetMapping("/{id}")
-    public Orders findOrderById(@PathVariable("id") Long id) {
-        return orderService.getOrderById(id);
+    public OrderResponseDto getOrderAndDetails(@PathVariable("id") Long id) {
+        Orders orders = orderService.getOrderById(id);
+        OrderResponseDto orderResponseDto = new OrderResponseDto(orders);
+
+        return orderResponseDto;
     }
 
     // 주문 생성
