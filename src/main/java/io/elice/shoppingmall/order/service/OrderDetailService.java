@@ -6,7 +6,9 @@ import io.elice.shoppingmall.order.repository.OrderDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,12 +33,22 @@ public class OrderDetailService {
     }
 
     // 상세 주문 수정
-    public void updateOrderDetail() {
-
+    public void updateOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto) {
+        Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
+        if(!foundOrder.isPresent()) {
+            throw new IllegalArgumentException();
+        }
+        OrderDetail toUpdateOrderDetail = foundOrder.get();
+        toUpdateOrderDetail.updateOrderDetail(orderDetailRequestDto);
+        orderDetailRepository.save(toUpdateOrderDetail);
     }
 
     // 상세 주문 삭제
-    public void deleteOrderDetail() {
-
+    public void deleteOrderDetail(Long id) {
+        Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
+        if(!foundOrder.isPresent()) {
+            throw new IllegalArgumentException();
+        }
+        orderDetailRepository.deleteById(id);
     }
 }

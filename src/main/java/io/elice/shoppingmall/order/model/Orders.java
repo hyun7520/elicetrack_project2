@@ -81,7 +81,6 @@ public class Orders {
     public void updateOrder(OrderRequestDto orderRequestDto) {
         this.orderDate = orderRequestDto.getOrderDate();
         this.deliveryDate = orderRequestDto.getDeliveryDate();
-        this.orderDate = orderRequestDto.getOrderDate();
         this.orderProcess = orderRequestDto.getOrderProcess();
         this.receiver = orderRequestDto.getReceiver();
         this.address = orderRequestDto.getAddress();
