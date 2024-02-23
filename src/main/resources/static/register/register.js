@@ -48,6 +48,19 @@ async function handleSubmit(e) {
     return alert("비밀번호가 일치하지 않습니다.");
   }
 
+  // 이메일 중복 확인
+  try {
+    const duplicateCheckResult = await Api.get(`/users/checkEmail?email=${email}`);
+    console.log(duplicateCheckResult);
+    if (duplicateCheckResult.isDuplicated) {
+      return alert("이미 사용 중인 이메일입니다.");
+    }
+  } catch (err) {
+    console.error(err.stack);
+    alert(`이메일 중복 확인 중 문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
+    return;
+  }
+
   // 회원가입 api 요청
   try {
     const data = { nickname, email, password };
