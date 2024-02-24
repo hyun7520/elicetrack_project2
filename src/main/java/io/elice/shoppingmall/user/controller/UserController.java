@@ -18,8 +18,6 @@ public class UserController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user){
-        boolean isDuplicated = userService.checkEmail(user.getEmail());
-
         return userService.register(user);
     }
 
