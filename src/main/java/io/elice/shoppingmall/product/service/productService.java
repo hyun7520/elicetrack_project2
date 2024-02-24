@@ -18,9 +18,10 @@ public class productService {
         productRepository.save(product);
     }
 
-    //일부 조회
-    public Product productView(Integer id){
-        return productRepository.findById(id).get();
+    //일부 상품 조회
+    public Product getProductById(Long id){
+        Optional<Product> optionalProduct = productRepository.findById(Math.toIntExact(id));
+        return optionalProduct.orElse(null);
     }
 
     // 전체 조회
@@ -29,20 +30,21 @@ public class productService {
     }
 
     //수정
-    public void productModify(Product product, Long id){
-        Optional<Product> optionalProduct = productRepository.findById(Math.toIntExact(id));
-        if (optionalProduct.isPresent()) {
-            Product update = optionalProduct.get();
-            update.setName(product.getName());
-            update.setContent(product.getContent());
-            update.setPrice(product.getPrice());
-            productRepository.save(update);
+    // 수정
+    public void modifyProduct(Product product){
+        Product existingProduct = getProductById(product.getProduct_id());
+        if (existingProduct != null) {
+            // 상품 정보 업데이트
+            existingProduct.setProductName(product.getProductName());
+            existingProduct.setContent(product.getContent());
+            existingProduct.setPrice(product.getPrice());
+            productRepository.save(existingProduct);
         } else {
             throw new IllegalArgumentException("유효하지 않은 상품 ID입니다.");
         }
     }
 
-    public void productDelete(Integer id) {
-        productRepository.deleteById(id);
+    public void productDelete(Long id) {
+        productRepository.deleteById(Math.toIntExact(id));
     }
 }

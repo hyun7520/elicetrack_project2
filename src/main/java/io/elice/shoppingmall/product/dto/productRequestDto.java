@@ -13,12 +13,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 
 public class productRequestDto {
-    private String name;
+    private String productName;
     private int price;
+    private String brandName;
     private String content;
-    private int cnt;
-    private String productImage;
+    private int commentCount;
+    private LocalDate createdDate;
+    private String productImageUrl;
     private int deliveryPrice;
-    private LocalDate rdate;
+    private int averageScore;
+    private int reviewCount;
+    private int discountPrice;
     private Long categoryId;
 }
