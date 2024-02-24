@@ -2,7 +2,7 @@ import * as Api from "../api.js";
 import { validateEmail, createNavbar } from "../useful-functions.js";
 
 // 요소(element), input 혹은 상수
-const fullNameInput = document.querySelector("#fullNameInput");
+const nicknameInput = document.querySelector("#nicknameInput");
 const emailInput = document.querySelector("#emailInput");
 const passwordInput = document.querySelector("#passwordInput");
 const passwordConfirmInput = document.querySelector("#passwordConfirmInput");
@@ -25,19 +25,19 @@ function addAllEvents() {
 async function handleSubmit(e) {
   e.preventDefault();
 
-  const fullName = fullNameInput.value;
+  const nickname = nicknameInput.value;
   const email = emailInput.value;
   const password = passwordInput.value;
   const passwordConfirm = passwordConfirmInput.value;
 
   // 잘 입력했는지 확인
-  const isFullNameValid = fullName.length >= 2;
+  const isnicknameValid = nickname.length >= 2;
   const isEmailValid = validateEmail(email);
   const isPasswordValid = password.length >= 4;
   const isPasswordSame = password === passwordConfirm;
 
-  if (!isFullNameValid || !isPasswordValid) {
-    return alert("이름은 2글자 이상, 비밀번호는 4글자 이상이어야 합니다.");
+  if (!isnicknameValid || !isPasswordValid) {
+    return alert("닉네임은 2글자 이상, 비밀번호는 4글자 이상이어야 합니다.");
   }
 
   if (!isEmailValid) {
@@ -48,9 +48,22 @@ async function handleSubmit(e) {
     return alert("비밀번호가 일치하지 않습니다.");
   }
 
+  // 이메일 중복 확인
+  try {
+    const duplicateCheckResult = await Api.get(`/users/checkEmail?email=${email}`);
+    console.log(duplicateCheckResult);
+    if (duplicateCheckResult.isDuplicated) {
+      return alert("이미 사용 중인 이메일입니다.");
+    }
+  } catch (err) {
+    console.error(err.stack);
+    alert(`이메일 중복 확인 중 문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
+    return;
+  }
+
   // 회원가입 api 요청
   try {
-    const data = { fullName, email, password };
+    const data = { nickname, email, password };
 
     await Api.post("/users/register", data);
 
