@@ -3,6 +3,7 @@ package io.elice.shoppingmall.order.service;
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.repository.OrderDetailRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
 
     // 주문 상세 생성
+    @Transactional
     public void createOrderDetail(OrderDetailRequestDto orderDetailRequestDto){
 
         OrderDetail orderDetail = OrderDetail.builder()
@@ -33,6 +35,7 @@ public class OrderDetailService {
     }
 
     // 상세 주문 수정
+    @Transactional
     public void updateOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto) {
         Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
         if(!foundOrder.isPresent()) {
@@ -44,6 +47,7 @@ public class OrderDetailService {
     }
 
     // 상세 주문 삭제
+    @Transactional
     public void deleteOrderDetail(Long id) {
         Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
         if(!foundOrder.isPresent()) {
