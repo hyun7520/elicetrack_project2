@@ -43,45 +43,39 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping
-    public String createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+    public void createOrder(@RequestBody OrderRequestDto orderRequestDto) {
         orderService.createOrder(orderRequestDto);
-        return "redirect:/orders";
     }
 
     // 주문 상세 내역 생성
     @PostMapping("/details")
-    public String createOrderDetail(@RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+    public void createOrderDetail(@RequestBody OrderDetailRequestDto orderDetailRequestDto) {
         orderDetailService.createOrderDetail(orderDetailRequestDto);
-        return "redirect:/orders";
     }
 
     // 주문 수정
     @PutMapping("/{id}")
-    public String updateOrder(@PathVariable("id") Long id,
+    public void updateOrder(@PathVariable("id") Long id,
                               @RequestBody OrderRequestDto orderRequestDto) {
         orderService.updateOrder(id, orderRequestDto);
-        return "redirect:/orders";
     }
 
     // 주문 상세 내역 수정
     @PutMapping("/details/{id}")
-    public String updateOrderDetail(@PathVariable("id") Long id,
+    public void updateOrderDetail(@PathVariable("id") Long id,
                                     @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
         orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
-        return "redirect:/orders";
     }
 
     // 주문 삭제
     @DeleteMapping("/{id}")
-    public String deleteOrder(@PathVariable("id") Long id) {
+    public void deleteOrder(@PathVariable("id") Long id) {
         orderService.deleteOrder(id);
-        return "redirect:/orders";
     }
 
     // 주문 상세 내역 삭제
     @DeleteMapping("/details/{id}")
-    public String deleteOrderDetail(@PathVariable("id") Long id) {
+    public void deleteOrderDetail(@PathVariable("id") Long id) {
         orderDetailService.deleteOrderDetail(id);
-        return "redirect:/orders";
     }
 }
