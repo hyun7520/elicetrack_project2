@@ -3,6 +3,7 @@ package io.elice.shoppingmall.order.service;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     // 주문 생성
+    @Transactional
     public void createOrder(OrderRequestDto orderRequestDto) {
         Orders order = Orders.builder()
                 .orderDate(orderRequestDto.getOrderDate())
@@ -45,6 +47,7 @@ public class OrderService {
     }
 
     // 주문 수정
+    @Transactional
     public void updateOrder(Long id, OrderRequestDto orderRequestDto) {
 
         if(checkOrder(id)) {
@@ -56,6 +59,7 @@ public class OrderService {
     }
 
     // 주문 삭제(관리자 권한만)
+    @Transactional
     public void deleteOrder(Long id ) {
 
         if(checkOrder(id)) {
