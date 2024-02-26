@@ -5,9 +5,10 @@ import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,8 +34,8 @@ public class OrderService {
     }
 
     // 전체 주문 조회
-    public List<Orders> getAllOrders() {
-        return orderRepository.findAll();
+    public Page<Orders> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 
     // 아이디로 특정 주문 조회

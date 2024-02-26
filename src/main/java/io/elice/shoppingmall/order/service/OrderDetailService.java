@@ -5,6 +5,9 @@ import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.repository.OrderDetailRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -32,6 +35,10 @@ public class OrderDetailService {
     // 전체 상세 주문 조회
     public List<OrderDetail> getAllOrderDetails() {
         return orderDetailRepository.findAll();
+    }
+
+    public Page<OrderDetail> getOrderDetailsByUser(Long id, Pageable pageable) {
+        return orderDetailRepository.findAllByOrder_id(id, pageable);
     }
 
     // 상세 주문 수정
