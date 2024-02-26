@@ -5,6 +5,10 @@ import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.repository.OrderDetailRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -19,14 +23,14 @@ public class OrderDetailService {
 
     // 주문 상세 생성
     @Transactional
-    public void createOrderDetail(OrderDetailRequestDto orderDetailRequestDto){
+    public OrderDetail createOrderDetail(OrderDetailRequestDto orderDetailRequestDto){
 
         OrderDetail orderDetail = OrderDetail.builder()
                 .productId(orderDetailRequestDto.getProductId())
                 .quantity(orderDetailRequestDto.getQuantity())
                 .price(orderDetailRequestDto.getPrice())
                 .build();
-        orderDetailRepository.save(orderDetail);
+        return orderDetailRepository.save(orderDetail);
     }
 
     // 전체 상세 주문 조회
@@ -34,25 +38,30 @@ public class OrderDetailService {
         return orderDetailRepository.findAll();
     }
 
+    public Page<OrderDetail> getOrderDetailsByUser(Long id, Pageable pageable) {
+        return orderDetailRepository.findAllByOrder_id(id, pageable);
+    }
+
     // 상세 주문 수정
     @Transactional
-    public void updateOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto) {
+    public OrderDetail updateOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto) {
         Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
         if(!foundOrder.isPresent()) {
             throw new IllegalArgumentException();
         }
         OrderDetail toUpdateOrderDetail = foundOrder.get();
         toUpdateOrderDetail.updateOrderDetail(orderDetailRequestDto);
-        orderDetailRepository.save(toUpdateOrderDetail);
+        return orderDetailRepository.save(toUpdateOrderDetail);
     }
 
     // 상세 주문 삭제
     @Transactional
-    public void deleteOrderDetail(Long id) {
+    public OrderDetail deleteOrderDetail(Long id) {
         Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
         if(!foundOrder.isPresent()) {
             throw new IllegalArgumentException();
         }
         orderDetailRepository.deleteById(id);
+        return null;
     }
 }
