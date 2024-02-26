@@ -8,6 +8,8 @@ import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.service.OrderDetailService;
 import io.elice.shoppingmall.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,14 +24,30 @@ public class OrderController {
 
     // 모든 주문 조회
     @GetMapping
-    public List<Orders> getAllOrders() {
-        return orderService.getAllOrders();
+    public Page<Orders> getAllOrders(@RequestParam(name = "page", defaultValue = "0") int page,
+                                     @RequestParam(name = "size", defaultValue = "5") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Orders> pagedOrders = orderService.getAllOrders(pageRequest);
+
+//        return orderService.getAllOrders();
+        return pagedOrders;
     }
 
     // 모든 주문 상세 내역 조회
     @GetMapping("/details")
     public List<OrderDetail> getAllOrderDetails() {
         return orderDetailService.getAllOrderDetails();
+    }
+
+    // 사용자 별 주문 상세 내역 조회
+    @GetMapping("/details/{id}")
+    public Page<OrderDetail> getOrderDetailsByUser(@PathVariable("id") Long id,
+                                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                                   @RequestParam(name = "size", defaultValue = "3") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<OrderDetail> pagedOrderDetails = orderDetailService.getOrderDetailsByUser(id, pageRequest);
+
+        return pagedOrderDetails;
     }
 
     // 아이디로 주문 조회
