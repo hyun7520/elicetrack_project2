@@ -19,7 +19,7 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public void createOrder(OrderRequestDto orderRequestDto) {
+    public Orders createOrder(OrderRequestDto orderRequestDto) {
         Orders order = Orders.builder()
                 .orderDate(orderRequestDto.getOrderDate())
                 .deliveryDate(orderRequestDto.getDeliveryDate())
@@ -30,7 +30,7 @@ public class OrderService {
                 .request(orderRequestDto.getRequest())
                 .totalCost(orderRequestDto.getTotalCost())
                 .build();
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     // 전체 주문 조회
@@ -49,23 +49,25 @@ public class OrderService {
 
     // 주문 수정
     @Transactional
-    public void updateOrder(Long id, OrderRequestDto orderRequestDto) {
+    public Orders updateOrder(Long id, OrderRequestDto orderRequestDto) {
 
-        if(checkOrder(id)) {
-            Optional<Orders> foundOrder = orderRepository.findById(id);
-            Orders toUpdateOrder = foundOrder.get();
-            toUpdateOrder.updateOrder(orderRequestDto);
-            orderRepository.save(toUpdateOrder);
+        if(!checkOrder(id)) {
+            return null;
         }
+        Optional<Orders> foundOrder = orderRepository.findById(id);
+        Orders toUpdateOrder = foundOrder.get();
+        toUpdateOrder.updateOrder(orderRequestDto);
+        return orderRepository.save(toUpdateOrder);
     }
 
     // 주문 삭제(관리자 권한만)
     @Transactional
-    public void deleteOrder(Long id ) {
+    public Orders deleteOrder(Long id ) {
 
-        if(checkOrder(id)) {
+        if(!checkOrder(id)) {
             orderRepository.deleteById(id);
         }
+        return null;
     }
 
     // 수정, 삭제하고자하는 주문이 존재하는지 확인
