@@ -1,13 +1,19 @@
 package io.elice.shoppingmall.user.controller;
 
+
+import io.elice.shoppingmall.user.Dto.SignInDto;
+import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.service.UserService;
 import io.elice.shoppingmall.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -16,17 +22,25 @@ public class UserController {
     private final UserService userService;
 
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user){
-        return userService.register(user);
+    @PostMapping("/sign-up")
+    public User signUp(@RequestBody SignUpDto signUpDto){
+        return userService.signUp(signUpDto);
     }
 
     @GetMapping("/checkEmail")
-    public Map<String, Boolean> checkEmail(@RequestParam String email) {
-        boolean isDuplicated = userService.checkEmail(email);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("isDuplicated", isDuplicated);
-        return response;
+    public Boolean checkEmail(@RequestParam String email) {
+
+        return userService.checkEmail(email);
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> login(@RequestBody SignInDto signInDto) {
+        User user = userService.authenticate(signInDto.getEmail(), signInDto.getPassword());
+        if (user != null) {
+            String jwt = userService.generateJwtToken(user);
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
     }
 
 

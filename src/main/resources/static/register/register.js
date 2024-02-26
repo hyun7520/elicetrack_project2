@@ -52,7 +52,7 @@ async function handleSubmit(e) {
   try {
     const duplicateCheckResult = await Api.get(`/users/checkEmail?email=${email}`);
     console.log(duplicateCheckResult);
-    if (duplicateCheckResult.isDuplicated) {
+    if (duplicateCheckResult) {
       return alert("이미 사용 중인 이메일입니다.");
     }
   } catch (err) {
@@ -65,7 +65,7 @@ async function handleSubmit(e) {
   try {
     const data = { nickname, email, password };
 
-    await Api.post("/users/register", data);
+    await Api.post("/users/sign-up", data);
 
     alert(`정상적으로 회원가입되었습니다.`);
     // 로그인 페이지 이동
