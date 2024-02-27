@@ -13,49 +13,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/products")
-public class productController {
+public class ProductController {
     private final productService productService;
 
-    // 모두 관리자(admin)가 사용하는 기능
-    // 등록 페이지
-    @GetMapping("/add")
-    public String productSavePage(){
-        return "product-add";
-    }
-
     // 등록
-    @PostMapping("/products")
-    public String productSave(Product product){
+    @PostMapping
+    public String createProduct(Product product){
         productService.saveProduct(product);
-        return "redirect:/productS";
-    }
-
-    // 수정 페이지
-    @GetMapping("/products/modify/{id}") //임의의 주소
-    public String productModiftFrom(@PathVariable("id") Long id, Model model){
-        model.addAttribute("product", productService.getProductById(id));
-        return "product/modify"; //주소 미지정
+        return "redirect:/products";
     }
 
     // 수정
-    @PostMapping("/products/modify/{id}")
-    public String productModify(Product product, @PathVariable("id") Long id){
+    @PostMapping("/{id}")
+    public String updateProduct(Product product, @PathVariable("id") Long id){
         product.setProduct_id(id);
         productService.modifyProduct(product);
         return "redirect:/product-detail/" + id;
     }
 
     // 삭제
-    @GetMapping("product/{id}") //임의 주소
+    @GetMapping("/{id}") // 삭제 메서드의 URL 변경
     public String productDelete(@PathVariable("id") Long id){
         productService.productDelete(id);
-        return "/admin";
+        return "redirect:/admin"; // 삭제 후에는 관리자 페이지로 리다이렉트
     }
 
     // 상세 페이지 조회
-    @GetMapping("/product-detail/{id}")
-    public String productDetail(Model model, @PathVariable("id") Long id){
+    @GetMapping("/details/{id}")
+    public String deleteProduct(Model model, @PathVariable("id") Long id){
         model.addAttribute("product", productService.getProductById(id));
         return "redirect:/product-detail/" + id;
+    }
+
+    // 모든 상품 목록 조회
+    @GetMapping
+    public String getAllProducts(Model model) {
+        model.addAttribute("products", productService.productList());
+        return "products";
     }
 }

@@ -2,6 +2,7 @@ package io.elice.shoppingmall.product.service;
 
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class productService {
     private final ProductRepository productRepository;
 
     // 등록
+    @Transactional
     public void saveProduct(Product product){
         productRepository.save(product);
     }
@@ -25,25 +27,24 @@ public class productService {
     }
 
     // 전체 조회
-    public List<Product> ProductList(){
+    public List<Product> productList(){
         return productRepository.findAll();
     }
 
     //수정
-    // 수정
-    public void modifyProduct(Product product){
-        Product existingProduct = getProductById(product.getProduct_id());
+    @Transactional
+    public void modifyProduct(Product proeduct){
+        Product existingProduct = getProductById(proeduct.getProduct_id());
         if (existingProduct != null) {
             // 상품 정보 업데이트
-            existingProduct.setProductName(product.getProductName());
-            existingProduct.setContent(product.getContent());
-            existingProduct.setPrice(product.getPrice());
+            existingProduct.updateProduct(proeduct);
             productRepository.save(existingProduct);
         } else {
             throw new IllegalArgumentException("유효하지 않은 상품 ID입니다.");
         }
     }
 
+    @Transactional
     public void productDelete(Long id) {
         productRepository.deleteById(Math.toIntExact(id));
     }

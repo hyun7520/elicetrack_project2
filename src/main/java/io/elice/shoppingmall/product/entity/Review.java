@@ -35,4 +35,12 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    public void updateReview(String context, String writerNickname, LocalDate createdDate, int rating, Product product) {
+        this.context = context;
+        this.writerNickname = writerNickname;
+        this.createdDate = createdDate;
+        this.rating = rating;
+        this.product = product;
+    }
 }

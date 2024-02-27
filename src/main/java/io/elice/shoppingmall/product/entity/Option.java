@@ -25,12 +25,13 @@ public class Option {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product productId;
+    private Product product;
 
-    public Option(String content, int price, int stock, Product productId) {
+    public void updateOption(Option option) {
         this.content = content;
         this.price = price;
         this.stock = stock;
-        this.productId = productId;
+        this.product = product;
     }
+
 }

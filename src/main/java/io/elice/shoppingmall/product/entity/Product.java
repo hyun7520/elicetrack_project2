@@ -1,9 +1,12 @@
 package io.elice.shoppingmall.product.entity;
 
+import io.elice.shoppingmall.cart.entity.Cart;
+import io.elice.shoppingmall.order.model.OrderDetail;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -51,12 +54,11 @@ public class Product {
     @Column(name="discount_price")
     private int discountPrice;
 
-    /*
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "product")
     private OrderDetail orderDetail;
 
-    @OneToMany(mappedBy = "product")
-    private List<UserLike> userLikes;
+//    @OneToMany(mappedBy = "product")
+//    private List<UserLike> userLikes;
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
@@ -64,15 +66,29 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Option> options;
 
-    @OneToMany(mappedBy = "product")
-    private List<UserScrap> userScrap;
+//    @OneToMany(mappedBy = "product")
+//    private List<UserScrap> userScrap;
+
+//    @ManyToOne
+//    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+//    private Category categoryid;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-    private Category categoryid;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+    @JoinColumn(name = "cart_id")
     private Cart carts;
-    */
+
+
+    public void updateProduct(Product newProduct) {
+        this.productName = newProduct.productName;
+        this.price = newProduct.price;
+        this.brandName = newProduct.brandName;
+        this.content = newProduct.content;
+        this.commentCount = newProduct.commentCount;
+        this.createdDate = newProduct.createdDate;
+        this.productImageUrl = newProduct.productImageUrl;
+        this.deliveryPrice = newProduct.deliveryPrice;
+        this.averageScore = newProduct.averageScore;
+        this.reviewCount = newProduct.reviewCount;
+        this.discountPrice = newProduct.discountPrice;
+    }
 }

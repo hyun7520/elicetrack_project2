@@ -10,41 +10,27 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
-public class reviewController {
+public class ReviewController {
     private final reviewService reviewService;
 
-    // 리뷰 등록 페이지
-    @GetMapping("/add")
-    public String reviewSavePage(Model model){
-        model.addAttribute("review", new Review());
-        return "review-add";
-    }
-
     // 리뷰 등록
-    @PostMapping("/add")
-    public String reviewSave(@ModelAttribute Review review){
+    @PostMapping
+    public String createReview(@ModelAttribute Review review){
         reviewService.saveReview(review);
         return "redirect:/reviews";
     }
 
-    // 리뷰 수정 페이지
-    @GetMapping("/modify/{id}")
-    public String reviewModifyForm(@PathVariable("id") Long id, Model model){
-        model.addAttribute("review", reviewService.getReviewById(id));
-        return "review-modify";
-    }
-
     // 리뷰 수정
-    @PostMapping("/modify/{id}")
-    public String reviewModify(@ModelAttribute Review review, @PathVariable("id") Long id){
+    @PostMapping("/{id}")
+    public String updateReview(@ModelAttribute Review review, @PathVariable("id") Long id){
         review.setReviewId(id);
         reviewService.modifyReview(review);
         return "redirect:/reviews";
     }
 
     // 리뷰 삭제
-    @GetMapping("/delete/{id}")
-    public String reviewDelete(@PathVariable("id") Long id){
+    @GetMapping("/{id}")
+    public String deleteReview(@PathVariable("id") Long id){
         reviewService.deleteReview(id);
         return "redirect:/reviews";
     }
@@ -58,7 +44,7 @@ public class reviewController {
 
     // 모든 리뷰 목록 조회
     @GetMapping
-    public String allReviews(Model model){
+    public String getAllReviews(Model model){
         model.addAttribute("reviews", reviewService.reviewList());
         return "reviews";
     }

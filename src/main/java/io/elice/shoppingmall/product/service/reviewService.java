@@ -2,6 +2,7 @@ package io.elice.shoppingmall.product.service;
 
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.repository.ReviewRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class reviewService {
     private final ReviewRepository reviewRepository;
 
     // 등록
+    @Transactional
     public void saveReview(Review review){
         reviewRepository.save(review);
     }
@@ -30,15 +32,11 @@ public class reviewService {
     }
 
     // 수정
-    public void modifyReview(Review review){
-        Review existingReview = getReviewById(review.getReviewId());
+    @Transactional
+    public void modifyReview(Review review) {
+        Review existingReview = review;
         if (existingReview != null) {
-            // 리뷰 정보 업데이트
-            existingReview.setContext(review.getContext());
-            existingReview.setWriterNickname(review.getWriterNickname());
-            existingReview.setCreatedDate(review.getCreatedDate());
-            existingReview.setRating(review.getRating());
-            existingReview.setProduct(review.getProduct());
+            existingReview.updateReview(review.getContext(), review.getWriterNickname(), review.getCreatedDate(), review.getRating(), review.getProduct());
             reviewRepository.save(existingReview);
         } else {
             throw new IllegalArgumentException("유효하지 않은 리뷰 ID입니다.");
@@ -46,6 +44,7 @@ public class reviewService {
     }
 
     // 삭제
+    @Transactional
     public void deleteReview(Long id) {
         reviewRepository.deleteById(id);
     }
