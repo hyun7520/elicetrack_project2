@@ -61,39 +61,48 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping
-    public void createOrder(@RequestBody OrderRequestDto orderRequestDto) {
-        orderService.createOrder(orderRequestDto);
+    public Orders createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+
+        // API 테스트를 위해 생성된 주문을 return하여 바로 확인이 가능하도록 했습니다.
+        // 더 적합한 리턴값이 있을지 고민해보겠습니다.
+        return orderService.createOrder(orderRequestDto);
     }
 
     // 주문 상세 내역 생성
     @PostMapping("/details")
-    public void createOrderDetail(@RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-        orderDetailService.createOrderDetail(orderDetailRequestDto);
+    public OrderDetail createOrderDetail(@RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+        return orderDetailService.createOrderDetail(orderDetailRequestDto);
     }
 
     // 주문 수정
     @PutMapping("/{id}")
-    public void updateOrder(@PathVariable("id") Long id,
+    public Orders updateOrder(@PathVariable("id") Long id,
                               @RequestBody OrderRequestDto orderRequestDto) {
-        orderService.updateOrder(id, orderRequestDto);
+
+        return orderService.updateOrder(id, orderRequestDto);
     }
 
     // 주문 상세 내역 수정
     @PutMapping("/details/{id}")
-    public void updateOrderDetail(@PathVariable("id") Long id,
+    public OrderDetail updateOrderDetail(@PathVariable("id") Long id,
                                     @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-        orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
+
+        return orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
     }
 
     // 주문 삭제
     @DeleteMapping("/{id}")
-    public void deleteOrder(@PathVariable("id") Long id) {
+    public String deleteOrder(@PathVariable("id") Long id) {
         orderService.deleteOrder(id);
+
+        return "요청하신 주문이 삭제되었습니다.";
     }
 
     // 주문 상세 내역 삭제
     @DeleteMapping("/details/{id}")
-    public void deleteOrderDetail(@PathVariable("id") Long id) {
+    public String deleteOrderDetail(@PathVariable("id") Long id) {
         orderDetailService.deleteOrderDetail(id);
+
+        return "주문 상세 내역이 삭제되었습니다.";
     }
 }
