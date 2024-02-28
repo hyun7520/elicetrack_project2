@@ -5,27 +5,24 @@ import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import io.jsonwebtoken.security.Keys;
 
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+   private final Key key;
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, Key key) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-
+        this.key = key;
     }
 
     public User signUp(SignUpDto signUpDto){
