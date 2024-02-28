@@ -42,17 +42,6 @@ public class OrderController {
         return orderResponseDto;
     }
 
-    // 특정 주문의 주문 상세 조회
-    @GetMapping("/details/{id}")
-    public Page<OrderDetail> getOrderDetailsByUser(@PathVariable("id") Long id,
-                                                   @RequestParam(name = "page", defaultValue = "0") int page,
-                                                   @RequestParam(name = "size", defaultValue = "3") int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<OrderDetail> pagedOrderDetails = orderDetailService.getOrderDetailsByUser(id, pageRequest);
-
-        return pagedOrderDetails;
-    }
-
     // 주문 생성
     @PostMapping
     public Orders createOrder(@RequestBody OrderRequestDto orderRequestDto) {
@@ -60,13 +49,6 @@ public class OrderController {
         // API 테스트를 위해 생성된 주문을 return하여 바로 확인이 가능하도록 했습니다.
         // 더 적합한 리턴값이 있을지 고민해보겠습니다.
         return orderService.createOrder(orderRequestDto);
-    }
-
-    // 주문 상세 내역 생성
-    @PostMapping("/details/{id}")
-    public OrderDetail createOrderDetail(@PathVariable("id") Long id,
-                                         @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-        return orderDetailService.createOrderDetail(orderDetailRequestDto);
     }
 
     // 주문 수정
@@ -87,25 +69,4 @@ public class OrderController {
         return "주문 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
     }
 
-    // 주문 상세 내역 삭제
-    @DeleteMapping("/details/{id}/{detailId}")
-    public String deleteOrderDetail(@PathVariable("id") Long orderId, @PathVariable("detailId") Long detailId) {
-
-        if(orderDetailService.deleteOrderDetail(orderId, detailId)) {
-            return "주문 상세 내역이 삭제되었습니다.";
-        }
-        return "상품 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
-    }
-
-
-
-    // 주문 상세 내역 수정
-    // 쇼핑몰을 사용하면서 주문 페이지에서 제품의 추가나 수정이 가능한 경우는 없었으며
-    // 어떤 제품을 구매할 것인지 선택만 가능했다. 수정은 현재 단계에서 필요하지 않을 것으로 보인다.
-//    @PutMapping("/details/{id}")
-//    public OrderDetail updateOrderDetail(@PathVariable("id") Long id,
-//                                    @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-//
-//        return orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
-//    }
 }

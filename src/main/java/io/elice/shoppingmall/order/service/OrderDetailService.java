@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,29 @@ public class OrderDetailService {
             return false;
         }
         orderDetailRepository.deleteById(detailId);
+        return true;
+    }
+
+    // 선택된 상세 내역 모두 삭제
+    // 리스트로 받아온다.
+    @Transactional
+    public boolean deleteSelectedDetails(Long id, List<Long> selectedDetailIds) {
+
+        Long tempId;
+
+        Optional<Orders> foundOrder = orderRepository.findById(id);
+        if(!foundOrder.isPresent()) {
+            return false;
+        }
+        Iterator<Long> detailIds = selectedDetailIds.iterator();
+        while(detailIds.hasNext()) {
+            tempId = detailIds.next();
+            Optional<OrderDetail> foundOrderDetail = orderDetailRepository.findById(tempId);
+            if(!foundOrderDetail.isPresent()) {
+                return false;
+            }
+            orderRepository.deleteById(tempId);
+        }
         return true;
     }
 
