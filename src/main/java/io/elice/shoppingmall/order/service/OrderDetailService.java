@@ -2,7 +2,9 @@ package io.elice.shoppingmall.order.service;
 
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.order.model.OrderDetail;
+import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderDetailRepository;
+import io.elice.shoppingmall.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Order;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class OrderDetailService {
 
     private final OrderDetailRepository orderDetailRepository;
+    private final OrderRepository orderRepository;
 
     // 주문 상세 생성
     @Transactional
@@ -42,26 +45,33 @@ public class OrderDetailService {
         return orderDetailRepository.findAllByOrder_id(id, pageable);
     }
 
-    // 상세 주문 수정
-    @Transactional
-    public OrderDetail updateOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto) {
-        Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
-        if(!foundOrder.isPresent()) {
-            throw new IllegalArgumentException();
-        }
-        OrderDetail toUpdateOrderDetail = foundOrder.get();
-        toUpdateOrderDetail.updateOrderDetail(orderDetailRequestDto);
-        return orderDetailRepository.save(toUpdateOrderDetail);
-    }
-
     // 상세 주문 삭제
     @Transactional
-    public OrderDetail deleteOrderDetail(Long id) {
-        Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
+    public boolean deleteOrderDetail(Long orderId, Long detailId) {
+        // 주문이 존재하는지 확인
+        Optional<Orders> foundOrder = orderRepository.findById(orderId);
         if(!foundOrder.isPresent()) {
-            throw new IllegalArgumentException();
+            return false;
         }
-        orderDetailRepository.deleteById(id);
-        return null;
+        // 주문이 있을 경우 삭제하고자하는 상세 내역이 존재하는지 확인
+        Optional<OrderDetail> foundOrderDetail = orderDetailRepository.findById(detailId);
+        if(!foundOrderDetail.isPresent()) {
+            return false;
+        }
+        orderDetailRepository.deleteById(detailId);
+        return true;
     }
+
+
+    // 상세 주문 수정
+//    @Transactional
+//    public OrderDetail updateOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto) {
+//        Optional<OrderDetail> foundOrder = orderDetailRepository.findById(id);
+//        if(!foundOrder.isPresent()) {
+//            throw new IllegalArgumentException();
+//        }
+//        OrderDetail toUpdateOrderDetail = foundOrder.get();
+//        toUpdateOrderDetail.updateOrderDetail(orderDetailRequestDto);
+//        return orderDetailRepository.save(toUpdateOrderDetail);
+//    }
 }

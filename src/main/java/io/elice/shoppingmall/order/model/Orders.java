@@ -90,7 +90,4 @@ public class Orders {
         this.totalCost = orderRequestDto.getTotalCost();
     }
 
-    public void addOrderDetail() {
-
-    }
 }

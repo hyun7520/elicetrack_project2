@@ -88,11 +88,13 @@ public class OrderController {
     }
 
     // 주문 상세 내역 삭제
-    @DeleteMapping("/details/{id}")
-    public String deleteOrderDetail(@PathVariable("id") Long id) {
-        orderDetailService.deleteOrderDetail(id);
+    @DeleteMapping("/details/{id}/{detailId}")
+    public String deleteOrderDetail(@PathVariable("id") Long orderId, @PathVariable("detailId") Long detailId) {
 
-        return "주문 상세 내역이 삭제되었습니다.";
+        if(orderDetailService.deleteOrderDetail(orderId, detailId)) {
+            return "주문 상세 내역이 삭제되었습니다.";
+        }
+        return "상품 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
     }
 
 
