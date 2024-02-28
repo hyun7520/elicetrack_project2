@@ -62,12 +62,13 @@ public class OrderService {
 
     // 주문 삭제(관리자 권한만)
     @Transactional
-    public Orders deleteOrder(Long id ) {
+    public boolean deleteOrder(Long id ) {
 
         if(!checkOrder(id)) {
-            orderRepository.deleteById(id);
+            return false;
         }
-        return null;
+        orderRepository.deleteById(id);
+        return true;
     }
 
     // 수정, 삭제하고자하는 주문이 존재하는지 확인

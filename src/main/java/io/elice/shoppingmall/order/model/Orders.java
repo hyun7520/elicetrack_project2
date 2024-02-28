@@ -3,6 +3,7 @@ package io.elice.shoppingmall.order.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -54,7 +55,7 @@ public class Orders {
     private Long totalCost;
 
     // 상세주문과 일대다 매핑
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
     @JsonManagedReference
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
@@ -87,5 +88,9 @@ public class Orders {
         this.deliveryProcess = orderRequestDto.getDeliveryProcess();
         this.request = orderRequestDto.getRequest();
         this.totalCost = orderRequestDto.getTotalCost();
+    }
+
+    public void addOrderDetail() {
+
     }
 }

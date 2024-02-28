@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import jakarta.persistence.*;
@@ -54,8 +55,9 @@ public class Product {
     @Column(name="discount_price")
     private int discountPrice;
 
-    @OneToOne(mappedBy = "product")
-    private OrderDetail orderDetail;
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<OrderDetail> orderDetail;
 
 //    @OneToMany(mappedBy = "product")
 //    private List<UserLike> userLikes;

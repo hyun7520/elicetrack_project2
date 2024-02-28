@@ -33,13 +33,16 @@ public class OrderController {
         return pagedOrders;
     }
 
-    // 모든 주문 상세 내역 조회
-    @GetMapping("/details")
-    public List<OrderDetail> getAllOrderDetails() {
-        return orderDetailService.getAllOrderDetails();
+    // 주문 아이디로 주문 조회
+    @GetMapping("/{id}")
+    public OrderResponseDto getOrderAndDetails(@PathVariable("id") Long id) {
+        Orders orders = orderService.getOrderById(id);
+        OrderResponseDto orderResponseDto = new OrderResponseDto(orders);
+
+        return orderResponseDto;
     }
 
-    // 사용자 별 주문 상세 내역 조회
+    // 특정 주문의 주문 상세 조회
     @GetMapping("/details/{id}")
     public Page<OrderDetail> getOrderDetailsByUser(@PathVariable("id") Long id,
                                                    @RequestParam(name = "page", defaultValue = "0") int page,
@@ -48,15 +51,6 @@ public class OrderController {
         Page<OrderDetail> pagedOrderDetails = orderDetailService.getOrderDetailsByUser(id, pageRequest);
 
         return pagedOrderDetails;
-    }
-
-    // 아이디로 주문 조회
-    @GetMapping("/{id}")
-    public OrderResponseDto getOrderAndDetails(@PathVariable("id") Long id) {
-        Orders orders = orderService.getOrderById(id);
-        OrderResponseDto orderResponseDto = new OrderResponseDto(orders);
-
-        return orderResponseDto;
     }
 
     // 주문 생성
@@ -69,12 +63,14 @@ public class OrderController {
     }
 
     // 주문 상세 내역 생성
-    @PostMapping("/details")
-    public OrderDetail createOrderDetail(@RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+    @PostMapping("/details/{id}")
+    public OrderDetail createOrderDetail(@PathVariable("id") Long id,
+                                         @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
         return orderDetailService.createOrderDetail(orderDetailRequestDto);
     }
 
     // 주문 수정
+    // 사이트 고객에 의한 배달 주소 등의 수정
     @PutMapping("/{id}")
     public Orders updateOrder(@PathVariable("id") Long id,
                               @RequestBody OrderRequestDto orderRequestDto) {
@@ -82,20 +78,13 @@ public class OrderController {
         return orderService.updateOrder(id, orderRequestDto);
     }
 
-    // 주문 상세 내역 수정
-    @PutMapping("/details/{id}")
-    public OrderDetail updateOrderDetail(@PathVariable("id") Long id,
-                                    @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-
-        return orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
-    }
-
     // 주문 삭제
     @DeleteMapping("/{id}")
     public String deleteOrder(@PathVariable("id") Long id) {
-        orderService.deleteOrder(id);
-
-        return "요청하신 주문이 삭제되었습니다.";
+        if(orderService.deleteOrder(id)) {
+            return "요청하신 주문이 삭제되었습니다.";
+        }
+        return "주문 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
     }
 
     // 주문 상세 내역 삭제
@@ -105,4 +94,16 @@ public class OrderController {
 
         return "주문 상세 내역이 삭제되었습니다.";
     }
+
+
+
+    // 주문 상세 내역 수정
+    // 쇼핑몰을 사용하면서 주문 페이지에서 제품의 추가나 수정이 가능한 경우는 없었으며
+    // 어떤 제품을 구매할 것인지 선택만 가능했다. 수정은 현재 단계에서 필요하지 않을 것으로 보인다.
+//    @PutMapping("/details/{id}")
+//    public OrderDetail updateOrderDetail(@PathVariable("id") Long id,
+//                                    @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+//
+//        return orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
+//    }
 }

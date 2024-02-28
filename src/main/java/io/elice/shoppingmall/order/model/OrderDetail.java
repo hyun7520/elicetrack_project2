@@ -43,8 +43,9 @@ public class OrderDetail {
     private Orders order;
     
     // 상품과 1:1 매핑
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 
     @Builder
