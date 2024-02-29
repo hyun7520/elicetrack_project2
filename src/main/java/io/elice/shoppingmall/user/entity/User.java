@@ -2,6 +2,7 @@ package io.elice.shoppingmall.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.order.model.Orders;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,6 +46,10 @@ public class User {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
+    @OneToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @JsonManagedReference

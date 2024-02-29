@@ -72,7 +72,7 @@ public class CartController {
     }
 
     // 장바구니에서 선택한 제품 제거
-    @DeleteMapping("/find/{userId}")
+    @DeleteMapping("/find/{userId}/delete-one")
     public String deleteItemFromCart(@PathVariable("userId") Long userId,
                                      @RequestParam("item") int item) {
 
@@ -83,7 +83,7 @@ public class CartController {
     }
 
     // 장바구니에서 여러개를 선택 후 제거
-    @DeleteMapping("/find/{userId}")
+    @DeleteMapping("/find/{userId}/delete-all")
     public String deleteSelectedItemsFromCart(@PathVariable("userId") Long userId,
                                               @RequestParam("items") List<Integer> items) {
 

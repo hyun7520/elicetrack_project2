@@ -1,12 +1,15 @@
 package io.elice.shoppingmall.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.elice.shoppingmall.cart.entity.Cart;
+import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -75,9 +78,9 @@ public class Product {
 //    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
 //    private Category categoryid;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart carts;
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    @JsonManagedReference
+    private List<CartItem> cartItems = new ArrayList<>();
 
 
     public void updateProduct(Product newProduct) {

@@ -5,15 +5,10 @@ import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 @Service
