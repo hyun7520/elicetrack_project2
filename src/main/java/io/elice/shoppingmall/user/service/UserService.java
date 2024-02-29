@@ -30,6 +30,10 @@ public class UserService {
                         .email(signUpDto.getEmail())
                         .password(signUpDto.getPassword())
                         .nickname(signUpDto.getNickname())
+                        .address(signUpDto.getAddress())
+                        .postcode(signUpDto.getPostcode())
+                        .detailAddress(signUpDto.getDetailAddress())
+                        .extraAddress(signUpDto.getExtraAddress())
                         .build();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);

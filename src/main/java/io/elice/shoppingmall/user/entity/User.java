@@ -29,7 +29,13 @@ public class User {
 
     private String phoneNumber;
 
+    private String postcode;
+
     private String address;
+
+    private String detailAddress;
+
+    private String extraAddress;
 
     private boolean isAdmin;
 

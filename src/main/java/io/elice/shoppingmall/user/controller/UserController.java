@@ -31,6 +31,9 @@ public class UserController {
     private final UserService userService;
     private final Key key;
 
+//    @GetMapping
+//    public ResponseEntity<?> getUser()
+
     @PostMapping("/sign-up")
     public User signUp(@RequestBody SignUpDto signUpDto){
         return userService.signUp(signUpDto);
