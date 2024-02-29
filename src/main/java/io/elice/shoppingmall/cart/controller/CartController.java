@@ -20,6 +20,9 @@ public class CartController {
 
     private final CartService cartService;
 
+    // 장바구니에 아이템을 추가 및 삭제는 cartItemController에서
+    // cart에서는 장바구니 비우기, 장바구니 아이템을 주문 페이지에 출력하기, 장바구니 조희 API를 구현
+
     // TO 박웅서
     // REST 설계 상 동사를 사용하면 좋지 않다고 알고 있고, "/create"는 POST와 중복되는 것 같아 삭제했습니다.
     // 아래의 GET 매핑에서도 같은 이유로 "/find"를 삭제했습니다.
@@ -47,8 +50,8 @@ public class CartController {
         return null;
     }
 
-    // 유저 당 하나의 카트를 가지기 때문에 삭제하기보다는 로그아웃 시,
-    // 또는 구매완료 시 내부 데이터만 지우는 방식으로 수정하는게 어떨까요?
+    // 유저 당 하나의 카트를 가지기 때문에 삭제하기보다는 로그아웃 시, 구매완료 시
+    // 내부 데이터만 지우는 방식으로 수정
     @DeleteMapping("/delete/{cartId}")
     public String deleteCart(@PathVariable Long cartId) {
         cartService.deleteCart(cartId);
@@ -66,18 +69,6 @@ public class CartController {
 
         return "order/order";
     }
-
-    // 장바구니에 상품페이지에서 선택한 아이템 여러개 추가
-    @PutMapping("/{cartId}/items")
-    public String addItemToCart(@RequestParam("item") List<Long> items) {
-
-        for(Long i : items) {
-            // cartService.addItemsToCart(i);
-        }
-
-        return null;
-    }
-
 }
 
 

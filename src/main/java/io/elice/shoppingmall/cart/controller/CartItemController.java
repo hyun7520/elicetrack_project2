@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.cart.controller;
 
+import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
@@ -13,20 +14,39 @@ import java.util.List;
 public class CartItemController {
 
     private final CartItemService cartItemService;
+    
+    // TODO RequestBody를 사용한 생성, 업데이트 방식에는 DTO를 사용하여 넣기
+
+    // 카트에 담긴 모든 아이템 조회
+    @GetMapping("/item/{id}")
+    public List<CartItem> items(@PathVariable("id") Long id) {
+
+        return cartItemService.getAllItems(id);
+    }
 
     // 카트에 아이템 추가
     // postman에서 잘 추가가 됐는지 바로 확인하기 위해 리턴값은 Product로 설정
-    @PutMapping("/item")
-    public Product addItemToCart(@RequestParam("id") Long id) {
+    @PostMapping("/item/{id}")
+    public Product addItemToCart(@RequestBody Long id) {
 
         Product checkIfAdded = cartItemService.addItemToCart(id);
 
         return checkIfAdded;
     }
 
+    // 카트에 담긴 아이템의 수량을 수정
+    @PutMapping("/item/{id}")
+    public String updateItemQuantity(// 수정할 cartItem 아이디와 변경할 수량 값을 받아오기
+                                     @RequestBody Long id ) {
+
+        cartItemService.updateItemQuantity(id);
+
+        return null;
+    }
+
     // 카트에서 아이템 삭제
     @DeleteMapping("/item/{id}")
-    public String deleteItemFromCart(@PathVariable("id") Long id) {
+    public String deleteItemFromCart(@RequestBody Long id) {
 
         cartItemService.deleteItemFromCart(id);
 
@@ -42,5 +62,4 @@ public class CartItemController {
 
         return null;
     }
-
 }

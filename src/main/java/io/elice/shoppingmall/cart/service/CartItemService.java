@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.cart.service;
 
 
+import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.product.entity.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,20 @@ public class CartItemService {
         return null;
     }
 
+    @Transactional
+    public void updateItemQuantity(Long id) {
+    }
+
+    @Transactional
     public void deleteItemFromCart(Long id) {
     }
 
+    @Transactional
     public void deleteAllSelected(List<Long> selectedItemIds) {
+    }
+
+    public List<CartItem> getAllItems(Long id) {
+
+        return null;
     }
 }
