@@ -48,21 +48,4 @@ public class OrderDetailController {
         // 살게 없는데 주문 테이블이 존재할 수 없기 때문에
         return "선택된 상품 삭제 성공";
     }
-
-    // 주문 상세 내역 생성
-//    @PostMapping("/{id}")
-//    public OrderDetail createOrderDetail(@PathVariable("id") Long id,
-//                                         @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-//        return orderDetailService.createOrderDetail(orderDetailRequestDto);
-//    }
-
-    // 주문 상세 내역 수정
-    // 쇼핑몰을 사용하면서 주문 페이지에서 제품의 추가나 수정이 가능한 경우는 없었으며
-    // 어떤 제품을 구매할 것인지 선택만 가능했다. 수정은 현재 단계에서 필요하지 않을 것으로 보인다.
-//    @PutMapping("/details/{id}")
-//    public OrderDetail updateOrderDetail(@PathVariable("id") Long id,
-//                                    @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
-//
-//        return orderDetailService.updateOrderDetail(id, orderDetailRequestDto);
-//    }
 }

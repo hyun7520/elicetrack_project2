@@ -20,20 +20,25 @@ public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping("/create")
+    // TO 박웅서
+    // REST 설계 상 동사를 사용하면 좋지 않다고 알고 있고, "/create"는 POST와 중복되는 것 같아 삭제했습니다.
+    // 아래의 GET 매핑에서도 같은 이유로 "/find"를 삭제했습니다.
+    @PostMapping
     public String createCart(@RequestBody CreateCartDTO createCartDTO) {
         cartService.createCart(createCartDTO);
 
         return null;
     }
 
-    @GetMapping("/find/{userId}")
+    @GetMapping("/{userId}")
     public String findCartByUserId(@PathVariable Long userId) {
         cartService.findCartByUserId(userId);
 
         return null;
     }
 
+    // TO 박웅서
+    // 제 파트에서는 PUT을 사용해 업데이트를 진행했습니다. 통일성을 위해 팀원과 논의 후 제 파트를 수정하거나 해당 부분을 수정하겠습니다.
     @PostMapping("/update/{cartId}")
     public String updateCartCount(@PathVariable Long cartId) throws Exception {
 
@@ -42,6 +47,8 @@ public class CartController {
         return null;
     }
 
+    // 유저 당 하나의 카트를 가지기 때문에 삭제하기보다는 로그아웃 시,
+    // 또는 구매완료 시 내부 데이터만 지우는 방식으로 수정하는게 어떨까요?
     @DeleteMapping("/delete/{cartId}")
     public String deleteCart(@PathVariable Long cartId) {
         cartService.deleteCart(cartId);
@@ -60,8 +67,8 @@ public class CartController {
         return "order/order";
     }
 
-    // 장바구니에 선택한 아이템 여러개 추가
-    @PutMapping("/add/{userId}")
+    // 장바구니에 상품페이지에서 선택한 아이템 여러개 추가
+    @PutMapping("/{cartId}/items")
     public String addItemToCart(@RequestParam("item") List<Long> items) {
 
         for(Long i : items) {
@@ -70,31 +77,6 @@ public class CartController {
 
         return null;
     }
-
-    // 장바구니에서 선택한 제품 제거
-    @DeleteMapping("/find/{userId}/delete-one")
-    public String deleteItemFromCart(@PathVariable("userId") Long userId,
-                                     @RequestParam("item") int item) {
-
-        // cartService.deleteItemFromCart(item);
-
-        // 삭제 완료 후 장바구니 페이지를 다시 로드
-        return null;
-    }
-
-    // 장바구니에서 여러개를 선택 후 제거
-    @DeleteMapping("/find/{userId}/delete-all")
-    public String deleteSelectedItemsFromCart(@PathVariable("userId") Long userId,
-                                              @RequestParam("items") List<Integer> items) {
-
-        for(int i : items) {
-            // 서비스 추가 예정
-            // cartService.deleteItemsFromCart(i);
-        }
-
-        return null;
-    }
-
 
 }
 
