@@ -41,17 +41,14 @@ public class OrderDetailController {
     // 선택된 주문 상세내역 일괄 삭제
     @DeleteMapping("/{id}")
     public String deleteSelectedOrderDetails(@PathVariable("id") Long id,
-                                             @RequestParam List<Long> selectedDetailIds) {
+                                             @RequestBody List<Long> selectedDetailIds) {
         orderDetailService.deleteSelectedDetails(id, selectedDetailIds);
         
-        // 전체 주문 상세내역이 삭제되면 상품 페이지나 메인페이지로 redirect 되도록 설정
-        // 살게 없는데 주문 테이블이 존재할 수 없다. - 주문 삭제로 대체 가능하지 않을까
-        return "전체 상품 삭제 성공";
+        // 주문 상세내역 전체 선택으로 삭제하면 상품 페이지나 메인페이지로 redirect 되도록 설정할 것
+        // 살게 없는데 주문 테이블이 존재할 수 없기 때문에
+        return "선택된 상품 삭제 성공";
     }
 
-
-    
-    
     // 주문 상세 내역 생성
 //    @PostMapping("/{id}")
 //    public OrderDetail createOrderDetail(@PathVariable("id") Long id,
