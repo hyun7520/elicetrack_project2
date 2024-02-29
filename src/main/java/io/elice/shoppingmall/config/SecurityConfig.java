@@ -32,10 +32,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public Key secretKey() {
-        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    }
 
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -49,10 +45,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/sign-in", "/users/sign-up").permitAll()
-                        .anyRequest().authenticated())
+                //        .requestMatchers("/users/sign-in", "/users/sign-up").permitAll()
+                //        .anyRequest().authenticated())
+                          .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
