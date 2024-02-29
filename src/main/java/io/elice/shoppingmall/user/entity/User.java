@@ -1,9 +1,14 @@
 package io.elice.shoppingmall.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.elice.shoppingmall.order.model.Orders;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -40,4 +45,9 @@ public class User {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Orders> orders = new ArrayList<>();
+
 }

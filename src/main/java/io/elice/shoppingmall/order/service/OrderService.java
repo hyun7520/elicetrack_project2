@@ -5,10 +5,15 @@ import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Order;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,15 +52,29 @@ public class OrderService {
         return order.get();
     }
 
+    public Page<Orders> getOrdersByUserId(Long id, Pageable pageable) {
+        Page<Orders> foundOrder = orderRepository.findAllByUser_Id(id, pageable);
+        if(foundOrder.getTotalElements() == 0) {
+            return null;
+        }
+        return foundOrder;
+    }
+
     // 주문 수정
     @Transactional
     public Orders updateOrder(Long id, OrderRequestDto orderRequestDto) {
-
+        
         if(!checkOrder(id)) {
             return null;
         }
         Optional<Orders> foundOrder = orderRepository.findById(id);
         Orders toUpdateOrder = foundOrder.get();
+        
+        // 배송 중일 경우 주소와 같은 정보는 수정이 불가능
+        // boolean을 return 하도록 수정
+        if(toUpdateOrder.getDeliveryProcess().equals("배송중")) {
+            return null;
+        }
         toUpdateOrder.updateOrder(orderRequestDto);
         return orderRepository.save(toUpdateOrder);
     }
@@ -74,11 +93,6 @@ public class OrderService {
     // 수정, 삭제하고자하는 주문이 존재하는지 확인
     public boolean checkOrder(Long id) {
         Optional<Orders> foundOrder = orderRepository.findById(id);
-
-        if(!foundOrder.isPresent()) {
-            throw new IllegalArgumentException();
-        }
-
-        return true;
+        return foundOrder.isPresent();
     }
 }

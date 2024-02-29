@@ -1,10 +1,12 @@
 package io.elice.shoppingmall.order.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
+import io.elice.shoppingmall.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -60,9 +62,10 @@ public class Orders {
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     // 회원 정보와 다대일 매핑
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "id")
+    @JsonBackReference
+    private User user;
 
     @Builder
     public Orders(Date orderDate, Date deliveryDate,
