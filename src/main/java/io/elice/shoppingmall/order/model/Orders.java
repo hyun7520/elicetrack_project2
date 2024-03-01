@@ -65,12 +65,12 @@ public class Orders {
     private Long totalCost;
 
     // 상세주문과 일대다 매핑
-    @OneToMany(mappedBy = "order", orphanRemoval = true)
+    @OneToMany(mappedBy = "order", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     // 회원 정보와 다대일 매핑
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
     @JsonBackReference
     private User user;
@@ -95,6 +95,10 @@ public class Orders {
         this.address = orderUpdateDto.getAddress();
         this.request = orderUpdateDto.getRequest();
 
+    }
+
+    public void updateOrderDetails(OrderDetail orderDetail) {
+        this.orderDetails.add(orderDetail);
     }
 
 }

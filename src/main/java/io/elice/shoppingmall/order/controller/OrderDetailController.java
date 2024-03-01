@@ -6,6 +6,7 @@ import io.elice.shoppingmall.order.service.OrderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,14 @@ import java.util.List;
 public class OrderDetailController {
 
     private final OrderDetailService orderDetailService;
+
+    // 특정 주문에 주문 상세 추가
+    @PostMapping("/{id}")
+    public String addOrderDetail(@PathVariable("id") Long id,
+                                 @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+
+        return orderDetailService.createOrderDetail(id, orderDetailRequestDto);
+    }
 
     // 특정 주문의 주문 상세내역 조회
     @GetMapping("/{id}")

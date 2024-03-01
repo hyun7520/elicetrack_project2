@@ -37,7 +37,7 @@ public class OrderDetail {
     private Long price;
 
     // 주문과 다대일 매핑
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     @JsonBackReference
     private Orders order;
@@ -49,8 +49,9 @@ public class OrderDetail {
     private Product product;
 
     @Builder
-    public OrderDetail(Long productId, Long quantity, Long price) {
+    public OrderDetail(Orders order, Long quantity, Long price) {
         //에러로 관련된 매핑 삭제
+        this.order = order;
         this.quantity = quantity;
         this.price = price;
     }

@@ -27,14 +27,27 @@ public class OrderDetailService {
 
     // 주문 상세 생성
     @Transactional
-    public OrderDetail createOrderDetail(OrderDetailRequestDto orderDetailRequestDto){
+    public String createOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto){
 
-        OrderDetail orderDetail = OrderDetail.builder()
-                .productId(orderDetailRequestDto.getProductId())
+        Optional<Orders> foundOrder = orderRepository.findById(id);
+
+        if(foundOrder.isPresent()) {
+            Orders order = foundOrder.get();
+
+            OrderDetail orderDetail = OrderDetail.builder()
+                .order(order)
                 .quantity(orderDetailRequestDto.getQuantity())
                 .price(orderDetailRequestDto.getPrice())
                 .build();
-        return orderDetailRepository.save(orderDetail);
+
+            orderDetailRepository.save(orderDetail);
+            order.updateOrderDetails(orderDetail);
+
+
+            return "상품이 추가되었습니다!";
+        }
+
+        return "주문이 존재하지 않습니다!";
     }
 
     // 전체 상세 주문 조회
