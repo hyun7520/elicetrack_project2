@@ -1,9 +1,6 @@
 package io.elice.shoppingmall.order.controller;
 
-import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
-import io.elice.shoppingmall.order.dto.OrderRequestDto;
-import io.elice.shoppingmall.order.dto.OrderResponseDto;
-import io.elice.shoppingmall.order.dto.OrderUpdateDto;
+import io.elice.shoppingmall.order.dto.*;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.service.OrderDetailService;
@@ -100,7 +97,7 @@ public class OrderController {
         return "주문 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
     }
 
-    // 주문 취소
+    // 주문 취소 - 사용자 기능
     @PutMapping("/{id}/cancel")
     public String cancelOrder(@PathVariable("id") Long id,
                               @RequestBody OrderUpdateDto orderUpdateDto) {
@@ -110,7 +107,9 @@ public class OrderController {
 
     // 주문 상태 설정 - 관리자 기능
     @PutMapping("/{id}/set-order")
-    public String setOrderStatus(@PathVariable("id") Long id) {
-        return null;
+    public String setOrderStatus(@PathVariable("id") Long id,
+                                 @RequestBody OrderManagerUpdateDto orderManagerUpdateDto) {
+
+        return orderService.managerUpdateOrder(id, orderManagerUpdateDto);
     }
 }

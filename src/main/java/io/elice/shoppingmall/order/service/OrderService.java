@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.order.service;
 
+import io.elice.shoppingmall.order.dto.OrderManagerUpdateDto;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.order.model.Orders;
@@ -86,6 +87,7 @@ public class OrderService {
         return orderRepository.save(toUpdateOrder);
     }
 
+    // 주문 취소 - 사용자
     @Transactional
     public String cancelOrder(Long id, OrderUpdateDto orderUpdateDto) {
 
@@ -101,6 +103,21 @@ public class OrderService {
         order.cancelOrder();
 
         return "주문 취소 완료!";
+    }
+
+    // 주문 수정 (결제 상태, 배송 상태) - 관리자
+    public String managerUpdateOrder(Long id, OrderManagerUpdateDto orderManagerUpdateDto) {
+
+        Optional<Orders> foundOrder = orderRepository.findById(id);
+
+        if(!foundOrder.isPresent()) {
+            return "주문이 존재하지 않습니다.";
+        }
+        Orders order = foundOrder.get();
+
+        order.managerUpdateOrder(orderManagerUpdateDto);
+
+        return "정상적으로 수정되었습니다.";
     }
 
     // 주문 삭제(관리자 권한만)

@@ -50,7 +50,7 @@ public class OrderDetailService {
                 .build();
 
             orderDetailRepository.save(orderDetail);
-            order.updateOrderDetails(orderDetail);
+            order.addOrderDetails(orderDetail);
 
             return "상품이 추가되었습니다!";
         }
