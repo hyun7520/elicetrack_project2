@@ -5,6 +5,9 @@ import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderDetailRepository;
 import io.elice.shoppingmall.order.repository.OrderRepository;
+import io.elice.shoppingmall.product.entity.Product;
+import io.elice.shoppingmall.product.repository.ProductRepository;
+import io.elice.shoppingmall.product.service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Order;
@@ -24,17 +27,20 @@ public class OrderDetailService {
 
     private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
+    private final ProductService productService;
 
     // 주문 상세 생성
     @Transactional
     public String createOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto){
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
+        Product foundProduct = productService.getProductById(orderDetailRequestDto.getProductId());
 
         if(foundOrder.isPresent()) {
             Orders order = foundOrder.get();
 
             OrderDetail orderDetail = OrderDetail.builder()
+                .product(foundProduct)
                 .order(order)
                 .quantity(orderDetailRequestDto.getQuantity())
                 .price(orderDetailRequestDto.getPrice())
@@ -43,10 +49,8 @@ public class OrderDetailService {
             orderDetailRepository.save(orderDetail);
             order.updateOrderDetails(orderDetail);
 
-
             return "상품이 추가되었습니다!";
         }
-
         return "주문이 존재하지 않습니다!";
     }
 
