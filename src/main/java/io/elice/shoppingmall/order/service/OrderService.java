@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.order.service;
 
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
+import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
@@ -23,10 +24,8 @@ public class OrderService {
         Orders order = Orders.builder()
                 .orderDate(orderRequestDto.getOrderDate())
                 .deliveryDate(orderRequestDto.getDeliveryDate())
-                .orderProcess(orderRequestDto.getOrderProcess())
                 .receiver(orderRequestDto.getReceiver())
                 .address(orderRequestDto.getAddress())
-                .deliveryProcess(orderRequestDto.getDeliveryProcess())
                 .request(orderRequestDto.getRequest())
                 .totalCost(orderRequestDto.getTotalCost())
                 .build();
@@ -57,7 +56,7 @@ public class OrderService {
 
     // 주문 수정
     @Transactional
-    public Orders updateOrder(Long id, OrderRequestDto orderRequestDto) {
+    public Orders updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
         
         if(!checkOrder(id)) {
             return null;
@@ -70,7 +69,7 @@ public class OrderService {
         if(toUpdateOrder.getDeliveryProcess().equals("배송중")) {
             return null;
         }
-        toUpdateOrder.updateOrder(orderRequestDto);
+        toUpdateOrder.updateOrder(orderUpdateDto);
         return orderRepository.save(toUpdateOrder);
     }
 

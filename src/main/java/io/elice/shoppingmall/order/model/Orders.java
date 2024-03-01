@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
+import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -31,13 +32,24 @@ public class Orders {
     @Column(name = "order_date")
     private Date orderDate;
 
-    // enum으로 수정할 것
     @Column(name = "delivery_date")
     private Date deliveryDate;
 
-    // enum으로 수정할 것
     @Column(name = "order_process")
-    private String orderProcess;
+    @Enumerated(EnumType.STRING)
+    private OrderProcess orderProcess;
+
+    public enum OrderProcess {
+        received, confirmed
+    }
+
+    @Column(name = "delivery_process")
+    @Enumerated(EnumType.STRING)
+    private DeliveryProcess deliveryProcess;
+
+    public enum DeliveryProcess {
+        preparing, shipping, complete
+    }
 
     @NotNull(message = "받는 분을 입력해주세요.")
     @Size(min = 2)
@@ -45,9 +57,6 @@ public class Orders {
 
     @NotNull(message = "주소를 입력해주세요")
     private String address;
-
-    @Column(name = "delivery_process")
-    private String deliveryProcess;
 
     private String request = "안전하게 배송해주세요";
 
@@ -68,28 +77,24 @@ public class Orders {
 
     @Builder
     public Orders(Date orderDate, Date deliveryDate,
-                 String orderProcess, String receiver,
-                 String address, String deliveryProcess,
+                 String address, String receiver,
                  String request, Long totalCost) {
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
-        this.orderProcess = orderProcess;
+        this.orderProcess = OrderProcess.received;
+        this.deliveryProcess = DeliveryProcess.preparing;
         this.receiver = receiver;
         this.address = address;
-        this.deliveryProcess = deliveryProcess;
         this.request = request;
         this.totalCost = totalCost;
     }
 
-    public void updateOrder(OrderRequestDto orderRequestDto) {
-        this.orderDate = orderRequestDto.getOrderDate();
-        this.deliveryDate = orderRequestDto.getDeliveryDate();
-        this.orderProcess = orderRequestDto.getOrderProcess();
-        this.receiver = orderRequestDto.getReceiver();
-        this.address = orderRequestDto.getAddress();
-        this.deliveryProcess = orderRequestDto.getDeliveryProcess();
-        this.request = orderRequestDto.getRequest();
-        this.totalCost = orderRequestDto.getTotalCost();
+    public void updateOrder(OrderUpdateDto orderUpdateDto) {
+
+        this.receiver = orderUpdateDto.getReceiver();
+        this.address = orderUpdateDto.getAddress();
+        this.request = orderUpdateDto.getRequest();
+
     }
 
 }

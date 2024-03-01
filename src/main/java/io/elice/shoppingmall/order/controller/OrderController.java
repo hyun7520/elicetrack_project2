@@ -3,6 +3,7 @@ package io.elice.shoppingmall.order.controller;
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import io.elice.shoppingmall.order.dto.OrderResponseDto;
+import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.service.OrderDetailService;
@@ -14,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -61,12 +65,17 @@ public class OrderController {
                             @RequestBody List<Product> products) {
         model.addAttribute("products", products);
 
-        return "static/page_name_here";
+        return null;
     }
 
     // 주문 생성 - 결제 버튼 클릭 시
     @PostMapping
     public Orders createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+        Date now = new Date();
+        String dateNow = date.format(now);
+        orderRequestDto.setOrderDate(now);
 
         // API 테스트를 위해 생성된 주문을 return하여 바로 확인이 가능하도록 했습니다.
         // 더 적합한 리턴값이 있을지 고민해보겠습니다.
@@ -74,12 +83,12 @@ public class OrderController {
     }
 
     // 주문 수정
-    // 사이트 고객에 의한 배달 주소 등의 수정
+    // 사이트 고객에 의한 배달 주소, 수신자, 요청사항 의 수정
     @PutMapping("/{id}")
     public Orders updateOrder(@PathVariable("id") Long id,
-                              @RequestBody OrderRequestDto orderRequestDto) {
+                              @RequestBody OrderUpdateDto orderUpdateDto) {
 
-        return orderService.updateOrder(id, orderRequestDto);
+        return orderService.updateOrder(id, orderUpdateDto);
     }
 
     // 주문 삭제 - 관리자권한
