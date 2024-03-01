@@ -70,7 +70,7 @@ public class OrderController {
 
     // 주문 생성 - 결제 버튼 클릭 시
     @PostMapping
-    public Orders createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+    public String createOrder(@RequestBody OrderRequestDto orderRequestDto) {
 
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
         Date now = new Date();

@@ -4,6 +4,8 @@ import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
+import io.elice.shoppingmall.user.entity.User;
+import io.elice.shoppingmall.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,11 +19,20 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     // 주문 생성
     @Transactional
-    public Orders createOrder(OrderRequestDto orderRequestDto) {
+    public String createOrder(OrderRequestDto orderRequestDto) {
+
+        Optional<User> foundUser = userRepository.findById(orderRequestDto.getUserId());
+
+        if(!foundUser.isPresent()) {
+            return "고객이 존재하지 않습니다!";
+        }
+
         Orders order = Orders.builder()
+                .user(foundUser.get())
                 .orderDate(orderRequestDto.getOrderDate())
                 .deliveryDate(orderRequestDto.getDeliveryDate())
                 .receiver(orderRequestDto.getReceiver())
@@ -29,7 +40,9 @@ public class OrderService {
                 .request(orderRequestDto.getRequest())
                 .totalCost(orderRequestDto.getTotalCost())
                 .build();
-        return orderRepository.save(order);
+        orderRepository.save(order);
+
+        return "주문이 정상적으로 처리되었습니다!";
     }
 
     // 전체 주문 조회

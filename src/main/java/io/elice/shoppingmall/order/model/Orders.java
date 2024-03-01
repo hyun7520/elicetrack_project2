@@ -76,9 +76,10 @@ public class Orders {
     private User user;
 
     @Builder
-    public Orders(Date orderDate, Date deliveryDate,
+    public Orders(User user, Date orderDate, Date deliveryDate,
                  String address, String receiver,
                  String request, Long totalCost) {
+        this.user = user;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.orderProcess = OrderProcess.received;

@@ -12,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class OrderRequestDto {
 
+    private Long userId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date orderDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
