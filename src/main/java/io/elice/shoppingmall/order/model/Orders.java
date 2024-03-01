@@ -40,7 +40,7 @@ public class Orders {
     private OrderProcess orderProcess;
 
     public enum OrderProcess {
-        received, confirmed
+        received, confirmed, canceled
     }
 
     @Column(name = "delivery_process")
@@ -102,4 +102,7 @@ public class Orders {
         this.orderDetails.add(orderDetail);
     }
 
+    public void cancelOrder() {
+        this.orderProcess = OrderProcess.canceled;
+    }
 }

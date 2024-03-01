@@ -86,6 +86,23 @@ public class OrderService {
         return orderRepository.save(toUpdateOrder);
     }
 
+    @Transactional
+    public String cancelOrder(Long id, OrderUpdateDto orderUpdateDto) {
+
+        Optional<Orders> foundOrder = orderRepository.findById(id);
+
+        if(!foundOrder.isPresent()) {
+            return "주문이 존재하지 않습니다.";
+        }
+        Orders order = foundOrder.get();
+        if(String.valueOf(order.getOrderProcess()).equals("canceled")) {
+            return "주문이 이미 취소되었습니다!";
+        }
+        order.cancelOrder();
+
+        return "주문 취소 완료!";
+    }
+
     // 주문 삭제(관리자 권한만)
     @Transactional
     public boolean deleteOrder(Long id ) {

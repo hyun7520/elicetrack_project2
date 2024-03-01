@@ -14,5 +14,5 @@ public class OrderUpdateDto {
     private String receiver;
     private String address;
     private String request;
-
+    private String orderProcess;
 }

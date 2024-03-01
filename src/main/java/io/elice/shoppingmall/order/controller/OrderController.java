@@ -102,8 +102,10 @@ public class OrderController {
 
     // 주문 취소
     @PutMapping("/{id}/cancel")
-    public String cancelOrder(@PathVariable("id") Long id) {
-        return null;
+    public String cancelOrder(@PathVariable("id") Long id,
+                              @RequestBody OrderUpdateDto orderUpdateDto) {
+
+        return orderService.cancelOrder(id, orderUpdateDto);
     }
 
     // 주문 상태 설정 - 관리자 기능
