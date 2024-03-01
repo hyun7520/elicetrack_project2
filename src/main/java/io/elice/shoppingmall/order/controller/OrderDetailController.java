@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.order.controller;
 
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
+import io.elice.shoppingmall.order.dto.OrderDetailUpdateDto;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.service.OrderDetailService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,13 @@ public class OrderDetailController {
         Page<OrderDetail> pagedOrderDetails = orderDetailService.getOrderDetailsByUser(id, pageRequest);
 
         return pagedOrderDetails;
+    }
+
+    @PutMapping("/{id}/{detailId}")
+    public String updateOrderDetail(@PathVariable("id") Long id,
+                                    @PathVariable("detailId") Long detailId,
+                                    @RequestBody OrderDetailUpdateDto orderDetailUpdateDto) {
+        return orderDetailService.updateOrderDetail(id, detailId, orderDetailUpdateDto);
     }
 
     // 주문 상세 내역 삭제

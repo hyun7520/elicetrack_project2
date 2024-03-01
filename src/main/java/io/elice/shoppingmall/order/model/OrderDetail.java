@@ -2,6 +2,7 @@ package io.elice.shoppingmall.order.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
+import io.elice.shoppingmall.order.dto.OrderDetailUpdateDto;
 import io.elice.shoppingmall.product.entity.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -57,8 +58,7 @@ public class OrderDetail {
         this.price = price;
     }
 
-    public void updateOrderDetail(OrderDetailRequestDto orderDetailRequestDto) {
-        this.quantity = orderDetailRequestDto.getQuantity();
-        this.price = orderDetailRequestDto.getPrice();
+    public void updateOrderDetail(Long quantity) {
+        this.quantity = quantity;
     }
 }
