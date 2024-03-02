@@ -11,4 +11,8 @@ public class SignUpDto {
     private String email;
     private String password;
     private String nickname;
+    private String postcode;
+    private String address;
+    private String detailAddress;
+    private String extraAddress;
 }
