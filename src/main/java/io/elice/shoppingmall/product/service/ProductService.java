@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class productService {
+public class ProductService {
     private final ProductRepository productRepository;
 
     // 등록
