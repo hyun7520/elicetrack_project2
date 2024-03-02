@@ -1,7 +1,7 @@
 package io.elice.shoppingmall.product.controller;
 
 import io.elice.shoppingmall.product.entity.Product;
-import io.elice.shoppingmall.product.service.productService;
+import io.elice.shoppingmall.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
-    private final productService productService;
+    private final ProductService productService;
 
     // 등록
     @PostMapping

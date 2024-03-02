@@ -7,10 +7,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDto {
 
+    private Long userId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date orderDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
