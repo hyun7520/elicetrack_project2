@@ -2,27 +2,21 @@ package io.elice.shoppingmall.order.service;
 
 import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.order.dto.OrderDetailUpdateDto;
-import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderDetailRepository;
 import io.elice.shoppingmall.order.repository.OrderRepository;
 import io.elice.shoppingmall.product.entity.Product;
-import io.elice.shoppingmall.product.repository.ProductRepository;
 import io.elice.shoppingmall.product.service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 @Service
 @RequiredArgsConstructor

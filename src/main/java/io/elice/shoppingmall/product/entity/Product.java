@@ -22,7 +22,7 @@ import java.util.List;
 @Table(name = "product")
 public class Product {
     @Id
-    @Column(name = "productId")
+    @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long productId; //상품코드
 
