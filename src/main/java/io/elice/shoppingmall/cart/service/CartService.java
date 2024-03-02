@@ -19,9 +19,10 @@ public class CartService {
     public void createCart(CreateCartDTO createCartDTO) {
 
         // 아직 product 와 user 안 넣음
-        Cart cart = Cart.builder().cartCount(1).build();
+//        Cart cart = Cart.builder().cartCount(1).build();
 
-        cartRepository.save(cart);
+//        cartRepository.save(cart);
+
     }
 
     public List<Cart> findCartByUserId(Long userId) {
@@ -33,11 +34,11 @@ public class CartService {
 
     public void updateCartCount(Long cartId) throws Exception {
 
-        Cart findCart = cartRepository.findById(cartId).orElseThrow(() -> new Exception("값을 찾을 수 없습니다."));
-
-        findCart.setCartCount(findCart.getCartCount() + 1);
-
-        cartRepository.save(findCart);
+//        Cart findCart = cartRepository.findById(cartId).orElseThrow(() -> new Exception("값을 찾을 수 없습니다."));
+//
+//        findCart.setCartCount(findCart.getCartCount() + 1);
+//
+//        cartRepository.save(findCart);
     }
 
     public void deleteCart(Long cartId) {

@@ -1,6 +1,9 @@
 package io.elice.shoppingmall.product.service;
 
+<<<<<<< HEAD
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
+=======
+>>>>>>> 7eadbbd773d3bb44d3eef6c7c43c2e01b82daa42
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;

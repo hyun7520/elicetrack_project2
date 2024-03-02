@@ -27,8 +27,8 @@ public class OrderResponseDto {
 
         this.orderDate = order.getOrderDate();
         this.deliveryDate = order.getDeliveryDate();
-        this.orderProcess = order.getOrderProcess();
-        this.deliveryProcess = order.getDeliveryProcess();
+        this.orderProcess = String.valueOf(order.getOrderProcess());
+        this.deliveryProcess = String.valueOf(order.getDeliveryProcess());
         this.receiver = order.getReceiver();
         this.address = order.getAddress();
         this.request = order.getRequest();

@@ -1,12 +1,16 @@
 package io.elice.shoppingmall.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.elice.shoppingmall.cart.entity.Cart;
+import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -55,8 +59,9 @@ public class Product {
     @Column(name="discount_price")
     private int discountPrice; //할인 가격
 
-    @OneToOne(mappedBy = "product")
-    private OrderDetail orderDetail;
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<OrderDetail> orderDetail;
 
 //    @OneToMany(mappedBy = "product")
 //    private List<UserLike> userLikes;
@@ -68,9 +73,9 @@ public class Product {
 //    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
 //    private Category categoryid;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart carts;
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    @JsonManagedReference
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @Builder
     public Product(String productName, int price, String brandName, String content, int commentCount,
