@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 
 @Slf4j
@@ -31,8 +31,10 @@ public class UserController {
     private final UserService userService;
     private final Key key;
 
-//    @GetMapping
-//    public ResponseEntity<?> getUser()
+    @GetMapping("/{id}")
+    public Optional<User> getUser(@PathVariable(name = "id") Long id) {
+        return userService.getUserById(id);
+    }
 
     @PostMapping("/sign-up")
     public User signUp(@RequestBody SignUpDto signUpDto){
@@ -61,6 +63,7 @@ public class UserController {
 
             boolean isAdmin = claims.getBody().get("isAdmin", Boolean.class);
             response.put("isAdmin", isAdmin);
+            response.put("id", user.getId());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
