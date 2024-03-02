@@ -1,5 +1,6 @@
 package io.elice.shoppingmall.product.entity;
 
+import io.elice.shoppingmall.product.dto.OptionRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,8 +10,10 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@Table(name = "options")
 public class Option {
     @Id
+    @Column(name = "optionId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long optionId;
 
@@ -21,17 +24,22 @@ public class Option {
     private int price;
 
     @Column(nullable = false)
-    private int stock;
+    private int stock; //재고 수량
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    public void updateOption(Option option) {
+    @Builder
+    public Option(String content, int price, int stock, Product product) {
         this.content = content;
         this.price = price;
         this.stock = stock;
-        this.product = product;
     }
 
+    public void updateOption(OptionRequestDto optionRequestDto) {
+        this.content = optionRequestDto.getContent();
+        this.price = optionRequestDto.getPrice();
+        this.stock = optionRequestDto.getStock();
+    }
 }

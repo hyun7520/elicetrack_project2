@@ -2,6 +2,7 @@ package io.elice.shoppingmall.product.entity;
 
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.order.model.OrderDetail;
+import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,9 +18,9 @@ import java.util.List;
 @Table(name = "product")
 public class Product {
     @Id
-    @Column(name = "product_id")
+    @Column(name = "productId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long product_id; //상품코드
+    private long productId; //상품코드
 
     @Column(name = "product_name", nullable = false, length = 255)
     private String productName; // 상품명
@@ -52,19 +53,13 @@ public class Product {
     private int reviewCount; // 리뷰 수
 
     @Column(name="discount_price")
-    private int discountPrice;
+    private int discountPrice; //할인 가격
 
     @OneToOne(mappedBy = "product")
     private OrderDetail orderDetail;
 
 //    @OneToMany(mappedBy = "product")
 //    private List<UserLike> userLikes;
-
-    @OneToMany(mappedBy = "product")
-    private List<Review> reviews;
-
-    @OneToMany(mappedBy = "product")
-    private List<Option> options;
 
 //    @OneToMany(mappedBy = "product")
 //    private List<UserScrap> userScrap;
@@ -77,18 +72,34 @@ public class Product {
     @JoinColumn(name = "cart_id")
     private Cart carts;
 
+    @Builder
+    public Product(String productName, int price, String brandName, String content, int commentCount,
+                   LocalDate createdDate, String productImageUrl, int deliveryPrice, int averageScore,
+                   int reviewCount, int discountPrice) {
+        this.productName = productName;
+        this.price = price;
+        this.brandName = brandName;
+        this.content = content;
+        this.commentCount = commentCount;
+        this.createdDate = createdDate;
+        this.productImageUrl = productImageUrl;
+        this.deliveryPrice = deliveryPrice;
+        this.averageScore = averageScore;
+        this.reviewCount = reviewCount;
+        this.discountPrice = discountPrice;
+    }
 
-    public void updateProduct(Product newProduct) {
-        this.productName = newProduct.productName;
-        this.price = newProduct.price;
-        this.brandName = newProduct.brandName;
-        this.content = newProduct.content;
-        this.commentCount = newProduct.commentCount;
-        this.createdDate = newProduct.createdDate;
-        this.productImageUrl = newProduct.productImageUrl;
-        this.deliveryPrice = newProduct.deliveryPrice;
-        this.averageScore = newProduct.averageScore;
-        this.reviewCount = newProduct.reviewCount;
-        this.discountPrice = newProduct.discountPrice;
+    public void updateProduct(ProductRequestDto productRequestDto) {
+        this.productName = productRequestDto.getProductName();
+        this.price = productRequestDto.getPrice();
+        this.brandName = productRequestDto.getBrandName();
+        this.content = productRequestDto.getContent();
+        this.commentCount = productRequestDto.getCommentCount();
+        this.createdDate = productRequestDto.getCreatedDate();
+        this.productImageUrl = productRequestDto.getProductImageUrl();
+        this.deliveryPrice = productRequestDto.getDeliveryPrice();
+        this.averageScore = productRequestDto.getAverageScore();
+        this.reviewCount = productRequestDto.getReviewCount();
+        this.discountPrice = productRequestDto.getDiscountPrice();
     }
 }

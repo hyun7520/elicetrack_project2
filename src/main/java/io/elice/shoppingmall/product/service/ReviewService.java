@@ -1,6 +1,8 @@
 package io.elice.shoppingmall.product.service;
 
+import io.elice.shoppingmall.product.dto.ReviewRequestDto;
 import io.elice.shoppingmall.product.entity.Review;
+import io.elice.shoppingmall.product.repository.ProductRepository;
 import io.elice.shoppingmall.product.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -11,19 +13,25 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class reviewService {
+public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
 
     // 등록
     @Transactional
-    public void saveReview(Review review){
-        reviewRepository.save(review);
+    public Review saveReview(Review review){
+        return reviewRepository.save(review);
     }
 
     // 리뷰 ID로 조회
     public Review getReviewById(Long id){
         Optional<Review> optionalReview = reviewRepository.findById(id);
         return optionalReview.orElse(null);
+    }
+
+    // 특정 상품의 리뷰 목록 조회
+    public List<Review> getReviewsByProductId(Long productId){
+        return reviewRepository.findReviewsByProductId(productId);
     }
 
     // 전체 조회
@@ -33,11 +41,11 @@ public class reviewService {
 
     // 수정
     @Transactional
-    public void modifyReview(Review review) {
-        Review existingReview = review;
-        if (existingReview != null) {
-            existingReview.updateReview(review.getContext(), review.getWriterNickname(), review.getCreatedDate(), review.getRating(), review.getProduct());
-            reviewRepository.save(existingReview);
+    public Review updateReview(Long id, ReviewRequestDto requestDto) {
+        Optional<Review> optionalReview = reviewRepository.findById(id);
+        if (optionalReview.isPresent()) {
+            Review existingReview = optionalReview.get();
+            return reviewRepository.save(existingReview);
         } else {
             throw new IllegalArgumentException("유효하지 않은 리뷰 ID입니다.");
         }
