@@ -50,18 +50,10 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody SignInDto signInDto) {
         User user = userService.authenticate(signInDto.getEmail(), signInDto.getPassword());
         if (user != null) {
-            ObjectMapper mapper = new ObjectMapper();
             String jwt = userService.generateJwtToken(user);
             Map<String, Object> response = new HashMap<>();
             response.put("token", jwt);
-
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(jwt);
-
-            boolean isAdmin = claims.getBody().get("isAdmin", Boolean.class);
-            response.put("isAdmin", isAdmin);
+            response.put("isAdmin", user.isAdmin());
             response.put("id", user.getId());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
