@@ -31,7 +31,7 @@ public class ReviewService {
 
     // 특정 상품의 리뷰 목록 조회
     public List<Review> getReviewsByProductId(Long productId){
-        return reviewRepository.findReviewsByProductId(productId);
+        return reviewRepository.findByProductProductId(productId);
     }
 
     // 전체 조회

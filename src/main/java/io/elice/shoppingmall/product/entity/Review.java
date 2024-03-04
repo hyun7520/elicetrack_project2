@@ -33,7 +33,7 @@ public class Review {
 //    private User userId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "productId", nullable = false)
     private Product product;
 
     public void updateReview(String context, String writerNickname, LocalDate createdDate, int rating, Product product) {
