@@ -20,13 +20,6 @@ import java.security.Key;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationProvider jwtAuthenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,7 +36,10 @@ public class SecurityConfig {
 //    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtAuthenticationProvider jwtAuthenticationProvider,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(jwtAuthenticationProvider)

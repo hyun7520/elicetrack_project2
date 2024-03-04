@@ -3,6 +3,7 @@ package io.elice.shoppingmall.cart.service;
 import io.elice.shoppingmall.cart.dto.CreateCartDTO;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.repository.CartRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,6 +17,8 @@ import java.util.Optional;
 public class CartService {
 
     private final CartRepository cartRepository;
+
+    @Transactional
     public void createCart(CreateCartDTO createCartDTO) {
 
         // 아직 product 와 user 안 넣음
@@ -31,7 +34,7 @@ public class CartService {
         return null;
     }
 
-
+    @Transactional
     public void updateCartCount(Long cartId) throws Exception {
 
 //        Cart findCart = cartRepository.findById(cartId).orElseThrow(() -> new Exception("값을 찾을 수 없습니다."));
@@ -41,6 +44,7 @@ public class CartService {
 //        cartRepository.save(findCart);
     }
 
+    @Transactional
     public void deleteCart(Long cartId) {
         cartRepository.deleteById(cartId);
     }

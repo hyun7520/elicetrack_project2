@@ -1,19 +1,17 @@
 package io.elice.shoppingmall.order.controller;
 
 import io.elice.shoppingmall.order.dto.*;
-import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.model.Orders;
-import io.elice.shoppingmall.order.service.OrderDetailService;
 import io.elice.shoppingmall.order.service.OrderService;
 import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -38,9 +36,8 @@ public class OrderController {
     @GetMapping("/{id}")
     public OrderResponseDto getOrderAndDetails(@PathVariable("id") Long id) {
         Orders orders = orderService.getOrderById(id);
-        OrderResponseDto orderResponseDto = new OrderResponseDto(orders);
 
-        return orderResponseDto;
+        return new OrderResponseDto(orders);
     }
 
     // 사용자 별로 주문 조회
@@ -67,7 +64,7 @@ public class OrderController {
 
     // 주문 생성 - 결제 버튼 클릭 시
     @PostMapping
-    public String createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+    public ResponseEntity<Object> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
 
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
         Date now = new Date();
@@ -82,8 +79,8 @@ public class OrderController {
     // 주문 수정
     // 사이트 고객에 의한 배달 주소, 수신자, 요청사항 의 수정
     @PutMapping("/{id}")
-    public Orders updateOrder(@PathVariable("id") Long id,
-                              @RequestBody OrderUpdateDto orderUpdateDto) {
+    public ResponseEntity<Object> updateOrder(@PathVariable("id") Long id,
+                                              @RequestBody OrderUpdateDto orderUpdateDto) {
 
         return orderService.updateOrder(id, orderUpdateDto);
     }
@@ -91,24 +88,22 @@ public class OrderController {
     // 주문 삭제 - 관리자권한
     @DeleteMapping("/{id}")
     public String deleteOrder(@PathVariable("id") Long id) {
-        if(orderService.deleteOrder(id)) {
-            return "요청하신 주문이 삭제되었습니다.";
-        }
-        return "주문 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
+        orderService.deleteOrder(id);
+        return null;
     }
 
     // 주문 취소 - 사용자 기능
     @PutMapping("/{id}/cancel")
-    public String cancelOrder(@PathVariable("id") Long id,
-                              @RequestBody OrderUpdateDto orderUpdateDto) {
+    public ResponseEntity<Object> cancelOrder(@PathVariable("id") Long id,
+                                              @RequestBody OrderUpdateDto orderUpdateDto) {
 
         return orderService.cancelOrder(id, orderUpdateDto);
     }
 
     // 주문 상태 설정 - 관리자 기능
     @PutMapping("/{id}/set-order")
-    public String setOrderStatus(@PathVariable("id") Long id,
-                                 @RequestBody OrderManagerUpdateDto orderManagerUpdateDto) {
+    public ResponseEntity<Object> setOrderStatus(@PathVariable("id") Long id,
+                                                 @RequestBody OrderManagerUpdateDto orderManagerUpdateDto) {
 
         return orderService.managerUpdateOrder(id, orderManagerUpdateDto);
     }

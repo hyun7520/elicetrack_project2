@@ -7,7 +7,7 @@ import io.elice.shoppingmall.order.service.OrderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.parameters.P;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +21,8 @@ public class OrderDetailController {
 
     // 특정 주문에 주문 상세 추가
     @PostMapping("/{id}")
-    public String addOrderDetail(@PathVariable("id") Long id,
-                                 @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+    public ResponseEntity<Object> addOrderDetail(@PathVariable("id") Long id,
+                                                 @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
 
         return orderDetailService.createOrderDetail(id, orderDetailRequestDto);
     }
@@ -38,31 +38,25 @@ public class OrderDetailController {
         return pagedOrderDetails;
     }
 
-    @PutMapping("/{id}/{detailId}")
-    public String updateOrderDetail(@PathVariable("id") Long id,
-                                    @PathVariable("detailId") Long detailId,
-                                    @RequestBody OrderDetailUpdateDto orderDetailUpdateDto) {
+    @PutMapping("/{id}/detail/{detailId}")
+    public ResponseEntity<Object> updateOrderDetail(@PathVariable("id") Long id,
+                                                    @PathVariable("detailId") Long detailId,
+                                                    @RequestBody OrderDetailUpdateDto orderDetailUpdateDto) {
         return orderDetailService.updateOrderDetail(id, detailId, orderDetailUpdateDto);
     }
 
     // 주문 상세 내역 삭제
     @DeleteMapping("/{id}/{detailId}")
-    public String deleteOrderDetail(@PathVariable("id") Long orderId, @PathVariable("detailId") Long detailId) {
+    public ResponseEntity<Object> deleteOrderDetail(@PathVariable("id") Long orderId, @PathVariable("detailId") Long detailId) {
 
-        if(orderDetailService.deleteOrderDetail(orderId, detailId)) {
-            return "주문 상세 내역이 삭제되었습니다.";
-        }
-        return "상품 삭제 중 오류가 발생했습니다. 다시 시도해주세요.";
+        return orderDetailService.deleteOrderDetail(orderId, detailId);
     }
 
     // 선택된 주문 상세내역 일괄 삭제
     @DeleteMapping("/{id}")
-    public String deleteSelectedOrderDetails(@PathVariable("id") Long id,
-                                             @RequestBody List<Long> selectedDetailIds) {
-        orderDetailService.deleteSelectedDetails(id, selectedDetailIds);
-        
-        // 주문 상세내역 전체 선택으로 삭제하면 상품 페이지나 메인페이지로 redirect 되도록 설정할 것
-        // 살게 없는데 주문 테이블이 존재할 수 없기 때문에
-        return "선택된 상품 삭제 성공";
+    public ResponseEntity<Object> deleteSelectedOrderDetails(@PathVariable("id") Long id,
+                                                             @RequestBody List<Long> selectedDetailIds) {
+
+        return orderDetailService.deleteSelectedDetails(id, selectedDetailIds);
     }
 }
