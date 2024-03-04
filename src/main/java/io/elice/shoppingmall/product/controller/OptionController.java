@@ -1,13 +1,15 @@
 package io.elice.shoppingmall.product.controller;
 
+import io.elice.shoppingmall.product.dto.OptionRequestDto;
 import io.elice.shoppingmall.product.entity.Option;
 import io.elice.shoppingmall.product.service.OptionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/options")
 public class OptionController {
@@ -15,31 +17,31 @@ public class OptionController {
 
     // 모든 옵션 목록 조회
     @GetMapping
-    public String getAllOption(Model model){
-        model.addAttribute("options", optionService.getAllOptions());
-        return "options";
+    public ResponseEntity<List<Option>> getAllOptions() {
+        List<Option> options = optionService.getAllOptions();
+        return ResponseEntity.ok(options);
     }
 
     // 옵션 등록
-    @PostMapping("/options/add")
-    public String createOption(@ModelAttribute Option option){
-        optionService.saveOption(option);
-        return "redirect:/options";
+    @PostMapping
+    public Option createOption(@RequestBody OptionRequestDto optionRequestDto){
+        Long productId = optionRequestDto.getProductId();
+        if (productId == null) {
+            throw new IllegalArgumentException("상품 ID가 필요합니다.");
+        }
+        return optionService.createOption(optionRequestDto);
     }
+
 
     // 옵션 수정
-    @PostMapping("/modify/{id}")
-    public String handleOptionModification(@ModelAttribute Option option, @PathVariable("id") Long id){
-        option.setOptionId(id);
-        optionService.modifyOption(option);
-        return "redirect:/options";
+    @PostMapping("/user/{optionId}")
+    public Option updateOption(@PathVariable("id") Long id, @RequestBody OptionRequestDto optionRequestDto) {
+        return optionService.updateOption(id, optionRequestDto);
     }
 
-
     // 옵션 삭제
-    @GetMapping("/delete/{id}")
-    public String optionDelete(@PathVariable("id") Long id){
-        optionService.deleteOption(id);
-        return "redirect:/options";
+    @DeleteMapping("/user/{optionId}")
+    public Option optionDelete(@PathVariable("id") Long id){
+        return optionService.deleteOption(id);
     }
 }
