@@ -12,7 +12,7 @@ public class SignUpDto {
     private String password;
     private String nickname;
     private String postcode;
-    private String address;
-    private String detailAddress;
-    private String extraAddress;
+    private String address1;
+    private String address2;
+    private String phoneNumber;
 }

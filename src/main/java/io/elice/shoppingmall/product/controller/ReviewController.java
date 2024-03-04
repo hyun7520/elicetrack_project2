@@ -35,10 +35,10 @@ public class ReviewController {
     }
 
     // 특정 상품의 리뷰 조회
-    @GetMapping("/product/{productId}")
-    public List<Review> reviewsByProduct(@PathVariable("productId") Long productId){
-        return reviewService.getReviewsByProductId(productId);
-    }
+//    @GetMapping("/product/{productId}")
+//    public List<Review> reviewsByProduct(@PathVariable("productId") Long productId){
+//        return reviewService.getReviewsByProductId(productId);
+//    }
 
     // 모든 리뷰 목록 조회
     @GetMapping

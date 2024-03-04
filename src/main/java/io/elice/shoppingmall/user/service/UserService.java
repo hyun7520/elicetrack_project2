@@ -5,6 +5,7 @@ import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,10 @@ public class UserService {
                         .email(signUpDto.getEmail())
                         .password(signUpDto.getPassword())
                         .nickname(signUpDto.getNickname())
-                        .address(signUpDto.getAddress())
+                        .address1(signUpDto.getAddress1())
+                        .address2(signUpDto.getAddress2())
                         .postcode(signUpDto.getPostcode())
-                        .detailAddress(signUpDto.getDetailAddress())
-                        .extraAddress(signUpDto.getExtraAddress())
+                        .phoneNumber(signUpDto.getPhoneNumber())
                         .build();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -67,4 +68,28 @@ public class UserService {
                 .compact();
     }
 
+    @Transactional
+    public User updateUser(Long id, SignUpDto signUpDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. id=" + id));
+        if(user.getNickname().equals(signUpDto.getNickname())){
+            user.setNickname(signUpDto.getNickname());
+        }
+        if(signUpDto.getPassword() != null){
+            user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        }
+        if(user.getPostcode().equals(signUpDto.getPostcode())){
+            user.setPostcode(signUpDto.getPostcode());
+        }
+        if(user.getAddress1().equals(signUpDto.getAddress1())){
+            user.setAddress1(signUpDto.getAddress1());
+        }
+        if(user.getAddress2().equals(signUpDto.getAddress2())){
+            user.setAddress2(signUpDto.getAddress2());
+        }
+        if(user.getPhoneNumber().equals(signUpDto.getPhoneNumber())){
+            user.setPhoneNumber(signUpDto.getPhoneNumber());
+        }
+        return userRepository.save(user);
+    }
 }

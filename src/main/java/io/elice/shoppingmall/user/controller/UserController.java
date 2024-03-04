@@ -34,6 +34,11 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @PatchMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody SignUpDto signUpDto) {
+        return userService.updateUser(id, signUpDto);
+    }
+
 
     @PostMapping("/sign-up")
     public User signUp(@RequestBody SignUpDto signUpDto){

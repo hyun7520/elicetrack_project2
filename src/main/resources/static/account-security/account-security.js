@@ -3,12 +3,12 @@ import * as Api from "../../api.js";
 
 // 요소(element), input 혹은 상수
 const securityTitle = document.querySelector("#securityTitle");
-const fullNameInput = document.querySelector("#fullNameInput");
-const fullNameToggle = document.querySelector("#fullNameToggle");
+const nicknameInput = document.querySelector("#nicknameInput");
+const nicknameToggle = document.querySelector("#nicknameToggle");
 const passwordInput = document.querySelector("#passwordInput");
 const passwordToggle = document.querySelector("#passwordToggle");
 const passwordConfirmInput = document.querySelector("#passwordConfirmInput");
-const postalCodeInput = document.querySelector("#postalCodeInput");
+const postcodeInput = document.querySelector("#postcodeInput");
 const searchAddressButton = document.querySelector("#searchAddressButton");
 const addressToggle = document.querySelector("#addressToggle");
 const address1Input = document.querySelector("#address1Input");
@@ -34,7 +34,7 @@ function addAllElements() {
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  fullNameToggle.addEventListener("change", toggleTargets);
+  nicknameToggle.addEventListener("change", toggleTargets);
   passwordToggle.addEventListener("change", toggleTargets);
   addressToggle.addEventListener("change", toggleTargets);
   phoneNumberToggle.addEventListener("change", toggleTargets);
@@ -54,15 +54,15 @@ function toggleTargets(e) {
   // 어떤 요소들의 토글인지 확인
   let targets;
 
-  if (toggleId.includes("fullName")) {
-    targets = [fullNameInput];
+  if (toggleId.includes("nickname")) {
+    targets = [nicknameInput];
   }
   if (toggleId.includes("password")) {
     targets = [passwordInput, passwordConfirmInput];
   }
   if (toggleId.includes("address")) {
     targets = [
-      postalCodeInput,
+      postcodeInput,
       address1Input,
       address2Input,
       searchAddressButton,
@@ -102,27 +102,24 @@ function toggleTargets(e) {
 // 나중에 사용자가 데이터를 변경했는지 확인하기 위해, 전역 변수로 userData 설정
 let userData;
 async function insertUserData() {
-  userData = await Api.get("/users");
+  let id = sessionStorage.getItem('id');
+  let url = `/users/${id}`;
+  userData = await Api.get(url);
 
   // 객체 destructuring
-  const { fullName, email, address, phoneNumber } = userData;
+  const { nickname, email, postcode, address1, address2, phoneNumber } = userData;
 
   // 서버에서 온 비밀번호는 해쉬 문자열인데, 이를 빈 문자열로 바꿈
   // 나중에 사용자가 비밀번호 변경을 위해 입력했는지 확인하기 위함임.
   userData.password = "";
 
   securityTitle.innerText = `회원정보 관리 (${email})`;
-  fullNameInput.value = fullName;
+  nicknameInput.value = nickname;
 
-  if (address) {
-    const { postalCode, address1, address2 } = address;
-
-    postalCodeInput.value = postalCode;
+  if (address1) {
+    postcodeInput.value = postcode;
     address1Input.value = address1;
     address2Input.value = address2;
-  } else {
-    // 나중에 입력 여부를 확인하기 위해 설정함
-    userData.address = { postalCode: "", address1: "", address2: "" };
   }
 
   if (phoneNumber) {
@@ -137,12 +134,12 @@ async function insertUserData() {
 }
 
 function disableForm() {
-  fullNameInput.setAttribute("disabled", "");
-  fullNameToggle.checked = false;
+  nicknameInput.setAttribute("disabled", "");
+  nicknameToggle.checked = false;
   passwordInput.setAttribute("disabled", "");
   passwordToggle.checked = false;
   passwordConfirmInput.setAttribute("disabled", "");
-  postalCodeInput.setAttribute("disabled", "");
+  postcodeInput.setAttribute("disabled", "");
   addressToggle.checked = false;
   searchAddressButton.setAttribute("disabled", "");
   address1Input.setAttribute("disabled", "");
@@ -180,7 +177,7 @@ function searchAddress(e) {
       } else {
       }
 
-      postalCodeInput.value = data.zonecode;
+      postcodeInput.value = data.zonecode;
       address1Input.value = `${addr} ${extraAddr}`;
       address2Input.placeholder = "상세 주소를 입력해 주세요.";
       address2Input.focus();
@@ -192,10 +189,10 @@ function searchAddress(e) {
 async function saveUserData(e) {
   e.preventDefault();
 
-  const fullName = fullNameInput.value;
+  const nickname = nicknameInput.value;
   const password = passwordInput.value;
   const passwordConfirm = passwordConfirmInput.value;
-  const postalCode = postalCodeInput.value;
+  const postcode = postcodeInput.value;
   const address1 = address1Input.value;
   const address2 = address2Input.value;
   const phoneNumber = phoneNumberInput.value;
@@ -203,10 +200,10 @@ async function saveUserData(e) {
 
   const isPasswordLong = password.length >= 4;
   const isPasswordSame = password === passwordConfirm;
-  const isPostalCodeChanged =
-    postalCode !== (userData.address?.postalCode || "");
-  const isAddress2Changed = address2 !== (userData.address?.address2 || "");
-  const isAddressChanged = isPostalCodeChanged || isAddress2Changed;
+  const ispostcodeChanged =
+    postcode !== (userData.postcode || "");
+  const isAddress2Changed = address2 !== (userData.address2 || "");
+  const isAddressChanged = ispostcodeChanged || isAddress2Changed;
 
   // 비밀번호를 새로 작성한 경우
   if (password && !isPasswordLong) {
@@ -221,8 +218,8 @@ async function saveUserData(e) {
   const data = { currentPassword };
 
   // 초기값과 다를 경우 api 요청에 사용할 data 객체에 넣어줌
-  if (fullName !== userData.fullName) {
-    data.fullName = fullName;
+  if (nickname !== userData.nickname) {
+    data.nickname = nickname;
   }
 
   if (password !== userData.password) {
@@ -236,11 +233,11 @@ async function saveUserData(e) {
   }
 
   if (isAddressChanged) {
-    data.address = {
-      postalCode,
-      address1,
-      address2,
-    };
+
+    data.postcode = postcode;
+    data.address1 = address1;
+    data.address2 = address2;
+
   }
 
   if (phoneNumber && phoneNumber !== userData.phoneNumber) {
