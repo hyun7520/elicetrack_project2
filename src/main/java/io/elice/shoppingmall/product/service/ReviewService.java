@@ -1,7 +1,6 @@
 package io.elice.shoppingmall.product.service;
 
 import io.elice.shoppingmall.product.dto.ReviewRequestDto;
-import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import io.elice.shoppingmall.product.repository.ReviewRepository;
@@ -9,17 +8,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ProductRepository productRepository;
 
     // 등록
     @Transactional
@@ -41,15 +36,17 @@ public class ReviewService {
 
     // 수정
     @Transactional
-    public Review updateReview(Long id, ReviewRequestDto requestDto) {
+    public Review updateReview(Long id, ReviewRequestDto reviewRequestDto) {
         Optional<Review> optionalReview = reviewRepository.findById(id);
         if (optionalReview.isPresent()) {
             Review existingReview = optionalReview.get();
+            existingReview.updateReview(reviewRequestDto);
             return reviewRepository.save(existingReview);
         } else {
             throw new IllegalArgumentException("유효하지 않은 리뷰 ID입니다.");
         }
     }
+
 
     // 삭제
     @Transactional

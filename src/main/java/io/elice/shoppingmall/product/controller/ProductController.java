@@ -25,13 +25,13 @@ public class ProductController {
     }
 
     // 수정
-    @PostMapping("/{id}/update")
+    @PostMapping("/user/{productId}")
     public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto productRequestDto){
         return productService.updateProduct(id, productRequestDto);
     }
 
     // 삭제
-    @DeleteMapping("/{id}/delete") // 삭제 메서드의 URL 변경
+    @DeleteMapping("/user/{productId}") // 삭제 메서드의 URL 변경
     public ResponseEntity<String> productDelete(@PathVariable("id") Long id){
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product with ID " + id + " has been deleted.");
