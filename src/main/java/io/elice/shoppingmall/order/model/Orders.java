@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.elice.shoppingmall.order.dto.OrderManagerUpdateDto;
-import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.user.entity.User;
 import jakarta.persistence.*;
