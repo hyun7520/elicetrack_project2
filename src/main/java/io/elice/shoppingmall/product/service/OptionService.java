@@ -1,7 +1,10 @@
 package io.elice.shoppingmall.product.service;
 
+import io.elice.shoppingmall.product.dto.OptionRequestDto;
 import io.elice.shoppingmall.product.entity.Option;
+import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.OptionRepository;
+import io.elice.shoppingmall.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,11 +16,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OptionService {
     private final OptionRepository optionRepository;
+    private final ProductRepository productRepository;
 
     // 옵션 등록
     @Transactional
-    public void saveOption(Option option){
-        optionRepository.save(option);
+    public Option createOption(OptionRequestDto optionRequestDto){
+        // 등록 전 상품 존재여부 확인
+        Product product = productRepository.findById(optionRequestDto.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+
+        Option option = Option.builder()
+                .content(optionRequestDto.getContent())
+                .price(optionRequestDto.getPrice())
+                .stock(optionRequestDto.getStock())
+                .product(product)
+                .build();
+        return optionRepository.save(option);
     }
 
     // 옵션 조회
@@ -33,20 +47,25 @@ public class OptionService {
 
     // 옵션 수정
     @Transactional
-    public void modifyOption(Option option){
-        Option existingOption = getOptionById(option.getOptionId());
-        if (existingOption != null) {
-            // 옵션 정보 업데이트
-            existingOption.updateOption(option);
-            optionRepository.save(existingOption);
+    public Option updateOption(Long id, OptionRequestDto optionRequestDto){
+        Optional<Option> optionalOption = optionRepository.findById(id);
+        if (optionalOption.isPresent()) {
+            Option existingOption = optionalOption.get();
+            existingOption.updateOption(optionRequestDto);
+            return optionRepository.save(existingOption);
         } else {
             throw new IllegalArgumentException("유효하지 않은 옵션 ID입니다.");
         }
     }
 
+
     // 옵션 삭제
     @Transactional
-    public void deleteOption(Long id) {
-        optionRepository.deleteById(id);
+    public Option deleteOption(Long id) {
+        Option deletedOption = optionRepository.findById(id).orElse(null);
+        if (deletedOption != null) {
+            optionRepository.delete(deletedOption);
+        }
+        return deletedOption;
     }
 }

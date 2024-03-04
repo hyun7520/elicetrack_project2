@@ -1,7 +1,6 @@
 package io.elice.shoppingmall.order.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
 import io.elice.shoppingmall.product.entity.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -37,25 +36,27 @@ public class OrderDetail {
     private Long price;
 
     // 주문과 다대일 매핑
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     @JsonBackReference
     private Orders order;
     
     // 상품과 1:1 매핑
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 
     @Builder
-    public OrderDetail(Long productId, Long quantity, Long price) {
+    public OrderDetail(Orders order, Product product, Long quantity, Long price) {
         //에러로 관련된 매핑 삭제
+        this.product = product;
+        this.order = order;
         this.quantity = quantity;
         this.price = price;
     }
 
-    public void updateOrderDetail(OrderDetailRequestDto orderDetailRequestDto) {
-        this.quantity = orderDetailRequestDto.getQuantity();
-        this.price = orderDetailRequestDto.getPrice();
+    public void updateOrderDetail(Long quantity) {
+        this.quantity = quantity;
     }
 }
