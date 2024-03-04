@@ -1,8 +1,6 @@
 package io.elice.shoppingmall.order.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import io.elice.shoppingmall.order.dto.OrderDetailRequestDto;
-import io.elice.shoppingmall.order.dto.OrderDetailUpdateDto;
 import io.elice.shoppingmall.product.entity.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
