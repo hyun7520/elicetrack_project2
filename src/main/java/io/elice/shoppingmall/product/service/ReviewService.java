@@ -1,11 +1,15 @@
 package io.elice.shoppingmall.product.service;
 
 import io.elice.shoppingmall.product.dto.ReviewRequestDto;
+import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import io.elice.shoppingmall.product.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,20 +27,16 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    // 리뷰 ID로 조회
+    // user ID로 조회
     public Review getReviewById(Long id){
         Optional<Review> optionalReview = reviewRepository.findById(id);
         return optionalReview.orElse(null);
     }
 
     // 특정 상품의 리뷰 목록 조회
-    public List<Review> getReviewsByProductId(Long productId){
-        return reviewRepository.findByProductProductId(productId);
-    }
-
-    // 전체 조회
-    public List<Review> reviewList(){
-        return reviewRepository.findAll();
+    public Page<Review> getReviewsByProductId(Long productId, int page, int size){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return this.reviewRepository.findByProductProductId(productId, pageRequest);
     }
 
     // 수정

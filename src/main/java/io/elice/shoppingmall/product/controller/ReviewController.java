@@ -1,9 +1,11 @@
 package io.elice.shoppingmall.product.controller;
 
 import io.elice.shoppingmall.product.dto.ReviewRequestDto;
+import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,14 +38,8 @@ public class ReviewController {
 
     // 특정 상품의 리뷰 조회
     @GetMapping("/product/{productId}")
-    public List<Review> reviewsByProduct(@PathVariable("productId") Long productId){
-        return reviewService.getReviewsByProductId(productId);
-    }
-
-    // 모든 리뷰 목록 조회
-    @GetMapping
-    public List<Review> getAllReviews(){
-        return reviewService.reviewList();
+    public Page<Review> reviewsByProduct(@PathVariable("productId") Long productId, @RequestParam(value="page", defaultValue="0") int page,@RequestParam(name = "size", defaultValue = "10") int size){
+        return reviewService.getReviewsByProductId(productId, page, size);
     }
 
 }
