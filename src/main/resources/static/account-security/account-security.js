@@ -1,5 +1,5 @@
-import { checkLogin, createNavbar } from "../../useful-functions.js";
-import * as Api from "../../api.js";
+import { checkLogin, createNavbar } from "../useful-functions.js";
+import * as Api from "../api.js";
 
 // 요소(element), input 혹은 상수
 const securityTitle = document.querySelector("#securityTitle");
@@ -233,11 +233,9 @@ async function saveUserData(e) {
   }
 
   if (isAddressChanged) {
-
     data.postcode = postcode;
     data.address1 = address1;
     data.address2 = address2;
-
   }
 
   if (phoneNumber && phoneNumber !== userData.phoneNumber) {

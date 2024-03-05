@@ -52,15 +52,12 @@ async function handleSubmit(e) {
     // 로그인 성공, 토큰을 세션 스토리지에 저장
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("id", id);
+    sessionStorage.setItem("isAdmin", isAdmin);
 
     alert(`정상적으로 로그인되었습니다.`);
 
     // 로그인 성공
 
-    // admin(관리자) 일 경우, sessionStorage에 기록함
-    if (isAdmin) {
-      sessionStorage.setItem("admin", "admin");
-    }
 
     // 기존 다른 페이지에서 이 로그인 페이지로 온 경우, 다시 돌아가도록 해 줌.
     const { previouspage } = getUrlParams();

@@ -1,5 +1,5 @@
-import { addCommas, checkAdmin, createNavbar } from "../../useful-functions.js";
-import * as Api from "../../api.js";
+import { addCommas, checkAdmin, createNavbar } from "../useful-functions.js";
+import * as Api from "../api.js";
 
 // 요소(element), input 혹은 상수
 const usersCount = document.querySelector("#usersCount");
@@ -42,12 +42,12 @@ async function insertUsers() {
   };
 
   for (const user of users) {
-    const { id, email, fullName, roles, createdAt } = user;
+    const { id, email, nickname, admin, createdAt } = user;
     const date = createdAt;
 
     summary.usersCount += 1;
 
-    if (roles.includes('ADMIN')) {
+    if (admin === "true") {
       summary.adminCount += 1;
     }
 
@@ -57,19 +57,19 @@ async function insertUsers() {
         <div class="columns orders-item" id="user-${id}">
           <div class="column is-2">${date}</div>
           <div class="column is-2">${email}</div>
-          <div class="column is-2">${fullName}</div>
+          <div class="column is-2">${nickname}</div>
           <div class="column is-2">
             <div class="select" >
               <select id="roleSelectBox-${id}">
                 <option 
                   class="has-background-link-light has-text-link"
-                  ${roles.includes('ADMIN') === false ? "selected" : ""} 
+                  ${admin === "true" ? "selected" : ""} 
                   value="USER">
                   일반사용자
                 </option>
                 <option 
                   class="has-background-danger-light has-text-danger"
-                  ${roles.includes('ADMIN') === true ? "selected" : ""} 
+                  ${admin === "true" ? "selected" : ""} 
                   value="ADMIN">
                   관리자
                 </option>

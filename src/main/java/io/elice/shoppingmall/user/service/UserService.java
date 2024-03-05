@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -41,6 +42,7 @@ public class UserService {
                         .address2(signUpDto.getAddress2())
                         .postcode(signUpDto.getPostcode())
                         .phoneNumber(signUpDto.getPhoneNumber())
+                        .isAdmin(signUpDto.isAdmin())
                         .build();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -102,5 +104,9 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
