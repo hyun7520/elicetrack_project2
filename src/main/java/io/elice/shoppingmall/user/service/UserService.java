@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.user.service;
 
 
+import io.elice.shoppingmall.user.Dto.DeleteDto;
 import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
@@ -91,5 +92,15 @@ public class UserService {
             user.setPhoneNumber(signUpDto.getPhoneNumber());
         }
         return userRepository.save(user);
+    }
+
+    public boolean checkPassword(DeleteDto deleteDto) {
+        User user = userRepository.findById(deleteDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        return passwordEncoder.matches(deleteDto.getPassword(), user.getPassword());
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

@@ -2,6 +2,7 @@ package io.elice.shoppingmall.user.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.elice.shoppingmall.user.Dto.DeleteDto;
 import io.elice.shoppingmall.user.Dto.SignInDto;
 import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.service.UserService;
@@ -64,5 +65,24 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("/password-check")
+    public ResponseEntity<?> passwordCheck(@RequestBody DeleteDto deleteDto) {
+        boolean isPasswordCorrect = userService.checkPassword(deleteDto);
+        if (!isPasswordCorrect) {
+            return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+        }
+        Map<String, String> response = new HashMap<>();
+        response.put("response", "ok");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("response", "ok");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
