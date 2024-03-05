@@ -3,10 +3,13 @@ package io.elice.shoppingmall.product.service;
 import io.elice.shoppingmall.product.dto.OptionRequestDto;
 import io.elice.shoppingmall.product.entity.Option;
 import io.elice.shoppingmall.product.entity.Product;
+import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.repository.OptionRepository;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,10 +37,9 @@ public class OptionService {
         return optionRepository.save(option);
     }
 
-    // 옵션 조회
-    public Option getOptionById(Long id){
-        Optional<Option> optionalOption = optionRepository.findById(id);
-        return optionalOption.orElse(null);
+    // 특정 상품의 옵션 조회
+    public List<Option> getOptionByProductId(Long productId){
+        return optionRepository.findByProductProductId(productId);
     }
 
     // 모든 옵션 조회
@@ -57,7 +59,6 @@ public class OptionService {
             throw new IllegalArgumentException("유효하지 않은 옵션 ID입니다.");
         }
     }
-
 
     // 옵션 삭제
     @Transactional

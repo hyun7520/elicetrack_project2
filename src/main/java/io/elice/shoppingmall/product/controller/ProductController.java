@@ -18,28 +18,28 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
 
-    // 등록
+    // 상품 등록
     @PostMapping
     public Product createProduct(@RequestBody ProductRequestDto productRequestDto){
         return productService.createProduct(productRequestDto);
     }
 
-    // 수정
-    @PostMapping("/user/{productId}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto productRequestDto){
+    // 상품 정보 수정
+    @PutMapping("/{productId}")
+    public Product updateProduct(@PathVariable("productId") Long id, @RequestBody ProductRequestDto productRequestDto){
         return productService.updateProduct(id, productRequestDto);
     }
 
-    // 삭제
-    @DeleteMapping("/user/{productId}") // 삭제 메서드의 URL 변경
-    public ResponseEntity<String> productDelete(@PathVariable("id") Long id){
+    // 상품 정보 삭제
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> productDelete(@PathVariable("productId") Long id){
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product with ID " + id + " has been deleted.");
     }
 
-    // 상세 페이지 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProductDetail(@PathVariable("id") Long id) {
+    // 상품 상세 페이지 조회
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> getProductDetail(@PathVariable("productId") Long id) {
         Product product = productService.getProductById(id);
 
         if (product != null) {
@@ -54,4 +54,6 @@ public class ProductController {
     public Page<Product> getAllproductList(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size) {
         return productService.getAllproductList(page, size);
     }
+
+    //user id로 상품 조회하기
 }

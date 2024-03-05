@@ -19,12 +19,12 @@ public class ReviewController {
 
     // 리뷰 등록
     @PostMapping
-    public Review createReview(@RequestBody Review review){
-        return reviewService.saveReview(review);
+    public Review createReview(@RequestBody ReviewRequestDto reviewRequestDto){
+        return reviewService.saveReview(reviewRequestDto);
     }
 
     // 리뷰 수정
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public Review updateReview(@PathVariable("id") Long id, @RequestBody ReviewRequestDto review){
         return reviewService.updateReview(id, review);
     }
@@ -40,6 +40,19 @@ public class ReviewController {
     @GetMapping("/product/{productId}")
     public Page<Review> reviewsByProduct(@PathVariable("productId") Long productId, @RequestParam(value="page", defaultValue="0") int page,@RequestParam(name = "size", defaultValue = "10") int size){
         return reviewService.getReviewsByProductId(productId, page, size);
+    }
+
+    // UserID로 리뷰 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<Page<Review>> getReviewByUserId(
+            @PathVariable Long userId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        Page<Review> reviewPage = reviewService.getReviewByUserId(userId, page, size);
+        if (reviewPage.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(reviewPage);
     }
 
 }

@@ -17,4 +17,5 @@ public class ReviewRequestDto {
     private LocalDate createdDate;
     private int rating;
     private Long productId;
+    private Long userId;
 }

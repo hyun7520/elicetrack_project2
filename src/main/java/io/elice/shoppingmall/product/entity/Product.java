@@ -55,8 +55,10 @@ public class Product {
     @Column(name="discount_price")
     private int discountPrice; //할인 가격
 
-    @OneToOne(mappedBy = "product")
-    private OrderDetail orderDetail;
+    // 상품 개수
+
+//    @OneToOne(mappedBy = "product")
+//    private OrderDetail orderDetail;
 
 //    @OneToMany(mappedBy = "product")
 //    private List<UserLike> userLikes;
