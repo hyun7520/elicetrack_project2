@@ -2,6 +2,7 @@ package io.elice.shoppingmall.cart.service;
 
 
 import io.elice.shoppingmall.cart.dto.CartItemRequestDto;
+import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
 import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.entity.CartItem;
@@ -12,8 +13,10 @@ import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +51,27 @@ public class CartItemService {
         foundCart.get().addCartItem(cartItem);
 
         return null;
+    }
+
+    public List<CartItemResponseDto> getAllItemsInCart(Long id) {
+
+        List<CartItem> foundItems = cartItemRepository.findAllByCart_User_Id(id);
+        List<CartItemResponseDto> returnItems = new ArrayList<>();
+
+        for(CartItem item : foundItems) {
+
+            CartItemResponseDto dto = CartItemResponseDto.builder()
+                    .createdAt(item.getCreatedAt())
+                    .amount(item.getAmount())
+                    .productName(item.getProduct().getProductName())
+                    .price(item.getProduct().getPrice())
+                    .brandName(item.getProduct().getBrandName())
+                    .build();
+
+            returnItems.add(dto);
+        }
+
+        return returnItems;
     }
 
     @Transactional
@@ -97,4 +121,6 @@ public class CartItemService {
 
         return null;
     }
+
+
 }

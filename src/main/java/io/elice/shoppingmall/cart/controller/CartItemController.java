@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.cart.controller;
 
 import io.elice.shoppingmall.cart.dto.CartItemRequestDto;
+import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
 import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
@@ -18,6 +19,13 @@ public class CartItemController {
     private final CartItemService cartItemService;
     
     // TODO RequestBody를 사용한 생성, 업데이트 방식에는 DTO를 사용하여 넣기
+    @GetMapping
+    public List<CartItemResponseDto> getAllItemsInCart(@PathVariable("id") Long id) {
+
+        List<CartItemResponseDto> cartItems = cartItemService.getAllItemsInCart(id);
+
+        return cartItems;
+    }
 
     // 카트에 아이템 추가
     @PostMapping
