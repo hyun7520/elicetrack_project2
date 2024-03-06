@@ -109,4 +109,11 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public User updateRole(Long id, boolean isAdmin) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        user.setAdmin(isAdmin);
+        return userRepository.save(user);
+    }
 }

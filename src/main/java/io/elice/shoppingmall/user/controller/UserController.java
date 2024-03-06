@@ -41,6 +41,10 @@ public class UserController {
         return userService.updateUser(id, signUpDto);
     }
 
+    @PatchMapping("/role/{id}")
+    public User updateRole(@PathVariable Long id, @RequestBody boolean isAdmin) {
+        return userService.updateRole(id, isAdmin);
+    }
 
     @PostMapping("/sign-up")
     public User signUp(@RequestBody SignUpDto signUpDto){

@@ -47,7 +47,7 @@ async function insertUsers() {
 
     summary.usersCount += 1;
 
-    if (admin === "true") {
+    if (admin === true) {
       summary.adminCount += 1;
     }
 
@@ -63,13 +63,13 @@ async function insertUsers() {
               <select id="roleSelectBox-${id}">
                 <option 
                   class="has-background-link-light has-text-link"
-                  ${admin === "true" ? "selected" : ""} 
+                  ${admin === true ? "selected" : ""} 
                   value="USER">
                   일반사용자
                 </option>
                 <option 
                   class="has-background-danger-light has-text-danger"
-                  ${admin === "true" ? "selected" : ""} 
+                  ${admin === true ? "selected" : ""} 
                   value="ADMIN">
                   관리자
                 </option>
@@ -93,15 +93,21 @@ async function insertUsers() {
 
     // 이벤트 - 권한관리 박스 수정 시 바로 db 반영
     roleSelectBox.addEventListener("change", async () => {
-      const newRole = roleSelectBox.value;
-      const data = { roles: newRole };
+
+      if(roleSelectBox.value === "USER"){
+        alert("관리자는 일반 회원으로 바꿀 수 없습니다.");
+        roleSelectBox.value = "ADMIN";
+        const index = roleSelectBox.selectedIndex;
+        roleSelectBox.className = roleSelectBox[index].className;
+        return;
+      }
 
       // 선택한 옵션의 배경색 반영
       const index = roleSelectBox.selectedIndex;
       roleSelectBox.className = roleSelectBox[index].className;
 
       // api 요청
-      await Api.patch("/users", id, data);
+      await Api.patch("/users/role", id, true);
     });
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
