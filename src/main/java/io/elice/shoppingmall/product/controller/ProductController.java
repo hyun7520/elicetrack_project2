@@ -56,4 +56,14 @@ public class ProductController {
     }
 
     //user id로 상품 조회하기
+
+    //categoryId로 상품 조회
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<Product>> getProductsByCategoryId(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Product> products = productService.getProductsByCategoryId(categoryId, page, size);
+        return ResponseEntity.ok(products);
+    }
 }

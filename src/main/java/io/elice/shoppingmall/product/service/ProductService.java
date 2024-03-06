@@ -1,5 +1,7 @@
 package io.elice.shoppingmall.product.service;
 
+import io.elice.shoppingmall.category.entity.Category;
+import io.elice.shoppingmall.category.repository.CategoryRepository;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
@@ -14,10 +16,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     // 등록
     @Transactional
     public Product createProduct(ProductRequestDto productRequestDto) {
+        Long categoryId = productRequestDto.getCategoryId();
+        // 카테고리 ID를 사용하여 해당 카테고리를 데이터베이스에서 조회
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: " + categoryId));
+
         Product product = Product.builder()
                 .productName(productRequestDto.getProductName())
                 .price(productRequestDto.getPrice())
@@ -30,12 +38,12 @@ public class ProductService {
                 .averageScore(productRequestDto.getAverageScore())
                 .reviewCount(productRequestDto.getReviewCount())
                 .discountPrice(productRequestDto.getDiscountPrice())
-                //.categoryId(productRequestDto.getCategoryId())
+                .category(category)
                 .build();
         return productRepository.save(product);
     }
 
-    //상품 상세 조회
+    //상품id로 상세 조회
     public Product getProductById(Long id){
         Optional<Product> optionalProduct = productRepository.findById(id);
         return optionalProduct.orElseThrow(() -> new IllegalArgumentException("해당 ID에 해당하는 제품을 찾을 수 없습니다: " + id));
@@ -45,6 +53,12 @@ public class ProductService {
     public Page<Product> getAllproductList(int page, int size){
         PageRequest pageRequest = PageRequest.of(page, size);
         return this.productRepository.findAll(pageRequest);
+    }
+
+    // category id로 전체 조회
+    public Page<Product> getProductsByCategoryId(Long categoryId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return productRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
     // 수정

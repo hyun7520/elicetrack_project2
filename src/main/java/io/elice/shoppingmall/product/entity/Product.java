@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.product.entity;
 
 import io.elice.shoppingmall.cart.entity.Cart;
+import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import jakarta.persistence.*;
@@ -66,9 +67,9 @@ public class Product {
 //    @OneToMany(mappedBy = "product")
 //    private List<UserScrap> userScrap;
 
-//    @ManyToOne
-//    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-//    private Category categoryid;
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
