@@ -53,8 +53,8 @@ public class User {
         createdAt = LocalDateTime.now();
     }
 
-    @OneToOne
-    @JoinColumn(name = "cart_id")
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private Cart cart;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)

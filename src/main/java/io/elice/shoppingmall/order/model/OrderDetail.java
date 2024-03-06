@@ -8,6 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "order_detail")
@@ -20,10 +23,9 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private Long id;
 
-    // 상품 아이디
-//    @NotNull
-//    @Column(name = "product_id")
-//    private Long productId;
+    @Column(name = "modified_at")
+    @LastModifiedDate
+    private Date modifiedAt;
 
     // 상품 구매 개수
     @NotNull
@@ -42,7 +44,7 @@ public class OrderDetail {
     private Orders order;
     
     // 상품과 1:1 매핑
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
