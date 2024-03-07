@@ -1,19 +1,13 @@
 package io.elice.shoppingmall.cart.service;
 
-import io.elice.shoppingmall.cart.dto.CreateCartDTO;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.repository.CartRepository;
-import io.elice.shoppingmall.product.entity.Option;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.EmptyStackException;
-import java.util.List;
 import java.util.Optional;
 
 @Service

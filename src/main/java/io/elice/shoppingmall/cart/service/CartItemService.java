@@ -1,19 +1,15 @@
 package io.elice.shoppingmall.cart.service;
 
-
-import io.elice.shoppingmall.cart.dto.CartItemRequestDto;
 import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
 import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.repository.CartItemRepository;
 import io.elice.shoppingmall.cart.repository.CartRepository;
-import io.elice.shoppingmall.product.entity.Option;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

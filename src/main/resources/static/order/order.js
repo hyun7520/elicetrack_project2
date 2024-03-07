@@ -56,6 +56,8 @@ function addAllEvents() {
   checkoutButton.addEventListener("click", doCheckout);
 }
 
+function insertOrder
+
 // Daum 주소 API (사용 설명 https://postcode.map.daum.net/guide)
 function searchAddress() {
   new daum.Postcode({

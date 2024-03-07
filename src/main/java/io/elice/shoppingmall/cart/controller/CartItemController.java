@@ -1,11 +1,9 @@
 package io.elice.shoppingmall.cart.controller;
 
-import io.elice.shoppingmall.cart.dto.CartItemRequestDto;
 import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
 import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
-import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

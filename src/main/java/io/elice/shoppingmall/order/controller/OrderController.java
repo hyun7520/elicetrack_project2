@@ -2,11 +2,13 @@ package io.elice.shoppingmall.order.controller;
 
 import io.elice.shoppingmall.order.dto.*;
 import io.elice.shoppingmall.order.model.Orders;
+import io.elice.shoppingmall.order.response.OrderResponse;
 import io.elice.shoppingmall.order.service.OrderService;
 import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +24,31 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // 주문 생성 - 결제 버튼 클릭 시
+    @PostMapping
+    public ResponseEntity<Object> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+        Date now = new Date();
+        String dateNow = date.format(now);
+        orderRequestDto.setOrderDate(now);
+
+        Orders order = orderService.createOrder(orderRequestDto);
+
+        if(order == null) {
+            return OrderResponse.responseBuilder(null, "사용자가 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+        }
+
+        return OrderResponse.responseBuilder(order, "주문이 정상적으로 생성되었습니다!", HttpStatus.CREATED);
+    }
+
     // 모든 주문 조회
     @GetMapping
     public Page<Orders> getAllOrders(@RequestParam(name = "page", defaultValue = "0") int page,
                                      @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Orders> pagedOrders = orderService.getAllOrders(pageRequest);
 
-        return pagedOrders;
+        return orderService.getAllOrders(pageRequest);
     }
 
     // 주문 아이디로 주문 조회
@@ -62,34 +81,19 @@ public class OrderController {
         return null;
     }
 
-    // 주문 생성 - 결제 버튼 클릭 시
-    @PostMapping
-    public ResponseEntity<Object> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
-
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
-        Date now = new Date();
-        String dateNow = date.format(now);
-        orderRequestDto.setOrderDate(now);
-
-        // API 테스트를 위해 생성된 주문을 return하여 바로 확인이 가능하도록 했습니다.
-        // 더 적합한 리턴값이 있을지 고민해보겠습니다.
-        return orderService.createOrder(orderRequestDto);
-    }
-
     // 주문 수정
     // 사이트 고객에 의한 배달 주소, 수신자, 요청사항 의 수정
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateOrder(@PathVariable("id") Long id,
                                               @RequestBody OrderUpdateDto orderUpdateDto) {
 
-        return orderService.updateOrder(id, orderUpdateDto);
-    }
+        Orders order = orderService.updateOrder(id, orderUpdateDto);
 
-    // 주문 삭제 - 관리자권한
-    @DeleteMapping("/{id}")
-    public String deleteOrder(@PathVariable("id") Long id) {
-        orderService.deleteOrder(id);
-        return null;
+        if(order == null) {
+            OrderResponse.responseBuilder(null, "배송 중이거나 배송 완료된 물건은 수정이 불가능합니다!", HttpStatus.BAD_REQUEST);
+        }
+
+        return OrderResponse.responseBuilder(order, "수정이 완료되었습니다!", HttpStatus.OK);
     }
 
     // 주문 취소 - 사용자 기능
@@ -97,7 +101,12 @@ public class OrderController {
     public ResponseEntity<Object> cancelOrder(@PathVariable("id") Long id,
                                               @RequestBody OrderUpdateDto orderUpdateDto) {
 
-        return orderService.cancelOrder(id, orderUpdateDto);
+        Orders canceledOrder = orderService.cancelOrder(id, orderUpdateDto);
+        if(canceledOrder == null) {
+            return OrderResponse.responseBuilder(null, "주문 취소가 불가능합니다!", HttpStatus.NOT_FOUND);
+        }
+
+        return OrderResponse.responseBuilder(canceledOrder, "주문 취소가 완료되었습니다!", HttpStatus.OK);
     }
 
     // 주문 상태 설정 - 관리자 기능
@@ -105,6 +114,23 @@ public class OrderController {
     public ResponseEntity<Object> setOrderStatus(@PathVariable("id") Long id,
                                                  @RequestBody OrderManagerUpdateDto orderManagerUpdateDto) {
 
-        return orderService.managerUpdateOrder(id, orderManagerUpdateDto);
+        Orders order = orderService.managerUpdateOrder(id, orderManagerUpdateDto);
+
+        if(order != null) {
+            return OrderResponse.responseBuilder(order, "수정이 완료되었습니다!", HttpStatus.OK);
+        }
+
+        return OrderResponse.responseBuilder(null, "존재하지 않는 주문입니다!", HttpStatus.NOT_FOUND);
+    }
+
+    // 주문 삭제 - 관리자권한
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteOrder(@PathVariable("id") Long id) {
+
+        if (orderService.deleteOrder(id)){
+            return OrderResponse.responseBuilder(null, "삭제가 완료 되었습니다!", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
