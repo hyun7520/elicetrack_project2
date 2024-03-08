@@ -37,11 +37,9 @@ public class User {
 
     private String postcode;
 
-    private String address;
+    private String address1;
 
-    private String detailAddress;
-
-    private String extraAddress;
+    private String address2;
 
     private boolean isAdmin;
 

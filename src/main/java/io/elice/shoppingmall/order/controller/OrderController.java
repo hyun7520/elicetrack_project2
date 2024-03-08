@@ -53,10 +53,9 @@ public class OrderController {
 
     // 주문 아이디로 주문 조회
     @GetMapping("/{id}")
-    public OrderResponseDto getOrderAndDetails(@PathVariable("id") Long id) {
-        Orders orders = orderService.getOrderById(id);
+    public Orders getOrderAndDetails(@PathVariable("id") Long id) {
 
-        return new OrderResponseDto(orders);
+        return orderService.getOrderById(id);
     }
 
     // 사용자 별로 주문 조회

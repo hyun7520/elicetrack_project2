@@ -37,9 +37,9 @@ public class CartService {
         cartRepository.save(newCart);
     }
 
-    public Cart findCartById(Long cartId) {
+    public Cart findCartById(Long id) {
 
-        Optional<Cart> foundCart = cartRepository.findById(cartId);
+        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
 
         if(foundCart.isEmpty()) {
             throw new IllegalArgumentException("장바구니가 존재하지 않습니다.");
@@ -48,6 +48,7 @@ public class CartService {
         return foundCart.get();
     }
 
+    @Transactional
     public Cart deleteCart(Long userId) {
 
         Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);

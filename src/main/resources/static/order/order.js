@@ -1,6 +1,5 @@
 import * as Api from "../api.js";
 import {
-  checkLogin,
   addCommas,
   convertToNumber,
   navigate,
@@ -37,15 +36,14 @@ const requestOption = {
   6: "직접 입력",
 };
 
-checkLogin();
 addAllElements();
 addAllEvents();
 
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
+  renderData();
   createNavbar();
   insertOrderSummary();
-  insertUserData();
 }
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
@@ -56,7 +54,103 @@ function addAllEvents() {
   checkoutButton.addEventListener("click", doCheckout);
 }
 
-function insertOrder
+// 데이터 렌더링
+async function renderData() {
+  const orderList = document.querySelector('.order-list');
+  const data = await fetchData();
+
+  console.log(data);
+
+  let i = 0;
+
+  while (i < data.length) {
+
+    const item = data[i];
+
+    let list = [];
+    let result = [];
+
+    const card = document.createElement('div');
+    const title = document.createElement('h5');
+    const price = document.createElement('p');
+    const checkBox = document.createElement('input');
+    const deleteButton = document.createElement('button');
+
+    title.textContent = item.productName;
+    price.textContent = item.price;
+    checkBox.setAttribute('type', 'checkbox')
+    checkBox.setAttribute('name', 'to-delete')
+    checkBox.setAttribute('value', item.id);
+    checkBox.setAttribute('onclick', 'insertValuesIntoList(result)')
+    deleteButton.setAttribute('id', 'delete-btn');
+    deleteButton.innerText = "제품 삭제";
+
+    list.push(item.id);
+
+    deleteButton.addEventListener('click', async function (event) {
+      if (event.target.id === 'delete-btn') {
+        try {
+          await deleteData(list);
+        } catch (error) {
+          window.alert("다음 오류가 발생했습니다. :", error);
+        }
+        location.reload();
+      }
+    });
+
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(checkBox);
+    card.appendChild(deleteButton);
+
+    orderList.appendChild(card);
+
+    i++;
+  }
+
+  // const deleteSelectedButton = document.getElementById('delete-all');
+  // deleteSelectedButton.addEventListener('click', deleteSelectedData(result));
+}
+
+function insertValuesIntoList(result) {
+  const query = 'input[name="to-delete"]:checked'
+  const value = document.querySelectorAll(query);
+
+  value.forEach((v) => {
+    result.push(v);
+  })
+}
+
+async function deleteSelectedData(result) {
+  try {
+    await deleteData(result);
+  } catch (error) {
+    window.alert("다음 오류가 발생했습니다. :", error);
+  }
+  location.reload();
+}
+
+async function deleteData(list) {
+  await fetch(`http://localhost:8080/cart/user/1/items`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(list)
+  })
+}
+
+// 데이터 가져오기
+async function fetchData() {
+  try {
+    const response = await fetch('http://localhost:8080/cart/user/1/items')
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    window.alert("오류가 발생했습니다!", error)
+  }
+}
+
 
 // Daum 주소 API (사용 설명 https://postcode.map.daum.net/guide)
 function searchAddress() {
@@ -96,7 +190,7 @@ function searchAddress() {
 // 페이지 로드 시 실행되며, 결제정보 카드에 값을 삽입함.
 async function insertOrderSummary() {
   const { ids, selectedIds, productsTotal } = await getFromDb(
-    "order",
+    "orders",
     "summary"
   );
 

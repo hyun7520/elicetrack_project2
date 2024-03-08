@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/cart/user")
 @RequiredArgsConstructor
 public class CartController {
 
@@ -28,7 +28,7 @@ public class CartController {
     // TO 박웅서
     // REST 설계 상 동사를 사용하면 좋지 않다고 알고 있고, "/create"는 POST와 중복되는 것 같아 삭제했습니다.
     // 아래의 GET 매핑에서도 같은 이유로 "/find"를 삭제했습니다.
-    @PostMapping("/user/{userId}")
+    @PostMapping("/{userId}")
     public String createCart(@PathVariable("userId") Long id) {
 
         cartService.createCart(id);
@@ -36,14 +36,14 @@ public class CartController {
         return null;
     }
 
-    @GetMapping("/{cartId}")
-    public Cart findCartByUserId(@PathVariable("cartId") Long cartId) {
+    @GetMapping("/{userId}")
+    public Cart findCartByUserId(@PathVariable("userId") Long userId) {
 
-        return cartService.findCartById(cartId);
+        return cartService.findCartById(userId);
     }
 
     // 로그아웃 시, 구매완료 시 삭제
-    @DeleteMapping("/user/{userId}")
+    @DeleteMapping("/{userId}")
     public String deleteCart(@PathVariable("userId") Long userId) {
 
         cartService.deleteCart(userId);

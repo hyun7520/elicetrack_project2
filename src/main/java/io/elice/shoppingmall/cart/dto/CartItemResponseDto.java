@@ -15,6 +15,7 @@ import java.util.Date;
 @Builder
 public class CartItemResponseDto {
 
+    private Long id;
     private Date createdAt;
     private int amount;
     private String productName;

@@ -57,6 +57,7 @@ public class CartItemService {
         for(CartItem item : foundItems) {
 
             CartItemResponseDto dto = CartItemResponseDto.builder()
+                    .id(item.getId())
                     .createdAt(item.getCreatedAt())
                     .amount(item.getAmount())
                     .productName(item.getProduct().getProductName())
@@ -91,18 +92,6 @@ public class CartItemService {
     }
 
     @Transactional
-    public CartItem deleteItemFromCart(Long id, Long cartItemId) {
-
-        if(cartRepository.findCartByUser_Id(id).isEmpty() || cartItemRepository.findById(cartItemId).isEmpty()) {
-            throw new IllegalArgumentException("삭제하려는 객체가 존재하지 않습니다!");
-        }
-
-        cartItemRepository.deleteById(cartItemId);
-
-        return null;
-    }
-
-    @Transactional
     public CartItem deleteAllSelected(Long id, List<Long> selectedItemIds) {
 
         if(cartRepository.findCartByUser_Id(id).isEmpty()) {
@@ -113,7 +102,7 @@ public class CartItemService {
             throw new IllegalArgumentException("장바구니가 비어 있습니다!");
         }
 
-        cartItemRepository.deleteAllByIdInBatch(selectedItemIds);
+        cartItemRepository.deleteAllById(selectedItemIds);
 
         return null;
     }

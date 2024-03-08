@@ -25,6 +25,7 @@
     <!-- 커스텀 css, js -->
     <link rel="stylesheet" href="/register/register.css" />
     <script src="/register/register.js" type="module" defer></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   </head>
   <body>
     <!-- 헤더 -->
@@ -123,14 +124,79 @@
         </div>
 
         <div class="field">
-          <label class="label" for="addressInput">주소</label>
-            <div class="control">
-              <input type="text" id="postcode" placeholder="우편번호">
-              <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
-              <input type="text" id="address" placeholder="주소"><br>
-              <input type="text" id="detailAddress" placeholder="상세주소">
-              <input type="text" id="extraAddress" placeholder="참고항목">
+          <div class="field-label is-normal">
+            <label class="label label-address" for="address2">주소</label>
+          </div>
+          <div class="field-body search">
+            <div class="field">
+              <p class="control">
+                <input
+                        class="input"
+                        id="postcodeInput"
+                        type="text"
+                        placeholder="주소찾기를 클릭해 주세요."
+                        readonly
+                />
+              </p>
             </div>
+            <div>
+              <button
+                      class="button is-light is-hovered"
+                      id="searchAddressButton"
+              >
+                주소찾기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label is-normal no-label"></div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control">
+                <input
+                        class="input"
+                        id="address1Input"
+                        type="text"
+                        placeholder=""
+                        autocomplete="on"
+                        readonly
+                />
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label is-normal no-label"></div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control">
+                <input
+                        class="input"
+                        id="address2Input"
+                        type="text"
+                        placeholder=""
+                        autocomplete="on"
+                />
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="phoneNumberInput">전화번호</label>
+          <div class="control">
+            <input
+                    class="input"
+                    id="phoneNumberInput"
+                    type="number"
+                    placeholder="- 없이 입력해 주세요."
+                    autocomplete="on"
+            />
+
+          </div>
         </div>
 
         <button class="button is-primary is-fullwidth" id="submitButton">

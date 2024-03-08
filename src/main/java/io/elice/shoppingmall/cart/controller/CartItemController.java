@@ -5,6 +5,9 @@ import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,15 +18,6 @@ import java.util.List;
 public class CartItemController {
 
     private final CartItemService cartItemService;
-    
-    // TODO RequestBody를 사용한 생성, 업데이트 방식에는 DTO를 사용하여 넣기
-    @GetMapping
-    public List<CartItemResponseDto> getAllItemsInCart(@PathVariable("id") Long id) {
-
-        List<CartItemResponseDto> cartItems = cartItemService.getAllItemsInCart(id);
-
-        return cartItems;
-    }
 
     // 카트에 아이템 추가
     @PostMapping
@@ -32,6 +26,14 @@ public class CartItemController {
                                   @RequestParam("qty") int qty) {
 
         return cartItemService.addItemToCart(id, productId, qty);
+    }
+
+    @GetMapping
+    public List<CartItemResponseDto> getAllItemsInCart(@PathVariable("id") Long id) {
+
+        List<CartItemResponseDto> cartItems = cartItemService.getAllItemsInCart(id);
+
+        return cartItems;
     }
 
     // 카트에 담긴 아이템의 수량을 수정
@@ -43,23 +45,23 @@ public class CartItemController {
         return cartItemService.updateItemQuantity(id, cartItemId, cartItemUpdateDto);
     }
 
-    // 카트에서 아이템 삭제
-    @DeleteMapping("/{cartItemId}")
-    public String deleteItemFromCart(@PathVariable("id") Long id,
-                                     @PathVariable("id") Long cartItemId) {
-
-        cartItemService.deleteItemFromCart(id, cartItemId);
-
-        return null;
-    }
 
     // 선택된 아이템을 카트에서 모두 삭제
     @DeleteMapping
     public String deleteItemsFromCart(@PathVariable("id") Long id,
-                                      @RequestBody List<Long> selectedItemIds) {
+                                      @RequestBody String selectedItemIds) {
 
-        // 리스트 형태로 삭제할 아이템의 아이디를 받아와 서비스단에 전달
-        cartItemService.deleteAllSelected(id, selectedItemIds);
+        JSONParser parser = new JSONParser();
+        JSONArray param = null;
+
+        try {
+            param = (JSONArray) parser.parse(selectedItemIds);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // 받아온 json 스트링을 파싱하여 전달
+        cartItemService.deleteAllSelected(id, param);
 
         return null;
     }

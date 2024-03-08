@@ -41,6 +41,6 @@ public class Review {
         this.writerNickname = writerNickname;
         this.createdDate = createdDate;
         this.rating = rating;
-//        this.product = product;
+
     }
 }

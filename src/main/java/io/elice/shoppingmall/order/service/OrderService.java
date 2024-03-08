@@ -109,6 +109,7 @@ public class OrderService {
     }
 
     // 주문 수정 (결제 상태, 배송 상태) - 관리자
+    @Transactional
     public Orders managerUpdateOrder(Long id, OrderManagerUpdateDto orderManagerUpdateDto) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);

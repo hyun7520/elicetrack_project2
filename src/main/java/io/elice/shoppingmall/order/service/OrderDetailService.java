@@ -59,6 +59,7 @@ public class OrderDetailService {
     }
 
     // 제품 수량 변경
+    @Transactional
     public OrderDetail updateOrderDetail(Long id, Long detailId, OrderDetailUpdateDto orderDetailUpdateDto) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);

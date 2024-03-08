@@ -58,7 +58,7 @@ public class OrderDetail {
 
     @Builder
     public OrderDetail(Orders order, Product product, Long quantity, Long price) {
-        //에러로 관련된 매핑 삭제
+
         this.product = product;
         this.order = order;
         this.quantity = quantity;

@@ -62,15 +62,16 @@ export const checkAdmin = async () => {
   }
 
   // 관리자 토큰 여부 확인
-  const res = await fetch("/users/admin-check", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  // const res = await fetch("/users/admin-check", {
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  // });
 
-  const { result } = await res.json();
 
-  if (result === "success") {
+  //const { result } = await res.json();
+  console.log(sessionStorage.getItem('isAdmin'));
+  if (sessionStorage.getItem('isAdmin') === 'true') {
     window.document.body.style.display = "block";
 
     return;
