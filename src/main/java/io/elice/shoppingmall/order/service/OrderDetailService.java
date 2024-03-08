@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +30,7 @@ public class OrderDetailService {
 
     // 주문 상세 생성
     @Transactional
-    public ResponseEntity<Object> createOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto){
+    public OrderDetail createOrderDetail(Long id, OrderDetailRequestDto orderDetailRequestDto){
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
         Optional<Product> foundProduct = productRepository.findById(orderDetailRequestDto.getProductId());
@@ -49,14 +48,9 @@ public class OrderDetailService {
             OrderDetail savedOrderDetail = orderDetailRepository.save(orderDetail);
             order.addOrderDetails(orderDetail);
 
-            return OrderDetailResponse.responseBuilder(savedOrderDetail, "상세 주문이 생성되었습니다!", HttpStatus.CREATED);
+            return savedOrderDetail;
         }
-        return OrderDetailResponse.responseBuilder(null, "주문이 존재하지 않습니다!", HttpStatus.NOT_FOUND);
-    }
-
-    // 전체 상세 주문 조회
-    public List<OrderDetail> getAllOrderDetails() {
-        return orderDetailRepository.findAll();
+        return null;
     }
 
     // 사용자 별 주문 상세 조회
@@ -65,13 +59,14 @@ public class OrderDetailService {
     }
 
     // 제품 수량 변경
-    public ResponseEntity<Object> updateOrderDetail(Long id, Long detailId, OrderDetailUpdateDto orderDetailUpdateDto) {
+    @Transactional
+    public OrderDetail updateOrderDetail(Long id, Long detailId, OrderDetailUpdateDto orderDetailUpdateDto) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
         Optional<OrderDetail> foundOrderDetail = orderDetailRepository.findById(detailId);
 
         if (!foundOrder.isPresent() || !foundOrderDetail.isPresent()) {
-            return OrderDetailResponse.responseBuilder(null, "변경하고자 하는 제품임 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+            return null;
         }
         Orders order = foundOrder.get();
         OrderDetail toUpdateOrderDetail = foundOrderDetail.get();
@@ -80,43 +75,41 @@ public class OrderDetailService {
             toUpdateOrderDetail.updateOrderDetail(orderDetailUpdateDto.getQuantity());
             updatedOrderDetail = orderDetailRepository.save(toUpdateOrderDetail);
         }
-        return OrderDetailResponse.responseBuilder(updatedOrderDetail, "수량이 변경되었습니다!", HttpStatus.OK);
+        return updatedOrderDetail;
     }
 
 
     // 상세 주문 삭제
     @Transactional
-    public ResponseEntity<Object> deleteOrderDetail(Long orderId, Long detailId) {
+    public boolean deleteOrderDetail(Long orderId, Long detailId) {
         // 주문이 존재하는지 확인
         Optional<Orders> foundOrder = orderRepository.findById(orderId);
         if(!foundOrder.isPresent()) {
-            return OrderDetailResponse.responseBuilder(null, "주문이 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+            return false;
         }
         // 주문이 있을 경우 삭제하고자하는 상세 내역이 존재하는지 확인
         Optional<OrderDetail> foundOrderDetail = orderDetailRepository.findById(detailId);
         if(!foundOrderDetail.isPresent()) {
-            return OrderDetailResponse.responseBuilder(null, "삭제하고자 하는 제품이 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+            return false;
         }
         orderDetailRepository.deleteById(detailId);
-        return OrderDetailResponse.responseBuilder(null, "제품이 정상적으로 삭제되었습니다!", HttpStatus.OK);
+        return true;
     }
 
     // 선택된 상세 내역 모두 삭제
     // 리스트로 받아온다.
     @Transactional
-    public ResponseEntity<Object> deleteSelectedDetails(Long id, List<Long> selectedDetailIds) {
-
-        Long tempId;
+    public boolean deleteSelectedDetails(Long id, List<Long> selectedDetailIds) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
         if(!foundOrder.isPresent()) {
-            return OrderDetailResponse.responseBuilder(null, "주문이 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+            return false;
         }
         if(selectedDetailIds.isEmpty())
-            return OrderDetailResponse.responseBuilder(null, "삭제하고자 하는 제품이 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+            return false;
 
         orderRepository.deleteByIdIn(selectedDetailIds);
 
-        return OrderDetailResponse.responseBuilder(null, "제품이 정상적으로 삭제되었습니다!", HttpStatus.OK);
+        return true;
     }
 }

@@ -5,6 +5,7 @@ import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/cart/user")
 @RequiredArgsConstructor
 public class CartController {
 
@@ -26,35 +28,24 @@ public class CartController {
     // TO 박웅서
     // REST 설계 상 동사를 사용하면 좋지 않다고 알고 있고, "/create"는 POST와 중복되는 것 같아 삭제했습니다.
     // 아래의 GET 매핑에서도 같은 이유로 "/find"를 삭제했습니다.
-    @PostMapping
-    public String createCart(@RequestBody CreateCartDTO createCartDTO) {
+    @PostMapping("/{userId}")
+    public String createCart(@PathVariable("userId") Long id) {
 
-        cartService.createCart(createCartDTO);
-
-        return null;
-    }
-
-    @GetMapping("/user/{userId}")
-    public String findCartByUserId(@PathVariable Long userId) {
-        cartService.findCartByUserId(userId);
+        cartService.createCart(id);
 
         return null;
     }
 
-    // TO 박웅서
-    // 제 파트에서는 PUT을 사용해 업데이트를 진행했습니다. 통일성을 위해 팀원과 논의 후 제 파트를 수정하거나 해당 부분을 수정하겠습니다.
-    @PutMapping("/user/{userId}")
-    public String updateCartCount(@PathVariable Long userId) throws Exception {
+    @GetMapping("/{userId}")
+    public Cart findCartByUserId(@PathVariable("userId") Long userId) {
 
-        cartService.updateCartCount(userId);
-
-        return null;
+        return cartService.findCartById(userId);
     }
 
-    // 유저 당 하나의 카트를 가지기 때문에 삭제하기보다는 로그아웃 시, 구매완료 시
-    // 내부 데이터만 지우는 방식으로 수정
-    @DeleteMapping("/user/{userId}")
-    public String deleteCart(@PathVariable Long userId) {
+    // 로그아웃 시, 구매완료 시 삭제
+    @DeleteMapping("/{userId}")
+    public String deleteCart(@PathVariable("userId") Long userId) {
+
         cartService.deleteCart(userId);
 
         return null;

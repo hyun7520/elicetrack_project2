@@ -33,7 +33,6 @@ public class OrderResponseDto {
         this.address = order.getAddress();
         this.request = order.getRequest();
         this.totalCost = order.getTotalCost();
-
         this.orderDetails = order.getOrderDetails();
     }
 }
