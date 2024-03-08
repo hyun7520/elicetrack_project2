@@ -1,5 +1,10 @@
 package io.elice.shoppingmall.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.elice.shoppingmall.product.dto.ReviewRequestDto;
+import io.elice.shoppingmall.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,13 +33,19 @@ public class Review {
     @Column(nullable = false)
     private int rating;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User userId;
 
+<<<<<<< HEAD
 //    @ManyToOne
 //    @JoinColumn(name = "product_id", nullable = false)
 //    private Product product;
+=======
+    @ManyToOne
+    @JoinColumn(name = "productId", nullable = false)
+    private Product product;
+>>>>>>> 8298897327af8b074ba46e14fd88ab220e6561fc
 
     public void updateReview(String context, String writerNickname, LocalDate createdDate, int rating, Product product) {
         this.context = context;
@@ -42,5 +53,12 @@ public class Review {
         this.createdDate = createdDate;
         this.rating = rating;
 
+    }
+
+    public void updateReview(ReviewRequestDto reviewRequestDto){
+        this.context = reviewRequestDto.getContext();
+        this.writerNickname = reviewRequestDto.getWriterNickname();
+        this.createdDate = reviewRequestDto.getCreatedDate();
+        this.rating = reviewRequestDto.getRating();
     }
 }
