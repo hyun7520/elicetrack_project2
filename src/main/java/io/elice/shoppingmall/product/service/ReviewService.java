@@ -29,19 +29,9 @@ public class ReviewService {
     }
 
     // 특정 상품의 리뷰 목록 조회
-<<<<<<< HEAD
-//    public List<Review> getReviewsByProductId(Long productId){
-//        return reviewRepository.findReviewsByProductId(productId);
-//    }
-
-    // 전체 조회
-    public List<Review> reviewList(){
-        return reviewRepository.findAll();
-=======
     public Page<Review> getReviewsByProductId(Long productId, int page, int size){
         PageRequest pageRequest = PageRequest.of(page, size);
         return this.reviewRepository.findByProductProductId(productId, pageRequest);
->>>>>>> 8298897327af8b074ba46e14fd88ab220e6561fc
     }
 
     // 수정

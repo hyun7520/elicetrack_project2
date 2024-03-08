@@ -37,21 +37,9 @@ public class ReviewController {
     }
 
     // 특정 상품의 리뷰 조회
-<<<<<<< HEAD
-//    @GetMapping("/product/{productId}")
-//    public List<Review> reviewsByProduct(@PathVariable("productId") Long productId){
-//        return reviewService.getReviewsByProductId(productId);
-//    }
-
-    // 모든 리뷰 목록 조회
-    @GetMapping
-    public List<Review> getAllReviews(){
-        return reviewService.reviewList();
-=======
     @GetMapping("/product/{productId}")
     public Page<Review> reviewsByProduct(@PathVariable("productId") Long productId, @RequestParam(value="page", defaultValue="0") int page,@RequestParam(name = "size", defaultValue = "10") int size){
         return reviewService.getReviewsByProductId(productId, page, size);
->>>>>>> 8298897327af8b074ba46e14fd88ab220e6561fc
     }
 
 }
