@@ -12,6 +12,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +24,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Orders {
 
@@ -30,7 +34,12 @@ public class Orders {
     private Long id;
 
     @Column(name = "order_date")
+    @CreatedDate
     private Date orderDate;
+
+    @Column(name = "modified_at")
+    @LastModifiedDate
+    private Date modifiedDate;
 
     @Column(name = "delivery_date")
     private Date deliveryDate;
@@ -76,12 +85,11 @@ public class Orders {
     private User user;
 
     @Builder
-    public Orders(User user, Date orderDate, Date deliveryDate,
+    public Orders(User user, Date orderDate,
                  String address, String receiver,
                  String request, Long totalCost) {
         this.user = user;
         this.orderDate = orderDate;
-        this.deliveryDate = deliveryDate;
         this.orderProcess = OrderProcess.received;
         this.deliveryProcess = DeliveryProcess.preparing;
         this.receiver = receiver;

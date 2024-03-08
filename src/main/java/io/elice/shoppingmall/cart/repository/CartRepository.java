@@ -5,10 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-    // 아직 유저 아이디가 없다.
-//    List<Cart> findCartByUserId(Long userId);
+    Optional<Cart> findCartByUser_Id(Long userId);
 }

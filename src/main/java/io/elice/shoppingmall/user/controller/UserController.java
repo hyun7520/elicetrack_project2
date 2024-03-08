@@ -2,6 +2,7 @@ package io.elice.shoppingmall.user.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.elice.shoppingmall.user.Dto.DeleteDto;
 import io.elice.shoppingmall.user.Dto.SignInDto;
 import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Key;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,6 +36,15 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @PatchMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody SignUpDto signUpDto) {
+        return userService.updateUser(id, signUpDto);
+    }
+
+    @PatchMapping("/role/{id}")
+    public User updateRole(@PathVariable Long id, @RequestBody boolean isAdmin) {
+        return userService.updateRole(id, isAdmin);
+    }
 
     @PostMapping("/sign-up")
     public User signUp(@RequestBody SignUpDto signUpDto){
@@ -59,5 +70,30 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("/password-check")
+    public ResponseEntity<?> passwordCheck(@RequestBody DeleteDto deleteDto) {
+        boolean isPasswordCorrect = userService.checkPassword(deleteDto);
+        if (!isPasswordCorrect) {
+            return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+        }
+        Map<String, String> response = new HashMap<>();
+        response.put("response", "ok");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("response", "ok");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 }

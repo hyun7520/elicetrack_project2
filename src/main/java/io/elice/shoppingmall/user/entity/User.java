@@ -37,11 +37,9 @@ public class User {
 
     private String postcode;
 
-    private String address;
+    private String address1;
 
-    private String detailAddress;
-
-    private String extraAddress;
+    private String address2;
 
     private boolean isAdmin;
 
@@ -53,8 +51,8 @@ public class User {
         createdAt = LocalDateTime.now();
     }
 
-    @OneToOne
-    @JoinColumn(name = "cart_id")
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private Cart cart;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
