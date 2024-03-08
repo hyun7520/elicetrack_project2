@@ -5,7 +5,6 @@ import io.elice.shoppingmall.product.entity.Option;
 import io.elice.shoppingmall.product.service.OptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,13 +34,13 @@ public class OptionController {
 
 
     // 옵션 수정
-    @PostMapping("/{id}/update")
+    @PostMapping("/user/{optionId}")
     public Option updateOption(@PathVariable("id") Long id, @RequestBody OptionRequestDto optionRequestDto) {
         return optionService.updateOption(id, optionRequestDto);
     }
 
     // 옵션 삭제
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/user/{optionId}")
     public Option optionDelete(@PathVariable("id") Long id){
         return optionService.deleteOption(id);
     }

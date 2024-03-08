@@ -5,6 +5,8 @@ import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,15 +37,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    //일부 상품 조회
+    //상품 상세 조회
     public Product getProductById(Long id){
         Optional<Product> optionalProduct = productRepository.findById(id);
         return optionalProduct.orElseThrow(() -> new IllegalArgumentException("해당 ID에 해당하는 제품을 찾을 수 없습니다: " + id));
     }
 
     // 전체 조회
-    public List<Product> productList(){
-        return productRepository.findAll();
+    public Page<Product> getAllproductList(int page, int size){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return this.productRepository.findAll(pageRequest);
     }
 
     // 수정
