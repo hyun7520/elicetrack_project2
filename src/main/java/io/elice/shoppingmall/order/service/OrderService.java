@@ -28,12 +28,12 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public ResponseEntity<Object> createOrder(OrderRequestDto orderRequestDto) {
+    public Orders createOrder(OrderRequestDto orderRequestDto) {
 
         Optional<User> foundUser = userRepository.findById(orderRequestDto.getUserId());
 
-        if(!foundUser.isPresent()) {
-            return OrderResponse.responseBuilder(null, "사용자가 존재하지 않습니다!", HttpStatus.NOT_FOUND);
+        if(foundUser.isEmpty()) {
+            return null;
         }
 
         Orders order = Orders.builder()
@@ -45,7 +45,7 @@ public class OrderService {
                 .totalCost(orderRequestDto.getTotalCost())
                 .build();
 
-        return OrderResponse.responseBuilder(orderRepository.save(order), "주문이 정상적으로 생성되었습니다!", HttpStatus.CREATED);
+        return orderRepository.save(order);
     }
 
     // 전체 주문 조회
@@ -56,7 +56,7 @@ public class OrderService {
     // 아이디로 특정 주문 조회
     public Orders getOrderById(Long id) {
         Optional<Orders> order = orderRepository.findById(id);
-        if(!order.isPresent()) {
+        if(order.isEmpty()) {
             throw new IllegalArgumentException("주문이 존재하지 않습니다.");
         }
         return order.get();
@@ -73,7 +73,7 @@ public class OrderService {
 
     // 주문 수정
     @Transactional
-    public ResponseEntity<Object> updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
+    public Orders updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
         
         if(!checkOrder(id)) {
             return null;
@@ -84,55 +84,54 @@ public class OrderService {
         // 배송 중일 경우 주소와 같은 정보는 수정이 불가능
         // boolean을 return 하도록 수정
         if(String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("shipping") || String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("complete")) {
-            return OrderResponse.responseBuilder(null, "배송 중인 물건은 수정이 불가능합니다!", HttpStatus.BAD_REQUEST);
+            return null;
         }
         toUpdateOrder.updateOrder(orderUpdateDto);
-        Orders savedOrder = orderRepository.save(toUpdateOrder);
-        return OrderResponse.responseBuilder(savedOrder, "수정이 완료되었습니다!", HttpStatus.OK);
+
+        return orderRepository.save(toUpdateOrder);
     }
 
     // 주문 취소 - 사용자
     @Transactional
-    public ResponseEntity<Object> cancelOrder(Long id, OrderUpdateDto orderUpdateDto) {
+    public Orders cancelOrder(Long id, OrderUpdateDto orderUpdateDto) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
 
-        if(!foundOrder.isPresent()) {
-            return OrderResponse.responseBuilder(null, "존재하지 않는 주문입니다!", HttpStatus.NOT_FOUND);
+        if(foundOrder.isEmpty()) {
+            return null;
         }
         Orders toCancelOrder = foundOrder.get();
         if(String.valueOf(toCancelOrder.getOrderProcess()).equals("canceled")) {
-            return OrderResponse.responseBuilder(null, "이미 취소된 주문입니다!", HttpStatus.BAD_REQUEST);
+            return null;
         }
         toCancelOrder.cancelOrder();
-        Orders canceledOrder = orderRepository.save(toCancelOrder);
-        return OrderResponse.responseBuilder(canceledOrder, "주문 취소가 완료되었습니다!", HttpStatus.OK);
+        return orderRepository.save(toCancelOrder);
     }
 
     // 주문 수정 (결제 상태, 배송 상태) - 관리자
-    public ResponseEntity<Object> managerUpdateOrder(Long id, OrderManagerUpdateDto orderManagerUpdateDto) {
+    @Transactional
+    public Orders managerUpdateOrder(Long id, OrderManagerUpdateDto orderManagerUpdateDto) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
 
-        if(!foundOrder.isPresent()) {
-            return OrderResponse.responseBuilder(null, "존재하지 않는 주문입니다!", HttpStatus.NOT_FOUND);
+        if(foundOrder.isEmpty()) {
+            return null;
         }
         Orders toUpdateOrder = foundOrder.get();
         toUpdateOrder.managerUpdateOrder(orderManagerUpdateDto);
-        Orders order = orderRepository.save(toUpdateOrder);
 
-        return OrderResponse.responseBuilder(order, "수정이 완료되었습니다!", HttpStatus.OK);
+        return orderRepository.save(toUpdateOrder);
     }
 
     // 주문 삭제(관리자 권한만)
     @Transactional
-    public ResponseEntity<Object> deleteOrder(Long id ) {
+    public boolean deleteOrder(Long id ) {
 
         if(!checkOrder(id)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return false;
         }
         orderRepository.deleteById(id);
-        return OrderResponse.responseBuilder(null, "삭제가 완료 되었습니다!", HttpStatus.OK);
+        return true;
     }
 
     // 수정, 삭제하고자하는 주문이 존재하는지 확인
