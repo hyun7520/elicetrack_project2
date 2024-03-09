@@ -131,7 +131,7 @@ async function deleteSelectedData(result) {
 }
 
 async function deleteData(list) {
-  await fetch(`http://localhost:8080/cart/user/1/items`, {
+  await fetch(`http://localhost:8080/carts/user/1/items`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -143,7 +143,7 @@ async function deleteData(list) {
 // 데이터 가져오기
 async function fetchData() {
   try {
-    const response = await fetch('http://localhost:8080/cart/user/1/items')
+    const response = await fetch('http://localhost:8080/carts/user/1/items')
     const data = await response.json();
     return data;
   } catch (error) {

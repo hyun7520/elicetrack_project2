@@ -2,53 +2,78 @@ package io.elice.shoppingmall.cart.controller;
 
 import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
 import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
+import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
+import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cart/user/{id}/items")
+@RequestMapping("/carts")
 public class CartItemController {
 
     private final CartItemService cartItemService;
 
     // 카트에 아이템 추가
-    @PostMapping
-    public CartItem addItemToCart(@PathVariable("id") Long id,
+    @PostMapping("/user/{userId}/items")
+    public ResponseEntity<CartItemResponseDto> addItemToCart(@PathVariable("userId") Long userId,
                                   @RequestParam("product") Long productId,
                                   @RequestParam("qty") int qty) {
 
-        return cartItemService.addItemToCart(id, productId, qty);
+        try {
+            CartItem createdCartItem = cartItemService.addItemToCart(userId, productId, qty);
+            Product product = createdCartItem.getProduct();
+            return ResponseEntity.ok(CartItemResponseDto.builder()
+                    .message(product.getProductName()+", "+createdCartItem.getAmount()+"개 가 장바구니에 담겼습니다!")
+                    .httpStatus(HttpStatus.CREATED)
+                    .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartItemResponseDto.builder()
+                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
+                    .build());
+        }
+
     }
 
-    @GetMapping
-    public List<CartItemResponseDto> getAllItemsInCart(@PathVariable("id") Long id) {
+    @GetMapping("/user/{userId}/items")
+    public ResponseEntity<List<CartItemResponseDto>> getAllItemsInCart(@PathVariable("userId") Long userId) {
 
-        List<CartItemResponseDto> cartItems = cartItemService.getAllItemsInCart(id);
-
-        return cartItems;
+        List<CartItemResponseDto> foundItems = cartItemService.getAllItemsInCart(userId);
+        return ResponseEntity.ok(foundItems);
     }
 
     // 카트에 담긴 아이템의 수량을 수정
-    @PutMapping("/{cartItemId}")
-    public CartItem updateItemQuantity(@PathVariable("id") Long id,
-                                       @PathVariable("id") Long cartItemId,
+    @PutMapping("/user/{userId}/items/{cartItemId}")
+    public ResponseEntity<CartItemResponseDto> updateItemQuantity(@PathVariable("userId") Long userId,
+                                       @PathVariable("cartItemId") Long cartItemId,
                                      @RequestBody CartItemUpdateDto cartItemUpdateDto) {
 
-        return cartItemService.updateItemQuantity(id, cartItemId, cartItemUpdateDto);
+        try {
+            CartItem updateItem = cartItemService.updateItemQuantity(userId, cartItemId, cartItemUpdateDto);
+            return ResponseEntity.ok(CartItemResponseDto.builder()
+                    .message("수정이 완료되었습니다.")
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartItemResponseDto.builder()
+                    .message("다음의 오류가 발생했습니다. \n" +e.getMessage())
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build());
+        }
     }
 
-
     // 선택된 아이템을 카트에서 모두 삭제
-    @DeleteMapping
-    public String deleteItemsFromCart(@PathVariable("id") Long id,
+    @DeleteMapping("/user/{userId}/items")
+    public ResponseEntity<CartItemResponseDto> deleteItemsFromCart(@PathVariable("userId") Long userId,
                                       @RequestBody String selectedItemIds) {
 
         JSONParser parser = new JSONParser();
@@ -56,13 +81,15 @@ public class CartItemController {
 
         try {
             param = (JSONArray) parser.parse(selectedItemIds);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            // 받아온 json 스트링을 파싱하여 전달
+            String userName = cartItemService.deleteAllSelected(userId, param);
+            return ResponseEntity.ok(CartItemResponseDto.builder()
+                    .message(userName + "님 삭제가 완료되었습니다.")
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartItemResponseDto.builder()
+                    .message("다음의 오류가 발생했습니다. \n" +e.getMessage())
+                    .build());
         }
-
-        // 받아온 json 스트링을 파싱하여 전달
-        cartItemService.deleteAllSelected(id, param);
-
-        return null;
     }
 }

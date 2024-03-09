@@ -1,10 +1,13 @@
 package io.elice.shoppingmall.cart.controller;
 
+import io.elice.shoppingmall.cart.dto.CartResponseDto;
 import io.elice.shoppingmall.cart.dto.CreateCartDTO;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.service.CartService;
 import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/cart/user")
+@RequestMapping("/carts/user")
 @RequiredArgsConstructor
 public class CartController {
 
@@ -29,26 +32,53 @@ public class CartController {
     // REST 설계 상 동사를 사용하면 좋지 않다고 알고 있고, "/create"는 POST와 중복되는 것 같아 삭제했습니다.
     // 아래의 GET 매핑에서도 같은 이유로 "/find"를 삭제했습니다.
     @PostMapping("/{userId}")
-    public String createCart(@PathVariable("userId") Long id) {
+    public ResponseEntity<CartResponseDto> createCart(@PathVariable("userId") Long id) {
 
-        cartService.createCart(id);
-
-        return null;
+        try {
+            Cart createdCart = cartService.createCart(id);
+            return ResponseEntity.ok(CartResponseDto.builder()
+                    .userName(createdCart.getUser().getNickname())
+                    .message("장바구니 생성 완료!")
+                    .httpStatus(HttpStatus.CREATED)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartResponseDto.builder()
+                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
+                    .build());
+        }
     }
-
+    
+    // 장바구니 정보 조회
     @GetMapping("/{userId}")
-    public Cart findCartByUserId(@PathVariable("userId") Long userId) {
+    public ResponseEntity<CartResponseDto> findCartByUserId(@PathVariable("userId") Long userId) {
 
-        return cartService.findCartById(userId);
+        try {
+            Cart foundCart = cartService.findCartByUserId(userId);
+            return ResponseEntity.ok(CartResponseDto.builder()
+                    .message("장바구니 조회완료!")
+                    .cart(foundCart)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartResponseDto.builder()
+                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
+                    .build());
+        }
     }
 
     // 로그아웃 시, 구매완료 시 삭제
     @DeleteMapping("/{userId}")
-    public String deleteCart(@PathVariable("userId") Long userId) {
+    public ResponseEntity<CartResponseDto> deleteCart(@PathVariable("userId") Long userId) {
 
-        cartService.deleteCart(userId);
-
-        return null;
+        try {
+            String userName = cartService.deleteCartByUserId(userId);
+            return ResponseEntity.ok(CartResponseDto.builder()
+                    .message(userName+"님, 장바구니 삭제가 완료되었습니다.")
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartResponseDto.builder()
+                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
+                    .build());
+        }
     }
 }
 
