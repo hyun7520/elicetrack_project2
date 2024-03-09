@@ -5,6 +5,7 @@ import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.repository.ProductRepository;
 import io.elice.shoppingmall.product.repository.ReviewRepository;
+import io.elice.shoppingmall.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,7 @@ public class ReviewService {
                 .createdDate(reviewRequestDto.getCreatedDate())
                 .rating(reviewRequestDto.getRating())
                 .product(product)
-                //.user(user)
+                .user(User.builder().build())
                 .build();
         return reviewRepository.save(review);
     }

@@ -1,15 +1,12 @@
 package io.elice.shoppingmall.product.controller;
 
 import io.elice.shoppingmall.product.dto.ReviewRequestDto;
-import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,5 +51,4 @@ public class ReviewController {
         }
         return ResponseEntity.ok(reviewPage);
     }
-
 }

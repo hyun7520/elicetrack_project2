@@ -1,6 +1,7 @@
 package io.elice.shoppingmall.category.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -19,10 +20,7 @@ public class Category {
     private Long categoryId;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String code;
+    private String CategoryName;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -32,8 +30,15 @@ public class Category {
     @JsonIgnore
     private List<Category> children;
 
+    @Builder
     public Category(String name, Category parent) {
-        this.name = name;
+        this.CategoryName = name;
         this.parent = parent;
+    }
+
+    public void updateCategory(CategoryRequestDto categoryRequestDto){
+        this.CategoryName = categoryRequestDto.getName();
+        this.parent = categoryRequestDto.getParent();
+        this.children = categoryRequestDto.getChildren();
     }
 }

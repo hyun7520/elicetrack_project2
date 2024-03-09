@@ -1,8 +1,11 @@
 package io.elice.shoppingmall.category.controller;
 
+import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,24 +16,40 @@ import java.util.List;
 public class CategoryController{
     private final CategoryService categoryService;
 
+    // 카테고리 모두 조회
     @GetMapping
-    public List<Category> findAll() {
-        return categoryService.findAll();
+    public List<Category> getAllcategory() {
+        return categoryService.getAllcategory();
     }
 
-    @GetMapping("/{id}")
-    public Category findById(@PathVariable Long id) {
-        return categoryService.findById(id);
+    // id로 카테고리 모두 조회
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<?> getCategoryById(@PathVariable("categoryId") Long id) {
+        Category category = categoryService.getCategoryById(id);
+
+        if (category != null){
+            return ResponseEntity.ok(category);
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with ID " + id + " not found");
+        }
     }
 
-    @PostMapping
-    public Category save(@RequestBody Category category) {
-        return categoryService.save(category);
+    // 카테고리 생성
+    @PostMapping("/{categoryId}")
+    public Category createCategory(@PathVariable("categoryId") Long id, @RequestBody CategoryRequestDto categoryRequestDto) {
+        return categoryService.createCategory(categoryRequestDto);
     }
 
-    @GetMapping("/code/{code}")
-    public Category findByCode(@PathVariable String code) {
-        return categoryService.findByCode(code);
+    // 카테고리 삭제
+    @DeleteMapping("/{categoryId}")
+    public void deleteById(@PathVariable("categoryId") Long id) {
+        categoryService.deleteById(id);
+    }
+
+    // 카테고리 수정
+    @PutMapping("/{categoryId}")
+    public Category updateById(@PathVariable("categoryId") Long id, @RequestBody CategoryRequestDto categoryRequestDto) {
+        return categoryService.updateById(id, categoryRequestDto);
     }
 
 }

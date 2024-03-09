@@ -6,7 +6,6 @@ import io.elice.shoppingmall.product.service.OptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -14,6 +13,7 @@ import java.util.List;
 @RequestMapping("/options")
 public class OptionController {
     private final OptionService optionService;
+
     // 모든 옵션 목록 조회 (없어도 될듯)
     @GetMapping
     public ResponseEntity<List<Option>> getAllOptions() {

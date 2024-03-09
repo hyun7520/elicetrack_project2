@@ -5,12 +5,9 @@ import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,8 +51,6 @@ public class ProductController {
     public Page<Product> getAllproductList(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size) {
         return productService.getAllproductList(page, size);
     }
-
-    //user id로 상품 조회하기
 
     //categoryId로 상품 조회
     @GetMapping("/category/{categoryId}")
