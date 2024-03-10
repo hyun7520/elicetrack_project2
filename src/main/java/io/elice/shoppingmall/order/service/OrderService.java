@@ -82,6 +82,9 @@ public class OrderService {
         if(String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("complete")) {
             throw new IllegalArgumentException("배송이 완료된 주문입니다!");
         }
+        if(String.valueOf(toUpdateOrder.getOrderProcess()).equals("canceled")) {
+            throw new IllegalArgumentException("취소된 주문입니다!");
+        }
         toUpdateOrder.updateOrder(orderUpdateDto);
 
         return orderRepository.save(toUpdateOrder);
@@ -89,7 +92,7 @@ public class OrderService {
 
     // 주문 취소 - 사용자
     @Transactional
-    public Orders cancelOrder(Long id, OrderUpdateDto orderUpdateDto) {
+    public Orders cancelOrder(Long id) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
 
@@ -97,6 +100,12 @@ public class OrderService {
             throw new IllegalArgumentException("주문이 존재하지 않습니다!");
         }
         Orders toCancelOrder = foundOrder.get();
+        if(String.valueOf(toCancelOrder.getDeliveryProcess()).equals("shipping")) {
+            throw new IllegalArgumentException("배송 중인 제품입니다!");
+        }
+        if(String.valueOf(toCancelOrder.getDeliveryProcess()).equals("complete")) {
+            throw new IllegalArgumentException("배송이 완료된 주문입니다!");
+        }
         if(String.valueOf(toCancelOrder.getOrderProcess()).equals("canceled")) {
             throw new IllegalArgumentException("이미 취소된 주문입니다!");
         }

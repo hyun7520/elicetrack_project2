@@ -30,17 +30,12 @@ public class OrderController {
         String dateNow = date.format(now);
         orderRequestDto.setOrderDate(now);
 
-        try {
-            Orders order = orderService.createOrder(orderRequestDto);
-            return ResponseEntity.ok(OrderResponseDto.builder()
-                    .order(order)
-                    .message("주문이 정상적으로 접수되었습니다!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderResponseDto.builder()
-                    .message("아래의 오류가 발생했습니다!" + e.getMessage())
-                    .build());
-        }
+        Orders order = orderService.createOrder(orderRequestDto);
+        return ResponseEntity.ok(OrderResponseDto.builder()
+                .order(order)
+                .message("주문이 정상적으로 접수되었습니다!")
+                .build());
+
     }
 
     // 모든 주문 조회
@@ -75,17 +70,13 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> updateOrder(@PathVariable("id") Long id,
                                               @RequestBody @Valid OrderUpdateDto orderUpdateDto) {
 
-        try {
-            Orders order = orderService.updateOrder(id, orderUpdateDto);
-            return ResponseEntity.ok(OrderResponseDto.builder()
-                    .order(order)
-                    .message("주문이 정상적으로 수정되었습니다!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderResponseDto.builder()
-                    .message("아래의 오류가 발생했습니다!" + e.getMessage())
-                    .build());
-        }
+
+        Orders order = orderService.updateOrder(id, orderUpdateDto);
+        return ResponseEntity.ok(OrderResponseDto.builder()
+                .order(order)
+                .message("주문이 정상적으로 수정되었습니다!")
+                .build());
+
     }
 
     // 주문 상태 설정 - 관리자 기능
@@ -93,50 +84,34 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> setOrderStatus(@PathVariable("id") Long id,
                                                            @RequestBody @Valid OrderManagerUpdateDto orderManagerUpdateDto) {
 
-        try {
-            Orders order = orderService.managerUpdateOrder(id, orderManagerUpdateDto);
-            return ResponseEntity.ok(OrderResponseDto.builder()
-                    .order(order)
-                    .message("관리자님! 주문이 정상적으로 수정되었습니다!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderResponseDto.builder()
-                    .message("아래의 오류가 발생했습니다!" + e.getMessage())
-                    .build());
-        }
+
+        Orders order = orderService.managerUpdateOrder(id, orderManagerUpdateDto);
+        return ResponseEntity.ok(OrderResponseDto.builder()
+                .order(order)
+                .message("관리자님! 주문이 정상적으로 수정되었습니다!")
+                .build());
+
     }
 
     // 주문 취소 - 사용자 기능
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<OrderResponseDto> cancelOrder(@PathVariable("id") Long id,
-                                              @RequestBody @Valid OrderUpdateDto orderUpdateDto) {
+    public ResponseEntity<OrderResponseDto> cancelOrder(@PathVariable("id") Long id) {
 
-        try {
-            Orders canceledOrder = orderService.cancelOrder(id, orderUpdateDto);
-            return ResponseEntity.ok(OrderResponseDto.builder()
-                    .order(canceledOrder)
-                    .message("주문이 정상적으로 취소되었습니다!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderResponseDto.builder()
-                    .message("아래의 오류가 발생했습니다!" + e.getMessage())
-                    .build());
-        }
+        Orders canceledOrder = orderService.cancelOrder(id);
+        return ResponseEntity.ok(OrderResponseDto.builder()
+                .order(canceledOrder)
+                .message("주문이 정상적으로 취소되었습니다!")
+                .build());
     }
 
     // 주문 삭제 - 관리자권한
     @DeleteMapping("/{id}")
     public ResponseEntity<OrderResponseDto> deleteOrder(@PathVariable("id") Long id) {
 
-        try {
-            String userName = orderService.deleteOrder(id);
-            return ResponseEntity.ok(OrderResponseDto.builder()
-                    .message(userName + "님에게 배송할 주문이 정상적으로 취소되었습니다!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderResponseDto.builder()
-                    .message("아래의 오류가 발생했습니다!" + e.getMessage())
-                    .build());
-        }
+        String userName = orderService.deleteOrder(id);
+        return ResponseEntity.ok(OrderResponseDto.builder()
+                .message(userName + "님에게 배송할 주문이 정상적으로 취소되었습니다!")
+                .build());
+
     }
 }

@@ -24,51 +24,37 @@ public class CartController {
     @PostMapping("/{userId}")
     public ResponseEntity<CartResponseDto> createCart(@PathVariable("userId") Long id) {
 
-        try {
-            Cart createdCart = cartService.createCart(id);
-            return ResponseEntity.ok(CartResponseDto.builder()
-                    .userName(createdCart.getUser().getNickname())
-                    .message("장바구니 생성 완료!")
-                    .httpStatus(HttpStatus.CREATED)
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+
+        Cart createdCart = cartService.createCart(id);
+        return ResponseEntity.ok(CartResponseDto.builder()
+                .userName(createdCart.getUser().getNickname())
+                .message("장바구니 생성 완료!")
+                .httpStatus(HttpStatus.CREATED)
+                .build());
+
     }
     
     // 장바구니 정보 조회
     @GetMapping("/{userId}")
     public ResponseEntity<CartResponseDto> findCartByUserId(@PathVariable("userId") Long userId) {
 
-        try {
-            Cart foundCart = cartService.findCartByUserId(userId);
-            return ResponseEntity.ok(CartResponseDto.builder()
-                    .message("장바구니 조회완료!")
-                    .cart(foundCart)
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+
+        Cart foundCart = cartService.findCartByUserId(userId);
+        return ResponseEntity.ok(CartResponseDto.builder()
+                .message("장바구니 조회완료!")
+                .cart(foundCart)
+                .build());
+
     }
 
     // 로그아웃 시, 구매완료 시 삭제
     @DeleteMapping("/{userId}")
     public ResponseEntity<CartResponseDto> deleteCart(@PathVariable("userId") Long userId) {
 
-        try {
-            String userName = cartService.deleteCartByUserId(userId);
-            return ResponseEntity.ok(CartResponseDto.builder()
-                    .message(userName+"님, 장바구니 삭제가 완료되었습니다.")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+        String userName = cartService.deleteCartByUserId(userId);
+        return ResponseEntity.ok(CartResponseDto.builder()
+                .message(userName+"님, 장바구니 삭제가 완료되었습니다.")
+                .build());
     }
 }
 

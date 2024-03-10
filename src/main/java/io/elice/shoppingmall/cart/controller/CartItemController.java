@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,20 +31,14 @@ public class CartItemController {
                                   @RequestParam("product") @Min(1) Long productId,
                                   @RequestParam("qty") @Min(1) int qty) {
 
-        try {
-            CartItem createdCartItem = cartItemService.addItemToCart(userId, productId, qty);
-            Product product = createdCartItem.getProduct();
-            return ResponseEntity.ok(CartItemResponseDto.builder()
-                    .message(product.getProductName()+", "+createdCartItem.getAmount()+"개 가 장바구니에 담겼습니다!")
-                    .httpStatus(HttpStatus.CREATED)
-                    .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartItemResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
 
+        CartItem createdCartItem = cartItemService.addItemToCart(userId, productId, qty);
+        Product product = createdCartItem.getProduct();
+        return ResponseEntity.ok(CartItemResponseDto.builder()
+                .message(product.getProductName()+", "+createdCartItem.getAmount()+"개 가 장바구니에 담겼습니다!")
+                .httpStatus(HttpStatus.CREATED)
+                .build()
+        );
     }
 
     @GetMapping("/user/{userId}/items")
@@ -59,38 +54,28 @@ public class CartItemController {
                                        @PathVariable("cartItemId") Long cartItemId,
                                      @RequestBody @Valid CartItemUpdateDto cartItemUpdateDto) {
 
-        try {
-            CartItem updateItem = cartItemService.updateItemQuantity(userId, cartItemId, cartItemUpdateDto);
-            return ResponseEntity.ok(CartItemResponseDto.builder()
-                    .message("수정이 완료되었습니다.")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartItemResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" +e.getMessage())
-                    .httpStatus(HttpStatus.NOT_FOUND)
-                    .build());
-        }
+
+        CartItem updateItem = cartItemService.updateItemQuantity(userId, cartItemId, cartItemUpdateDto);
+        return ResponseEntity.ok(CartItemResponseDto.builder()
+                .message("수정이 완료되었습니다.")
+                .build());
+
     }
 
     // 선택된 아이템을 카트에서 모두 삭제
     @DeleteMapping("/user/{userId}/items")
     public ResponseEntity<CartItemResponseDto> deleteItemsFromCart(@PathVariable("userId") Long userId,
-                                      @RequestBody @NotEmpty String selectedItemIds) {
+                                      @RequestBody @NotEmpty String selectedItemIds) throws ParseException {
 
         JSONParser parser = new JSONParser();
         JSONArray param = null;
+        param = (JSONArray) parser.parse(selectedItemIds);
 
-        try {
-            param = (JSONArray) parser.parse(selectedItemIds);
-            // 받아온 json 스트링을 파싱하여 전달
-            String userName = cartItemService.deleteAllSelected(userId, param);
-            return ResponseEntity.ok(CartItemResponseDto.builder()
-                    .message(userName + "님 삭제가 완료되었습니다.")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CartItemResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" +e.getMessage())
-                    .build());
-        }
+        // 받아온 json 스트링을 파싱하여 전달
+        String userName = cartItemService.deleteAllSelected(userId, param);
+        return ResponseEntity.ok(CartItemResponseDto.builder()
+                .message(userName + "님 삭제가 완료되었습니다.")
+                .build());
+
     }
 }

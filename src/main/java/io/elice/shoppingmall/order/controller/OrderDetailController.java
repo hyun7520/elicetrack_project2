@@ -27,18 +27,14 @@ public class OrderDetailController {
     public ResponseEntity<OrderDetailResponseDto> addOrderDetail(@PathVariable("id") Long id,
                                                                  @RequestBody @Valid OrderDetailRequestDto orderDetailRequestDto) {
 
-        try {
-            OrderDetail orderDetail = orderDetailService.createOrderDetail(id, orderDetailRequestDto);
-            return ResponseEntity.ok(OrderDetailResponseDto.builder()
-                    .orderDetail(orderDetail)
-                    .message("상세 주문이 생성되었습니다!")
-                    .httpStatus(HttpStatus.CREATED)
-                    .build());
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderDetailResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+
+        OrderDetail orderDetail = orderDetailService.createOrderDetail(id, orderDetailRequestDto);
+        return ResponseEntity.ok(OrderDetailResponseDto.builder()
+                .orderDetail(orderDetail)
+                .message("상세 주문이 생성되었습니다!")
+                .httpStatus(HttpStatus.CREATED)
+                .build());
+
     }
 
     // 특정 주문의 주문 상세내역 조회
@@ -56,17 +52,11 @@ public class OrderDetailController {
                                                     @PathVariable("detailId") Long detailId,
                                                     @RequestBody @Valid OrderDetailUpdateDto orderDetailUpdateDto) {
 
-        try {
-            OrderDetail orderDetail = orderDetailService.updateOrderDetail(id, detailId, orderDetailUpdateDto);
-            return ResponseEntity.ok(OrderDetailResponseDto.builder()
-                    .orderDetail(orderDetail)
-                    .message("상세 주문이 수정되었습니다!!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderDetailResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+        OrderDetail orderDetail = orderDetailService.updateOrderDetail(id, detailId, orderDetailUpdateDto);
+        return ResponseEntity.ok(OrderDetailResponseDto.builder()
+                .orderDetail(orderDetail)
+                .message("상세 주문이 수정되었습니다!!")
+                .build());
     }
 
     // 선택한 주문에서 특정 주문 상세를 삭제
@@ -74,16 +64,11 @@ public class OrderDetailController {
     public ResponseEntity<OrderDetailResponseDto> deleteOrderDetail(@PathVariable("id") Long orderId,
                                                                     @PathVariable("detailId") Long detailId) {
 
-        try {
-            String productName = orderDetailService.deleteOrderDetail(orderId, detailId);
-            return ResponseEntity.ok(OrderDetailResponseDto.builder()
-                    .message(productName + "에 대한 주문이 정상적으로 삭제되었습니다!!!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderDetailResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+
+        String productName = orderDetailService.deleteOrderDetail(orderId, detailId);
+        return ResponseEntity.ok(OrderDetailResponseDto.builder()
+                .message(productName + "에 대한 주문이 정상적으로 삭제되었습니다!!!")
+                .build());
     }
 
     // 선택된 주문에 대한 상세내역 일괄 삭제
@@ -91,15 +76,11 @@ public class OrderDetailController {
     public ResponseEntity<OrderDetailResponseDto> deleteSelectedOrderDetails(@PathVariable("id") Long id,
                                                                              @RequestBody List<Long> selectedDetailIds) {
 
-        try {
-            String receiverName = orderDetailService.deleteSelectedDetails(id, selectedDetailIds);
-            return ResponseEntity.ok(OrderDetailResponseDto.builder()
-                    .message(receiverName + "님에 대한 주문이 삭제되었습니다!!")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(OrderDetailResponseDto.builder()
-                    .message("다음의 오류가 발생했습니다. \n" + e.getMessage())
-                    .build());
-        }
+
+        String receiverName = orderDetailService.deleteSelectedDetails(id, selectedDetailIds);
+        return ResponseEntity.ok(OrderDetailResponseDto.builder()
+                .message(receiverName + "님에 대한 주문이 삭제되었습니다!!")
+                .build());
+
     }
 }
