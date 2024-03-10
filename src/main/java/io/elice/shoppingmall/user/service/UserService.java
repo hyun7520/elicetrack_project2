@@ -118,4 +118,12 @@ public class UserService {
         user.setAdmin(isAdmin);
         return userRepository.save(user);
     }
+
+    public int getUserCount() {
+        return (int) userRepository.count();
+    }
+
+    public int getAdminCount() {
+        return userRepository.countByIsAdmin(true);
+    }
 }

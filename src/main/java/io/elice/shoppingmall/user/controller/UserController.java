@@ -101,4 +101,14 @@ public class UserController {
         Page<User> users = userService.getAllUsers(pageRequest);
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/count-user")
+    public Integer getUserCount() {
+        return userService.getUserCount();
+    }
+
+    @GetMapping("/count-admin")
+    public Integer getAdminCount() {
+        return userService.getAdminCount();
+    }
 }

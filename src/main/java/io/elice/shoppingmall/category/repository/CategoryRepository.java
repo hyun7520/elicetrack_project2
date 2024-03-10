@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByParentCategoryId(Long parentId);
-    Optional<Category> findByCode(String code);
+    //Optional<Category> findByCode(String code);
 }
