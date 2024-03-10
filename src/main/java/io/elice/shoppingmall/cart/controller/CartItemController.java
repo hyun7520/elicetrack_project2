@@ -2,14 +2,15 @@ package io.elice.shoppingmall.cart.controller;
 
 import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
 import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
-import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.product.entity.Product;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,8 @@ public class CartItemController {
     // 카트에 아이템 추가
     @PostMapping("/user/{userId}/items")
     public ResponseEntity<CartItemResponseDto> addItemToCart(@PathVariable("userId") Long userId,
-                                  @RequestParam("product") Long productId,
-                                  @RequestParam("qty") int qty) {
+                                  @RequestParam("product") @Min(1) Long productId,
+                                  @RequestParam("qty") @Min(1) int qty) {
 
         try {
             CartItem createdCartItem = cartItemService.addItemToCart(userId, productId, qty);
@@ -56,7 +57,7 @@ public class CartItemController {
     @PutMapping("/user/{userId}/items/{cartItemId}")
     public ResponseEntity<CartItemResponseDto> updateItemQuantity(@PathVariable("userId") Long userId,
                                        @PathVariable("cartItemId") Long cartItemId,
-                                     @RequestBody CartItemUpdateDto cartItemUpdateDto) {
+                                     @RequestBody @Valid CartItemUpdateDto cartItemUpdateDto) {
 
         try {
             CartItem updateItem = cartItemService.updateItemQuantity(userId, cartItemId, cartItemUpdateDto);
@@ -74,7 +75,7 @@ public class CartItemController {
     // 선택된 아이템을 카트에서 모두 삭제
     @DeleteMapping("/user/{userId}/items")
     public ResponseEntity<CartItemResponseDto> deleteItemsFromCart(@PathVariable("userId") Long userId,
-                                      @RequestBody String selectedItemIds) {
+                                      @RequestBody @NotEmpty String selectedItemIds) {
 
         JSONParser parser = new JSONParser();
         JSONArray param = null;

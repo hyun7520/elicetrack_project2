@@ -5,6 +5,7 @@ import io.elice.shoppingmall.order.dto.OrderDetailResponseDto;
 import io.elice.shoppingmall.order.dto.OrderDetailUpdateDto;
 import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.order.service.OrderDetailService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +25,7 @@ public class OrderDetailController {
     // 특정 주문에 주문 상세 추가
     @PostMapping("/{id}/details")
     public ResponseEntity<OrderDetailResponseDto> addOrderDetail(@PathVariable("id") Long id,
-                                                                 @RequestBody OrderDetailRequestDto orderDetailRequestDto) {
+                                                                 @RequestBody @Valid OrderDetailRequestDto orderDetailRequestDto) {
 
         try {
             OrderDetail orderDetail = orderDetailService.createOrderDetail(id, orderDetailRequestDto);
@@ -53,7 +54,7 @@ public class OrderDetailController {
     @PutMapping("/{id}/details/{detailId}")
     public ResponseEntity<OrderDetailResponseDto> updateOrderDetail(@PathVariable("id") Long id,
                                                     @PathVariable("detailId") Long detailId,
-                                                    @RequestBody OrderDetailUpdateDto orderDetailUpdateDto) {
+                                                    @RequestBody @Valid OrderDetailUpdateDto orderDetailUpdateDto) {
 
         try {
             OrderDetail orderDetail = orderDetailService.updateOrderDetail(id, detailId, orderDetailUpdateDto);
@@ -70,7 +71,8 @@ public class OrderDetailController {
 
     // 선택한 주문에서 특정 주문 상세를 삭제
     @DeleteMapping("/{id}/details/{detailId}")
-    public ResponseEntity<OrderDetailResponseDto> deleteOrderDetail(@PathVariable("id") Long orderId, @PathVariable("detailId") Long detailId) {
+    public ResponseEntity<OrderDetailResponseDto> deleteOrderDetail(@PathVariable("id") Long orderId,
+                                                                    @PathVariable("detailId") Long detailId) {
 
         try {
             String productName = orderDetailService.deleteOrderDetail(orderId, detailId);
@@ -87,7 +89,7 @@ public class OrderDetailController {
     // 선택된 주문에 대한 상세내역 일괄 삭제
     @DeleteMapping("/{id}/details")
     public ResponseEntity<OrderDetailResponseDto> deleteSelectedOrderDetails(@PathVariable("id") Long id,
-                                                             @RequestBody List<Long> selectedDetailIds) {
+                                                                             @RequestBody List<Long> selectedDetailIds) {
 
         try {
             String receiverName = orderDetailService.deleteSelectedDetails(id, selectedDetailIds);

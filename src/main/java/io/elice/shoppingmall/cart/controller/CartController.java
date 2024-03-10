@@ -1,22 +1,12 @@
 package io.elice.shoppingmall.cart.controller;
 
 import io.elice.shoppingmall.cart.dto.CartResponseDto;
-import io.elice.shoppingmall.cart.dto.CreateCartDTO;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.cart.service.CartService;
-import io.elice.shoppingmall.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/carts/user")

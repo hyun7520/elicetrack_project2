@@ -3,6 +3,7 @@ package io.elice.shoppingmall.order.controller;
 import io.elice.shoppingmall.order.dto.*;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +23,7 @@ public class OrderController {
 
     // 주문 생성 - 결제 버튼 클릭 시
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody @Valid OrderRequestDto orderRequestDto) {
 
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
         Date now = new Date();
@@ -72,7 +73,7 @@ public class OrderController {
     // 사이트 고객에 의한 배달 주소, 수신자, 요청사항 의 수정
     @PutMapping("/{id}")
     public ResponseEntity<OrderResponseDto> updateOrder(@PathVariable("id") Long id,
-                                              @RequestBody OrderUpdateDto orderUpdateDto) {
+                                              @RequestBody @Valid OrderUpdateDto orderUpdateDto) {
 
         try {
             Orders order = orderService.updateOrder(id, orderUpdateDto);
@@ -90,7 +91,7 @@ public class OrderController {
     // 주문 상태 설정 - 관리자 기능
     @PutMapping("/{id}/order-status")
     public ResponseEntity<OrderResponseDto> setOrderStatus(@PathVariable("id") Long id,
-                                                           @RequestBody OrderManagerUpdateDto orderManagerUpdateDto) {
+                                                           @RequestBody @Valid OrderManagerUpdateDto orderManagerUpdateDto) {
 
         try {
             Orders order = orderService.managerUpdateOrder(id, orderManagerUpdateDto);
@@ -108,7 +109,7 @@ public class OrderController {
     // 주문 취소 - 사용자 기능
     @PutMapping("/{id}/cancel")
     public ResponseEntity<OrderResponseDto> cancelOrder(@PathVariable("id") Long id,
-                                              @RequestBody OrderUpdateDto orderUpdateDto) {
+                                              @RequestBody @Valid OrderUpdateDto orderUpdateDto) {
 
         try {
             Orders canceledOrder = orderService.cancelOrder(id, orderUpdateDto);
