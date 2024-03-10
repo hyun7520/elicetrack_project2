@@ -12,6 +12,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +43,7 @@ public class UserController {
         return userService.updateUser(id, signUpDto);
     }
 
-    @PatchMapping("/role/{id}")
+    @PatchMapping("/{id}/role")
     public User updateRole(@PathVariable Long id, @RequestBody boolean isAdmin) {
         return userService.updateRole(id, isAdmin);
     }
@@ -91,9 +93,12 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    @GetMapping()
+    public ResponseEntity<Page<User>> getAllUsers(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> users = userService.getAllUsers(pageRequest);
         return ResponseEntity.ok(users);
     }
 }

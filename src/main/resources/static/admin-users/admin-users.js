@@ -33,7 +33,17 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 회원 id를 전역변수로 관리함
 let userIdToDelete;
 async function insertUsers() {
-  const users = await Api.get("/users/all");
+
+  let page = 0;
+  document.getElementById('page1').addEventListener('click', () => {
+    page--;
+  });
+
+  document.getElementById('page2').addEventListener('click', () => {
+    page++;
+  });
+
+  const users = await Api.get(`/users?page=${page}&size=10`);
 
   // 총 요약에 활용
   const summary = {
@@ -107,7 +117,7 @@ async function insertUsers() {
       roleSelectBox.className = roleSelectBox[index].className;
 
       // api 요청
-      await Api.patch("/users/role", id, true);
+      await Api.patch(`/users/${id}/role`, true);
     });
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
