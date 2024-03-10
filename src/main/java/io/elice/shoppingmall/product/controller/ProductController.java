@@ -4,10 +4,13 @@ import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,11 +57,12 @@ public class ProductController {
 
     //categoryId로 상품 조회
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Page<Product>> getProductsByCategoryId(
+    public ResponseEntity<List<Product>> getProductsByCategoryId(
             @PathVariable Long categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<Product> products = productService.getProductsByCategoryId(categoryId, page, size);
+        Page<Product> productPage = productService.getProductsByCategoryId(categoryId, page, size);
+        List<Product> products = productPage.getContent();
         return ResponseEntity.ok(products);
     }
 }

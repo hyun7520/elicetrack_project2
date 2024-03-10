@@ -1,25 +1,35 @@
-
+// 수정함.
 async function get(endpoint, params = "") {
-  const apiUrl = params ? `${endpoint}/${params}` : endpoint;
-  console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
+  try {
+    const apiUrl = params ? `${endpoint}/${params}` : endpoint;
+    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
 
-  // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
-  const token = sessionStorage.getItem("token");
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
+    const token = sessionStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-  const res = await fetch(apiUrl, { headers });
+    const res = await fetch(apiUrl, { headers });
 
-  // 응답 코드가 4XX 계열일 때 (400, 403 등)
-  if (!res.ok) {
-    const errorContent = await res.json();
-    const { reason } = errorContent;
+    console.log(res);
 
-    throw new Error(reason);
+    // 응답 코드가 4XX 계열일 때 (400, 403 등)
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+
+      throw new Error(reason);
+    }
+
+    const result = await res.json();
+
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("API 요청 중 오류 발생:", error);
+    throw error;
   }
-
-  const result = await res.json();
-  return result;
 }
+
 
 async function post(endpoint, data) {
   const apiUrl = endpoint;

@@ -1,8 +1,6 @@
 import * as Api from "../api.js";
-import { getImageUrl } from "../aws-s3.js";
 import { navigate, createNavbar } from "../useful-functions.js";
-// import {attach} from "bulma-carousel/src/js";
-
+import bulmaCarousel from "bulma-carousel/dist/js/bulma-carousel.min.js";
 
 // 요소(element), input 혹은 상수
 const sliderDiv = document.querySelector("#slider");
@@ -16,7 +14,6 @@ addAllEvents();
 async function addAllElements() {
   createNavbar();
   await addImageCardsToSlider();
-  attachSlider();
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
@@ -25,15 +22,17 @@ function addAllEvents() {}
 // api에서 카테고리 정보 및 사진 가져와서 슬라이드 카드로 사용
 async function addImageCardsToSlider() {
   const categories = await Api.get("/categories");
-  console.log(categories)
 
   for (const category of categories) {
     // 객체 destructuring
     const { id, title, description, themeClass, imageKey } = category;
 
+    // 이미지를 가져오기
+    const imageUrl = await getImageUrl(imageKey);
+
     sliderDiv.insertAdjacentHTML(
-      "beforeend",
-      `
+        "beforeend",
+        `
       <div class="card" id="category-${id}">
         <div class="notification ${themeClass}">
           <p class="title is-3 is-spaced">${title}</p>
@@ -42,7 +41,7 @@ async function addImageCardsToSlider() {
         <div class="card-image">
           <figure class="image is-3by2">
             <img
-              src="${imageKey}"
+              src="${imageUrl}"
               alt="카테고리 이미지"
             />
           </figure>
@@ -53,8 +52,11 @@ async function addImageCardsToSlider() {
 
     const card = document.querySelector(`#category-${id}`);
 
-    card.addEventListener("click", navigate(`/product/list?category=${title}`));
+    card.addEventListener("click", () => navigate(`/product/list?category=${title}`));
   }
+
+  // 슬라이더에 적용
+  attachSlider();
 }
 
 function attachSlider() {
@@ -78,4 +80,3 @@ function attachSlider() {
     });
   });
 }
-
