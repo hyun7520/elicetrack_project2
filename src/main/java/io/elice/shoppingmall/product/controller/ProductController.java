@@ -3,14 +3,13 @@ package io.elice.shoppingmall.product.controller;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,34 +17,34 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
 
-    // 등록
+    // 상품 등록
     @PostMapping
-    public Product createProduct(@RequestBody ProductRequestDto productRequestDto){
+    public Product createProduct(@Valid @RequestBody ProductRequestDto productRequestDto){
         return productService.createProduct(productRequestDto);
     }
 
-    // 수정
-    @PostMapping("/user/{productId}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto productRequestDto){
+    // 상품 정보 수정
+    @PutMapping("/{productId}")
+    public Product updateProduct(@PathVariable("productId") Long id, @Valid @RequestBody ProductRequestDto productRequestDto){
         return productService.updateProduct(id, productRequestDto);
     }
 
-    // 삭제
-    @DeleteMapping("/user/{productId}") // 삭제 메서드의 URL 변경
-    public ResponseEntity<String> productDelete(@PathVariable("id") Long id){
+    // 상품 정보 삭제
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> productDelete(@PathVariable("productId") Long id){
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product with ID " + id + " has been deleted.");
     }
 
-    // 상세 페이지 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProductDetail(@PathVariable("id") Long id) {
+    // 상품 상세 페이지 조회
+    @GetMapping("/{productId}")
+    public ResponseEntity<Product> getProductDetail(@PathVariable("productId") Long id) {
         Product product = productService.getProductById(id);
 
         if (product != null) {
             return ResponseEntity.ok(product);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product with ID " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -53,5 +52,15 @@ public class ProductController {
     @GetMapping
     public Page<Product> getAllproductList(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size) {
         return productService.getAllproductList(page, size);
+    }
+
+    //categoryId로 상품 조회
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<Product>> getProductsByCategoryId(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Product> products = productService.getProductsByCategoryId(categoryId, page, size);
+        return ResponseEntity.ok(products);
     }
 }
