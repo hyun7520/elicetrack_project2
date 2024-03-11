@@ -3,20 +3,23 @@ package io.elice.shoppingmall.product.controller;
 import io.elice.shoppingmall.product.dto.ReviewRequestDto;
 import io.elice.shoppingmall.product.entity.Review;
 import io.elice.shoppingmall.product.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
+@Validated
 public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰 등록
     @PostMapping
-    public Review createReview(@RequestBody ReviewRequestDto reviewRequestDto){
+    public Review createReview(@Valid @RequestBody ReviewRequestDto reviewRequestDto){
         return reviewService.saveReview(reviewRequestDto);
     }
 
@@ -40,7 +43,7 @@ public class ReviewController {
     }
 
     // UserID로 리뷰 조회
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<Page<Review>> getReviewByUserId(
             @PathVariable Long userId,
             @RequestParam(value = "page", defaultValue = "0") int page,

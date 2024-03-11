@@ -40,64 +40,54 @@ function getCategoryParams() {
 }
 
 async function addProductItemsToContainer(categoryId) {
-  const products = await Api.get(`/products/category/${categoryId}?page=0&size=10`);
+  try {
+    const response = await fetch(`http://localhost/products/category/${categoryId}`);
+    if (!response.ok) {
+      throw new Error('네트워크 오류: ' + response.status);
+    }
+    const products = await response.json();
 
-  for (const product of products.content) {
-    const random = randomId();
-    const imageUrl = await getImageUrl(product.productImageUrl);
+    for (const product of products.content) {
+      const random = randomId();
+      const imageUrl = await getImageUrl(product.productImageUrl);
 
-    productItemContainer.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="message media product-item" id="a${random}">
-        <div class="media-left">
-          <figure class="image">
-            <img src="${imageUrl}" alt="제품 이미지" />
-          </figure>
-        </div>
-        <div class="media-content">
-          <div class="content">
-            <p class="title">${product.productName}</p>
-            <p class="description">${product.content}</p>
-            <p class="price">${addCommas(product.price)}원</p>
+      productItemContainer.insertAdjacentHTML(
+          "beforeend",
+          `
+        <div class="message media product-item" id="a${random}">
+          <div class="media-left">
+            <figure class="image">
+              <img src="${imageUrl}" alt="제품 이미지" />
+            </figure>
+          </div>
+          <div class="media-content">
+            <div class="content">
+              <p class="title">${product.productName}</p>
+              <p class="description">${product.content}</p>
+              <p class="price">${addCommas(product.price)}원</p>
+            </div>
           </div>
         </div>
-      </div>
-      `
-    );
+        `
+      );
 
-    const productItem = document.querySelector(`#a${random}`);
-    productItem.addEventListener(
-        "click",
-        () => navigate(`/product/detail?id=${product.productId}`)
-    );
+      const productItem = document.querySelector(`#a${random}`);
+      productItem.addEventListener(
+          "click",
+          () => navigate(`/product/detail?id=${product.productId}`)
+      );
+    }
+  } catch (error) {
+    console.error('데이터를 불러오는 중 오류가 발생했습니다:', error.message);
   }
 }
 
-async function addPagination(categoryId) {
-  const products = await Api.get(`/products/category/${categoryId}?page=0&size=10`);
-  const totalProducts = products.totalElements; // 총 상품 수
-  const pageSize = 10; // 페이지당 보여줄 상품 수
-  const totalPages = Math.ceil(totalProducts / pageSize); // 페이지 수 계산
-
-  const paginationList = document.getElementById("paginationList"); // 페이지네이션을 추가할 요소
-
-  for (let i = 1; i <= totalPages; i++) {
-    const listItem = document.createElement("li");
-    listItem.innerHTML = `<a class="pagination-link">${i}</a>`;
-
-    listItem.addEventListener("click", async () => {
-      await loadProductsByPage(categoryId, i - 1);
-    });
-
-    paginationList.appendChild(listItem);
-  }
-}
 
 async function loadProductsByPage(categoryId, page) {
-  productItemContainer.innerHTML = ""; // 이전에 표시된 상품을 지웁니다.
+  productItemContainer.innerHTML = "";
 
-  const products = await Api.get(`/products/category/${categoryId}?page=${page}&size=10`);
+  const response = await fetch(`http://localhost/products/category/${categoryId}?page=${page}&size=10`);
+  const products = await response.json();
 
   for (const product of products.content) {
     const random = randomId();

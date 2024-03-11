@@ -20,7 +20,8 @@ public class Category {
     private Long categoryId;
 
     @Column(nullable = false)
-    private String CategoryName;
+    @JoinColumn(name = "category_name")
+    private String categoryName;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -32,12 +33,12 @@ public class Category {
 
     @Builder
     public Category(String name, Category parent) {
-        this.CategoryName = name;
+        this.categoryName = name;
         this.parent = parent;
     }
 
     public void updateCategory(CategoryRequestDto categoryRequestDto){
-        this.CategoryName = categoryRequestDto.getName();
+        this.categoryName = categoryRequestDto.getName();
         this.parent = categoryRequestDto.getParent();
         this.children = categoryRequestDto.getChildren();
     }

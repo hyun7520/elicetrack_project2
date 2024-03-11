@@ -24,13 +24,13 @@ public class CategoryController{
 
     // id로 카테고리 모두 조회
     @GetMapping("/{categoryId}")
-    public ResponseEntity<?> getCategoryById(@PathVariable("categoryId") Long id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable("categoryId") Long id) {
         Category category = categoryService.getCategoryById(id);
 
         if (category != null){
             return ResponseEntity.ok(category);
         }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with ID " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
     }
 
