@@ -251,11 +251,11 @@ async function insertUsers(page = 0, size = 10) {
 
     const roleSelectBox = document.querySelector(`#roleSelectBox-${id}`);
     const deleteButton = document.querySelector(`#deleteButton-${id}`);
-    export const ROLE = { USER: 'USER', ADMIN: 'ADMIN' }
+
     roleSelectBox.addEventListener("change", async () => {
-      if(roleSelectBox.value === ROLE.USER){
+      if(roleSelectBox.value === "USER"){
         alert("관리자는 일반 회원으로 바꿀 수 없습니다.");
-        roleSelectBox.value = ROLE.ADMIN;
+        roleSelectBox.value = "ADMIN";
 
         return;
       }
