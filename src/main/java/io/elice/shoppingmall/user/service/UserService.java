@@ -1,16 +1,21 @@
 package io.elice.shoppingmall.user.service;
 
 
+import io.elice.shoppingmall.user.Dto.DeleteDto;
 import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,10 +40,11 @@ public class UserService {
                         .email(signUpDto.getEmail())
                         .password(signUpDto.getPassword())
                         .nickname(signUpDto.getNickname())
-                        .address(signUpDto.getAddress())
+                        .address1(signUpDto.getAddress1())
+                        .address2(signUpDto.getAddress2())
                         .postcode(signUpDto.getPostcode())
-                        .detailAddress(signUpDto.getDetailAddress())
-                        .extraAddress(signUpDto.getExtraAddress())
+                        .phoneNumber(signUpDto.getPhoneNumber())
+                        .isAdmin(signUpDto.isAdmin())
                         .build();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -67,4 +73,57 @@ public class UserService {
                 .compact();
     }
 
+    @Transactional
+    public User updateUser(Long id, SignUpDto signUpDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. id=" + id));
+        if(!user.getNickname().equals(signUpDto.getNickname())){
+            user.setNickname(signUpDto.getNickname());
+        }
+        if(signUpDto.getPassword() != null){
+            user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
+        }
+        if(!user.getPostcode().equals(signUpDto.getPostcode())){
+            user.setPostcode(signUpDto.getPostcode());
+        }
+        if(!user.getAddress1().equals(signUpDto.getAddress1())){
+            user.setAddress1(signUpDto.getAddress1());
+        }
+        if(!user.getAddress2().equals(signUpDto.getAddress2())){
+            user.setAddress2(signUpDto.getAddress2());
+        }
+        if(!user.getPhoneNumber().equals(signUpDto.getPhoneNumber())){
+            user.setPhoneNumber(signUpDto.getPhoneNumber());
+        }
+        return userRepository.save(user);
+    }
+
+    public boolean checkPassword(DeleteDto deleteDto) {
+        User user = userRepository.findById(deleteDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        return passwordEncoder.matches(deleteDto.getPassword(), user.getPassword());
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    public User updateRole(Long id, boolean isAdmin) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+        user.setAdmin(isAdmin);
+        return userRepository.save(user);
+    }
+
+    public int getUserCount() {
+        return (int) userRepository.count();
+    }
+
+    public int getAdminCount() {
+        return userRepository.countByIsAdmin(true);
+    }
 }
