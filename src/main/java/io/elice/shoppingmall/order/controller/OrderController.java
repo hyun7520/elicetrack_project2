@@ -32,6 +32,7 @@ public class OrderController {
 
         Orders order = orderService.createOrder(orderRequestDto);
         return ResponseEntity.ok(OrderResponseDto.builder()
+                .id(order.getId())
                 .order(order)
                 .message("주문이 정상적으로 접수되었습니다!")
                 .build());

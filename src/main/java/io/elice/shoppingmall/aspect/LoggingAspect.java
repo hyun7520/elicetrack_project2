@@ -14,12 +14,12 @@ public class LoggingAspect {
 
     Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
-    @Pointcut("execution(* io.elice.shoppingmall.order.controller.*.*(..))")
+    @Pointcut("execution(* io.elice.shoppingmall.*.*.*.*(..))")
     private void orderController() {}
 
     @Before("orderController()")
     public void beforeLog(JoinPoint joinPoint) {
-        logger.info("다음 {} 클래스의 {} 메서드를 실행합니다!: ", joinPoint.getSignature().getClass() , joinPoint.getSignature().getName());
+        logger.info("다음 {} 메서드를 실행합니다!: ", joinPoint.getSignature().getName());
     }
 
     @After("orderController()")
@@ -34,6 +34,6 @@ public class LoggingAspect {
 
     @AfterThrowing("orderController()")
     public void afterThrowingLog(JoinPoint joinPoint) {
-        logger.warn("{} 클래스의 {} 메서드에서 문제가 생겼습니다!", joinPoint.getSignature().getClass(), joinPoint.getSignature().getName());
+        logger.warn("{} 메서드에서 문제가 생겼습니다!", joinPoint.getSignature().getName());
     }
 }

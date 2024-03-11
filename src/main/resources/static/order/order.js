@@ -27,6 +27,8 @@ const deliveryFeeElem = document.querySelector("#deliveryFee");
 const orderTotalElem = document.querySelector("#orderTotal");
 const checkoutButton = document.querySelector("#checkoutButton");
 
+const result = [];
+
 const requestOption = {
   1: "직접 수령하겠습니다.",
   2: "배송 전 연락바랍니다.",
@@ -41,10 +43,11 @@ addAllEvents();
 
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
-  renderData();
+  deleteFunctions();
   createNavbar();
   insertOrderSummary();
 }
+
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
@@ -54,10 +57,26 @@ function addAllEvents() {
   checkoutButton.addEventListener("click", doCheckout);
 }
 
-// 데이터 렌더링
-async function renderData() {
+// 데이터 가져오기
+async function fetchData() {
+  try {
+    const response = await fetch('http://localhost:8080/carts/user/1/items');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    window.alert("오류가 발생했습니다!", error)
+  }
+}
+
+// 장바구니 데이터 출력 및 삭제 기능 추가
+async function deleteFunctions() {
+
   const orderList = document.querySelector('.order-list');
   const data = await fetchData();
+
+  if (data.length == 0) {
+    window.location.href = 'http://localhost:8080/home/home.html';
+  }
 
   console.log(data);
 
@@ -65,37 +84,42 @@ async function renderData() {
 
   while (i < data.length) {
 
+    const list = [];
     const item = data[i];
-
-    let list = [];
-    let result = [];
 
     const card = document.createElement('div');
     const title = document.createElement('h5');
     const price = document.createElement('p');
     const checkBox = document.createElement('input');
     const deleteButton = document.createElement('button');
+    deleteButton.innerText = "제품 삭제";
 
     title.textContent = item.productName;
     price.textContent = item.price;
     checkBox.setAttribute('type', 'checkbox')
     checkBox.setAttribute('name', 'to-delete')
     checkBox.setAttribute('value', item.id);
-    checkBox.setAttribute('onclick', 'insertValuesIntoList(result)')
-    deleteButton.setAttribute('id', 'delete-btn');
-    deleteButton.innerText = "제품 삭제";
+    checkBox.setAttribute('class', "check");
+    checkBox.addEventListener('change', function () {
+      if (this.checked) {
+        result.push(item.id)
+      } else {
+        result.splice(result.indexOf(item.id), 1);
+      }
+      console.log(result);
+    })
 
-    list.push(item.id);
-
-    deleteButton.addEventListener('click', async function (event) {
-      if (event.target.id === 'delete-btn') {
+    deleteButton.addEventListener("click", async function () {
+      if (window.confirm("제품을 장바구니에 삭제할까요?")) {
         try {
+          list.push(item.id);
           await deleteData(list);
         } catch (error) {
           window.alert("다음 오류가 발생했습니다. :", error);
         }
         location.reload();
       }
+
     });
 
     card.appendChild(title);
@@ -108,28 +132,22 @@ async function renderData() {
     i++;
   }
 
-  // const deleteSelectedButton = document.getElementById('delete-all');
-  // deleteSelectedButton.addEventListener('click', deleteSelectedData(result));
+  document.querySelector('#delete-all').addEventListener("click", deleteSelectedData);
 }
 
-function insertValuesIntoList(result) {
-  const query = 'input[name="to-delete"]:checked'
-  const value = document.querySelectorAll(query);
-
-  value.forEach((v) => {
-    result.push(v);
-  })
-}
-
-async function deleteSelectedData(result) {
+// 선택된 제품들 모두 삭제
+async function deleteSelectedData() {
   try {
-    await deleteData(result);
+    if (window.confirm("선택된 제품들을 모두 삭제할까요?") == true) {
+      await deleteData(result);
+    }
   } catch (error) {
     window.alert("다음 오류가 발생했습니다. :", error);
   }
   location.reload();
 }
 
+// 제품 삭제 기능
 async function deleteData(list) {
   await fetch(`http://localhost:8080/carts/user/1/items`, {
     method: "DELETE",
@@ -138,17 +156,6 @@ async function deleteData(list) {
     },
     body: JSON.stringify(list)
   })
-}
-
-// 데이터 가져오기
-async function fetchData() {
-  try {
-    const response = await fetch('http://localhost:8080/carts/user/1/items')
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    window.alert("오류가 발생했습니다!", error)
-  }
 }
 
 
@@ -288,9 +295,9 @@ async function doCheckout() {
   const address2 = address2Input.value;
   const requestType = requestSelectBox.value;
   const customRequest = customRequestInput.value;
-  const summaryTitle = productsTitleElem.innerText;
-  const totalPrice = convertToNumber(orderTotalElem.innerText);
-  const { selectedIds } = await getFromDb("order", "summary");
+  // const summaryTitle = productsTitleElem.innerText;
+  // const totalPrice = convertToNumber(orderTotalElem.innerText);
+  const selectedItems = await fetchData("http://localhost:8080/carts/user/1/items");
 
   if (!receiverName || !receiverPhoneNumber || !postalCode || !address2) {
     return alert("배송지 정보를 모두 입력해 주세요.");
@@ -309,60 +316,67 @@ async function doCheckout() {
     request = requestOption[requestType];
   }
 
-  const address = {
-    postalCode,
-    address1,
-    address2,
-    receiverName,
-    receiverPhoneNumber,
-  };
+  const address = postalCode + address2 + receiverName + receiverPhoneNumber;
 
   try {
     // 전체 주문을 등록함
-    const orderData = await Api.post("/api/order", {
-      summaryTitle,
-      totalPrice,
-      address,
-      request,
+    const order = await fetch("http://localhost:8080/orders", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        "userId": 1,
+        "receiver": receiverName,
+        "address": address,
+        "request": request,
+        "totalCost": 30000
+      })
     });
 
-    const orderId = orderData._id;
+    console.log(order.get);
 
     // 제품별로 주문아이템을 등록함
-    for (const productId of selectedIds) {
-      const { quantity, price } = await getFromDb("cart", productId);
-      const totalPrice = quantity * price;
+    // for (const product of selectedItems) {
 
-      await Api.post("/api/orderitem", {
-        orderId,
-        productId,
-        quantity,
-        totalPrice,
-      });
+    //   const { productId, amount, price } = product;
+    //   const totalPrice = amount * price;
 
-      // indexedDB에서 해당 제품 관련 데이터를 제거함
-      await deleteFromDb("cart", productId);
-      await putToDb("order", "summary", (data) => {
-        data.ids = data.ids.filter((id) => id !== productId);
-        data.selectedIds = data.selectedIds.filter((id) => id !== productId);
-        data.productsCount -= 1;
-        data.productsTotal -= totalPrice;
-      });
-    }
+    //   await fetch(`http://localhost:8080/orders/${order.id}/details`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       "productId": productId,
+    //       "quantity": amount,
+    //       "price": totalPrice
+    //     })
+    //   });
 
-    // 입력된 배송지정보를 유저db에 등록함
-    const data = {
-      phoneNumber: receiverPhoneNumber,
-      address: {
-        postalCode,
-        address1,
-        address2,
-      },
-    };
-    await Api.post("/api/user/deliveryinfo", data);
+    //   // indexedDB에서 해당 제품 관련 데이터를 제거함
+    //   // await deleteFromDb("cart", productId);
+    //   // await putToDb("order", "summary", (data) => {
+    //   //   data.ids = data.ids.filter((id) => id !== productId);
+    //   //   data.selectedIds = data.selectedIds.filter((id) => id !== productId);
+    //   //   data.productsCount -= 1;
+    //   //   data.productsTotal -= totalPrice;
+    //   // });
+    // }
 
-    alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
-    window.location.href = "/order/complete";
+    // await fetch('http://localhost:8080/carts/user/1'), {
+    //   method: 'DELETE'
+    // }
+
+    // // 입력된 배송지정보를 유저db에 등록함
+    // // const data = {
+    // //   phoneNumber: receiverPhoneNumber,
+    // //   address: {
+    // //     postalCode,
+    // //     address1,
+    // //     address2,
+    // //   },
+    // // };
+    // // await Api.post("/api/user/deliveryinfo", data);
+
+    // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
+    // window.location.href = "http://localhost:8080/home/home.html";
   } catch (err) {
     console.log(err);
     alert(`결제 중 문제가 발생하였습니다: ${err.message}`);
