@@ -5,7 +5,6 @@ import io.elice.shoppingmall.order.dto.OrderRequestDto;
 import io.elice.shoppingmall.order.dto.OrderUpdateDto;
 import io.elice.shoppingmall.order.model.Orders;
 import io.elice.shoppingmall.order.repository.OrderRepository;
-import io.elice.shoppingmall.order.response.OrderResponse;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -13,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,7 +30,7 @@ public class OrderService {
         Optional<User> foundUser = userRepository.findById(orderRequestDto.getUserId());
 
         if(foundUser.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("사용자가 존재하지 않습니다!");
         }
 
         Orders order = Orders.builder()
@@ -74,17 +71,19 @@ public class OrderService {
     // 주문 수정
     @Transactional
     public Orders updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
-        
-        if(!checkOrder(id)) {
-            return null;
-        }
-        Optional<Orders> foundOrder = orderRepository.findById(id);
-        Orders toUpdateOrder = foundOrder.get();
+
+        Orders toUpdateOrder = checkOrder(id);
         
         // 배송 중일 경우 주소와 같은 정보는 수정이 불가능
         // boolean을 return 하도록 수정
-        if(String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("shipping") || String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("complete")) {
-            return null;
+        if(String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("shipping")) {
+            throw new IllegalArgumentException("배송 중인 제품입니다!");
+        }
+        if(String.valueOf(toUpdateOrder.getDeliveryProcess()).equals("complete")) {
+            throw new IllegalArgumentException("배송이 완료된 주문입니다!");
+        }
+        if(String.valueOf(toUpdateOrder.getOrderProcess()).equals("canceled")) {
+            throw new IllegalArgumentException("취소된 주문입니다!");
         }
         toUpdateOrder.updateOrder(orderUpdateDto);
 
@@ -93,16 +92,22 @@ public class OrderService {
 
     // 주문 취소 - 사용자
     @Transactional
-    public Orders cancelOrder(Long id, OrderUpdateDto orderUpdateDto) {
+    public Orders cancelOrder(Long id) {
 
         Optional<Orders> foundOrder = orderRepository.findById(id);
 
         if(foundOrder.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("주문이 존재하지 않습니다!");
         }
         Orders toCancelOrder = foundOrder.get();
+        if(String.valueOf(toCancelOrder.getDeliveryProcess()).equals("shipping")) {
+            throw new IllegalArgumentException("배송 중인 제품입니다!");
+        }
+        if(String.valueOf(toCancelOrder.getDeliveryProcess()).equals("complete")) {
+            throw new IllegalArgumentException("배송이 완료된 주문입니다!");
+        }
         if(String.valueOf(toCancelOrder.getOrderProcess()).equals("canceled")) {
-            return null;
+            throw new IllegalArgumentException("이미 취소된 주문입니다!");
         }
         toCancelOrder.cancelOrder();
         return orderRepository.save(toCancelOrder);
@@ -115,7 +120,7 @@ public class OrderService {
         Optional<Orders> foundOrder = orderRepository.findById(id);
 
         if(foundOrder.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("주문이 존재하지 않습니다!");
         }
         Orders toUpdateOrder = foundOrder.get();
         toUpdateOrder.managerUpdateOrder(orderManagerUpdateDto);
@@ -125,18 +130,21 @@ public class OrderService {
 
     // 주문 삭제(관리자 권한만)
     @Transactional
-    public boolean deleteOrder(Long id ) {
+    public String deleteOrder(Long id ) {
 
-        if(!checkOrder(id)) {
-            return false;
-        }
+        Orders toDeleteOrder = checkOrder(id);
+
         orderRepository.deleteById(id);
-        return true;
+
+        return toDeleteOrder.getReceiver();
     }
 
     // 수정, 삭제하고자하는 주문이 존재하는지 확인
-    public boolean checkOrder(Long id) {
+    public Orders checkOrder(Long id) {
         Optional<Orders> foundOrder = orderRepository.findById(id);
-        return foundOrder.isPresent();
+        if(foundOrder.isPresent()) {
+            return foundOrder.get();
+        }
+        throw new IllegalArgumentException("주문이 존재하지 않습니다!");
     }
 }
