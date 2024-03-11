@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@Data
 public class OrderResponseDto {
 
     private Date orderDate;
@@ -22,8 +23,11 @@ public class OrderResponseDto {
     private Long totalCost;
 
     private List<OrderDetail> orderDetails;
+    private String userName;
+    private String message;
 
-    public OrderResponseDto(Orders order) {
+    @Builder
+    public OrderResponseDto(Orders order, String message, String userName) {
 
         this.orderDate = order.getOrderDate();
         this.deliveryDate = order.getDeliveryDate();
@@ -34,5 +38,7 @@ public class OrderResponseDto {
         this.request = order.getRequest();
         this.totalCost = order.getTotalCost();
         this.orderDetails = order.getOrderDetails();
+        this.message = message;
+        this.userName = userName;
     }
 }

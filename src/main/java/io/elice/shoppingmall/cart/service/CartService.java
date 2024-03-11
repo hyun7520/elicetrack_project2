@@ -18,14 +18,14 @@ public class CartService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createCart(Long id) {
+    public Cart createCart(Long id) {
 
         Optional<User> foundUser = userRepository.findById(id);
-        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
-
         if(foundUser.isEmpty()) {
             throw new IllegalArgumentException("사용자가 존재하지 않습니다");
         }
+
+        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
         if(foundCart.isPresent()) {
             throw new IllegalArgumentException("이미 장바구니가 존재합니다!");
         }
@@ -34,12 +34,12 @@ public class CartService {
                 .user(foundUser.get())
                 .build();
 
-        cartRepository.save(newCart);
+        return cartRepository.save(newCart);
     }
 
-    public Cart findCartById(Long id) {
+    public Cart findCartByUserId(Long userId) {
 
-        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
+        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
 
         if(foundCart.isEmpty()) {
             throw new IllegalArgumentException("장바구니가 존재하지 않습니다.");
@@ -49,16 +49,19 @@ public class CartService {
     }
 
     @Transactional
-    public Cart deleteCart(Long userId) {
+    public String deleteCartByUserId(Long userId) {
 
+        Optional<User> foundUser = userRepository.findById(userId);
         Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
 
+        if(foundUser.isEmpty()) {
+            throw new IllegalArgumentException("사용자가 존재하지 않습니다!");
+        }
         if(foundCart.isEmpty()) {
-            throw new IllegalArgumentException("장바구니가 존재하지 않습니다.");
+            throw new IllegalArgumentException("장바구니가 존재하지 않습니다!");
         }
 
         cartRepository.delete(foundCart.get());
-
-        return null;
+        return foundUser.get().getNickname();
     }
 }

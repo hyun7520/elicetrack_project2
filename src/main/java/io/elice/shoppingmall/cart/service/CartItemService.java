@@ -8,6 +8,8 @@ import io.elice.shoppingmall.cart.repository.CartItemRepository;
 import io.elice.shoppingmall.cart.repository.CartRepository;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.repository.ProductRepository;
+import io.elice.shoppingmall.user.entity.User;
+import io.elice.shoppingmall.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class CartItemService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public CartItem addItemToCart(Long id, Long productId, int qty) {
@@ -46,7 +49,7 @@ public class CartItemService {
         cartItemRepository.save(cartItem);
         foundCart.get().addCartItem(cartItem);
 
-        return null;
+        return cartItem;
     }
 
     public List<CartItemResponseDto> getAllItemsInCart(Long id) {
@@ -92,9 +95,15 @@ public class CartItemService {
     }
 
     @Transactional
-    public CartItem deleteAllSelected(Long id, List<Long> selectedItemIds) {
+    public String deleteAllSelected(Long userId, List<Long> selectedItemIds) {
 
-        if(cartRepository.findCartByUser_Id(id).isEmpty()) {
+        Optional<User> foundUser = userRepository.findById(userId);
+
+        if(foundUser.isEmpty()) {
+            throw new IllegalArgumentException("사용자가 존재하지 않습니다!");
+        }
+
+        if(cartRepository.findCartByUser_Id(userId).isEmpty()) {
             throw new IllegalArgumentException("장바구니가 존재하지 않습니다!");
         }
 
@@ -104,7 +113,7 @@ public class CartItemService {
 
         cartItemRepository.deleteAllById(selectedItemIds);
 
-        return null;
+        return foundUser.get().getNickname();
     }
 
 
