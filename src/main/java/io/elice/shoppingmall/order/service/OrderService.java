@@ -130,7 +130,7 @@ public class OrderService {
 
     // 주문 삭제(관리자 권한만)
     @Transactional
-    public String deleteOrder(Long id ) {
+    public String deleteOrder(Long id) {
 
         Orders toDeleteOrder = checkOrder(id);
 

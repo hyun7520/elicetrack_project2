@@ -34,7 +34,7 @@
   ></script>
   <!-- AWS S3 사진 업로드용 -->
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
-  <!--  <script src="../api.js"></script>-->
+<!--  <script src="../api.js"></script>-->
   <!-- 커스텀 css, js -->
   <link rel="stylesheet" href="/home/home.css" />
   <script src="/home/home.js" type="module" defer></script>
@@ -104,17 +104,28 @@
       <button id="test" onclick="test()">
         테스트
       </button>
-      <button id="adminPageBtn" style="display: none;">어드민 페이지</button>
     </div>
   </div>
 </nav>
 
-<!-- 카테고리 블록 -->
+<!-- 슬라이드 이미지 -->
 <section class="section">
   <div class="container is-clipped">
-    <div id="categoryBlocks"></div>
+    <div class="slider-arrow-container">
+      <button class="slider-arrow slider-arrow-left" id="sliderArrowLeft">
+            <span class="icon is-large">
+              <i class="fas fa-chevron-left fa-2x"></i>
+            </span>
+      </button>
+      <button class="slider-arrow slider-arrow-right" id="sliderArrowRight">
+            <span class="icon is-large">
+              <i class="fas fa-chevron-right fa-2x"></i>
+            </span>
+      </button>
+    </div>
+
+    <div id="slider"></div>
   </div>
 </section>
-
 </body>
 </html>

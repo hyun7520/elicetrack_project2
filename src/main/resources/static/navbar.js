@@ -92,8 +92,7 @@ const addNavElements = (keyString) => {
       if (logoutElem) {
         logoutElem.addEventListener('click', () => {
           sessionStorage.removeItem('token');
-          sessionStorage.removeItem('id');
-          sessionStorage.removeItem('isAdmin');
+          sessionStorage.removeItem('admin');
 
           window.location.href = '/';
         });

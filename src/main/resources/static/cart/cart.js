@@ -18,7 +18,7 @@ const deliveryFeeElem = document.querySelector("#deliveryFee");
 const orderTotalElem = document.querySelector("#orderTotal");
 const purchaseButton = document.querySelector("#purchaseButton");
 
-const checked = [];
+let checked = [];
 
 addAllElements();
 addAllEvents();
@@ -41,7 +41,6 @@ function addAllEvents() {
 async function insertProductsfromCart() {
   const response = await fetch('http://localhost:8080/carts/user/1/items');
   const products = await response.json();
-  console.log(products);
 
   let i = 0;
 
@@ -51,8 +50,8 @@ async function insertProductsfromCart() {
     const product = products[i]
 
     // 객체 destructuring
-    const { id, amount, productName, price, brandName, productId } = product;
-
+    const { id, productName, price, brandName, productId } = product;
+    let { amount } = product;
     // const imageUrl = await getImageUrl(imageKey);
     // const isSelected = selectedIds.includes(_id);
 
@@ -133,7 +132,7 @@ async function insertProductsfromCart() {
       if (this.checked) {
         checked.push(id);
       } else {
-        checked.splice(checked.indexOf(id), 1);
+        checked = checked.filter(toDelete => toDelete != id)
       }
       console.log(checked);
     })
@@ -154,6 +153,34 @@ async function insertProductsfromCart() {
     deletespan.setAttribute('class', 'icon');
     const deleteicon = document.createElement('i');
     deleteicon.setAttribute('class', 'fas fa-trash-can');
+
+    const plusqButton = document.querySelector(`#plus-${id}`);
+    const minusqButton = document.querySelector(`#minus-${id}`);
+    let amountInput = document.querySelector(`#quantityInput-${id}`);
+    let amountCalculate = document.querySelector(`#quantity-${id}`);
+    let totalCal = document.querySelector(`#total-${id}`);
+
+    const unit = "원";
+
+    plusqButton.addEventListener('click', async function () {
+      if (amount < 100) {
+        amount += 1;
+        amountInput.value = amountCalculate.innerHTML = amount;
+        totalCal.innerHTML = `${addCommas(amount * price)}` + unit;
+      } else {
+        window.alert("최대 구매 가능 개수는 99개입니다!");
+      }
+    })
+
+    minusqButton.addEventListener('click', async function () {
+      if (amount != 1) {
+        amount -= 1;
+        amountInput.value = amountCalculate.innerHTML = amount;
+        totalCal.innerHTML = `${addCommas(amount * price)}` + unit;
+      } else {
+        window.alert("1개 이상 구매하셔야 합니다!");
+      }
+    })
 
     deletespan.appendChild(deleteicon);
     deleteOneButton.appendChild(deletespan);
@@ -193,8 +220,8 @@ async function insertProductsfromCart() {
     //   .addEventListener("click", navigate(`/product/detail?id=${_id}`));
 
     // document
-    //   .querySelector(`#plus-${_id}`)
-    //   .addEventListener("click", () => increaseItemQuantity(_id));
+    //   .querySelector(`#plus-${id}`)
+    //   .addEventListener("click", () => increaseItemQuantity(id));
 
     // document
     //   .querySelector(`#minus-${_id}`)
@@ -457,7 +484,7 @@ async function updateOrderSummary(id, type) {
   const isRemoveTemp = type.includes("removeTemp");
   const isRemovePermanent = type.includes("removePermanent");
   const isRemove = isRemoveTemp || isRemovePermanent;
-  const isItemChecked = document.querySelector(`#checkbox-${id}`).checked;
+  // const isItemChecked = document.querySelector(`#checkbox-${id}`).checked;
   const isDeleteWithoutChecked = isDeleteButton && !isItemChecked;
 
   // 업데이트에 사용될 변수

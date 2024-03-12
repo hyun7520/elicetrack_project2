@@ -18,14 +18,14 @@ public class CartService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Cart createCart(Long id) {
+    public Cart createCart(Long userId) {
 
-        Optional<User> foundUser = userRepository.findById(id);
+        Optional<User> foundUser = userRepository.findById(userId);
         if(foundUser.isEmpty()) {
             throw new IllegalArgumentException("사용자가 존재하지 않습니다");
         }
 
-        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
+        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
         if(foundCart.isPresent()) {
             throw new IllegalArgumentException("이미 장바구니가 존재합니다!");
         }
