@@ -11,8 +11,7 @@ import java.util.List;
 public class CategoryResponseDto {
     private String name;
     private String code;
-    private Category parent;
+    private Long parent;
     private String content;
     private String imageUrl;
-    private List<Category> children;
 }

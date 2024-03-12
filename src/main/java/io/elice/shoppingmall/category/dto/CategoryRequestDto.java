@@ -13,11 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryRequestDto {
-    private String name;
+    private String categoryName;
     private String code;
-    private Category parent;
+    private Long parentId;
     private String content;
     private String imageUrl;
-
-    private List<Category> children;
 }

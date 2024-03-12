@@ -23,13 +23,8 @@ public class Category {
     @JoinColumn(name = "category_name")
     private String categoryName;
 
-    @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Category parent;
-
-    @OneToMany(mappedBy = "parent")
-    @JsonIgnore
-    private List<Category> children;
+    private Long parentId;
 
     @Column(nullable = false)
     @JoinColumn(name = "content")
@@ -39,16 +34,16 @@ public class Category {
     private String imageUrl;
 
     @Builder
-    public Category(String name, Category parent) {
-        this.categoryName = name;
-        this.parent = parent;
+    public Category(String categoryName, Long parentId) {
+        this.categoryName = categoryName;
+        this.parentId = parentId;
         this.imageUrl = imageUrl;
     }
 
     public void updateCategory(CategoryRequestDto categoryRequestDto){
-        this.categoryName = categoryRequestDto.getName();
-        this.parent = categoryRequestDto.getParent();
-        this.children = categoryRequestDto.getChildren();
+        this.categoryName = categoryRequestDto.getCategoryName();
+        this.parentId = categoryRequestDto.getParentId();
+        this.content = categoryRequestDto.getContent();
         this.imageUrl = categoryRequestDto.getImageUrl();
     }
 }

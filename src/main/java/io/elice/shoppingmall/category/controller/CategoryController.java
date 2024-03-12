@@ -17,8 +17,12 @@ public class CategoryController{
 
     // 카테고리 모두 조회
     @GetMapping
-    public List<Category> getAllcategory() {
-        return categoryService.getAllcategory();
+    public List<Category> getAllcategory(@RequestParam(value = "parent", required = false) Long parentId) {
+        if (parentId == null) {
+            return categoryService.getAllCategoriesWithNullParent();
+        } else {
+            return categoryService.findByParentId(parentId);
+        }
     }
 
     // id로 카테고리 모두 조회
@@ -51,10 +55,9 @@ public class CategoryController{
         return categoryService.updateById(id, categoryRequestDto);
     }
 
-    // 카테고리 이미지 업로드
-//    @PostMapping("/{categoryId}/image")
-//    public Category uploadCategoryImage(@PathVariable("categoryId") Long id, @RequestParam("image_url") String imageUrl) {
-//        return categoryService.uploadCategoryImage(id, imageUrl);
-//    }
-
+    // 상위 카테고리의 하위 카테고리 조회
+    @GetMapping("/{categoryId}/subcategories")
+    public List<Category> getSubcategories(@PathVariable("categoryId") Long categoryId) {
+        return categoryService.findByParentCategoryId(categoryId);
+    }
 }

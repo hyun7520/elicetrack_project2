@@ -16,7 +16,7 @@ function addAllEvents() {}
 // api에서 카테고리 정보 및 사진 가져와서 블록으로 사용
 async function addImageCardsToBlocks() {
   try {
-    const response = await fetch("http://localhost:8080/categories");
+    const response = await fetch("http://localhost:8080/categories?parentId=null");
     if (!response.ok) {
       throw new Error("Failed to fetch categories");
     }
@@ -60,12 +60,104 @@ async function addImageCardsToBlocks() {
     // 카드 클릭 시 해당 카테고리의 상품 목록 페이지로 이동
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', async () => {
         const categoryId = card.getAttribute('data-categoryId');
-        window.location.href = (`/product-list/product-list.html?categoryId=${categoryId}`);
+        try {
+          const response = await fetch(`http://localhost:8080/categories/${categoryId}/subcategories`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch subcategories");
+          }
+          const subcategories = await response.json();
+
+          // 하위 카테고리가 있는 경우 팝업 창 표시
+          if (subcategories.length > 0) {
+            const selectedSubcategory = await selectSubcategory(subcategories);
+            if (selectedSubcategory) {
+              window.location.href = `/product-list/product-list.html?categoryId=${selectedSubcategory.categoryId}`;
+            }
+          } else {
+            // 하위 카테고리가 없는 경우 알림 표시
+            showNoSubcategoriesAlert();
+          }
+        } catch (error) {
+          console.error("Error fetching subcategories:", error);
+        }
       });
     });
   } catch (error) {
     console.error("Error fetching categories:", error);
   }
+}
+
+// 하위 카테고리 선택 팝업 창 표시 함수
+async function selectSubcategory(subcategories) {
+  return new Promise((resolve) => {
+    const modal = document.createElement('div');
+    modal.classList.add('modal', 'is-active');
+    modal.innerHTML = `
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <p>하위 카테고리를 선택하세요:</p>
+          <div class="content">
+            ${subcategories.map(subcategory => `
+              <a href="#" class="subcategory" data-categoryId="${subcategory.categoryId}">${subcategory.categoryName}</a>
+            `).join('')}
+          </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    // 하위 카테고리 링크 클릭 시 해당 카테고리의 categoryId를 resolve하여 반환
+    modal.querySelectorAll('.subcategory').forEach(subcategoryLink => {
+      subcategoryLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        const selectedCategoryId = event.target.getAttribute('data-categoryId');
+        modal.remove();
+        resolve({ categoryId: selectedCategoryId });
+      });
+    });
+
+    // 모달 닫기 버튼 클릭 시 모달 닫기
+    modal.querySelector('.modal-close').addEventListener('click', () => {
+      modal.remove();
+      navigate('/home.html');
+    });
+
+    // 모달 배경 클릭 시 모달 닫기
+    modal.querySelector('.modal-background').addEventListener('click', () => {
+      modal.remove();
+      navigate('/home.html');
+    });
+  });
+}
+
+// 하위 카테고리가 없는 경우 알림 표시
+function showNoSubcategoriesAlert() {
+  const modal = document.createElement('div');
+  modal.classList.add('modal', 'is-active');
+  modal.innerHTML = `
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <div class="box">
+        <p>소속된 카테고리가 없습니다.</p>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // 닫기 버튼 클릭 시 모달 닫기
+  modal.querySelector('.modal-close').addEventListener('click', () => {
+    modal.remove();
+    navigate('/home.html');
+  });
+
+  // 모달 배경 클릭 시 모달 닫기
+  modal.querySelector('.modal-background').addEventListener('click', () => {
+    modal.remove();
+    navigate('/home.html');
+  });
 }

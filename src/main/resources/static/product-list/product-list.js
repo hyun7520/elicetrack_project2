@@ -38,7 +38,11 @@ function getCategoryParams() {
   return categoryId;
 }
 
+
+// 겹치는 코드 합치자!!!
 async function addProductItemsToContainer(categoryId) {
+  productItemContainer.innerHTML = "";
+
   try {
     const response = await fetch(`http://localhost:8080/products/category/${categoryId}`);
     if (!response.ok) {
@@ -51,12 +55,12 @@ async function addProductItemsToContainer(categoryId) {
 
     for (const product of products.content) {
       const random = randomId();
-      const imageUrl = `http://localhost:8080/attach/images/${product.productImageUrl}`;
+      const imageUrl = `http://localhost:8080${product.productImageUrl}`;
 
       productItemContainer.insertAdjacentHTML(
           "beforeend",
           `
-        <div class="message media product-item" id="a${random}">
+        <div class="message media product-item" id="a${random}" data-productId="${product.productId}">
           <div class="media-left">
             <figure class="image">
               <img src="${imageUrl}" alt="제품 이미지"/>
@@ -101,9 +105,9 @@ async function addPagination(categoryId) {
     const data = await response.json();
     const totalPages = data.totalPages;
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = 0; i < totalPages; i++) {
       const pageLink = document.createElement("a");
-      pageLink.textContent = i;
+      pageLink.textContent = i + 1;
       pageLink.href = `javascript:void(0);`;
       pageLink.addEventListener("click", () => loadProductsByPage(categoryId, i));
 
@@ -123,33 +127,42 @@ async function loadProductsByPage(categoryId, page) {
       throw new Error("Failed to fetch products");
     }
     const products = await response.json();
+    console.log(products);
 
     for (const product of products.content) {
       const random = randomId();
-      const imageUrl = `http://localhost:8080/attach/images/${product.productImageUrl}`;
+      const imageUrl = `http://localhost:8080${product.productImageUrl}`;
 
-      const productItem = document.createElement("div");
-      productItem.classList.add("message", "media", "product-item");
-      productItem.id = `a${random}`;
-      productItem.innerHTML = `
-        <div class="media-left">
-          <figure class="image">
-            <img src="${imageUrl}" alt="제품 이미지" />
-          </figure>
+      productItemContainer.insertAdjacentHTML(
+          "beforeend",
+          `
+        <div class="message media product-item" id="a${random}" data-productId="${product.productId}">
+            <div class="media-left">
+                <figure class="image">
+                    <img src="${imageUrl}" alt="제품 이미지"/>
+                </figure>
+            </div>
+            <div class="media-content">
+                <div class="content">
+                    <p class="title">${product.productName}</p>
+                    <p class="description">${product.content}</p>
+                    <p class="price">${addCommas(product.price)}원</p>
+                </div>
+            </div>
         </div>
-        <div class="media-content">
-          <div class="content">
-            <p class="title">${product.productName}</p>
-            <p class="description">${product.content}</p>
-            <p class="price">${addCommas(product.price)}원</p>
-          </div>
-        </div>
-      `;
+        `
+      );
 
-      productItem.addEventListener("click", () => navigate(`/product-detail/product-detail.html?id=${product.productId}`));
-
-      productItemContainer.appendChild(productItem);
+      const productItem = document.querySelector(`#a${random}`);
+      productItem.addEventListener(
+          "click",
+          () => {
+            const productId = productItem.getAttribute('data-productId');
+            window.location.href = `/product-detail/product-detail.html?productId=${productId}`;
+          }
+      );
     }
+
   } catch (error) {
     console.error('데이터를 불러오는 중 오류가 발생했습니다:', error.message);
   }

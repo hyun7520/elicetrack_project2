@@ -21,18 +21,27 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    // 부모 id로 카테고리 찾기
+    // 부모 카테고리 아이디로 카테고리 찾기
     public List<Category> findByParentId(Long parentId) {
-        return categoryRepository.findByParentCategoryId(parentId);
+        return categoryRepository.findByParentId(parentId);
+    }
+
+    // 부모 카테고리의 categoryId를 사용하여 하위 카테고리 반환
+    public List<Category> findByParentCategoryId(Long parentCategoryId) {
+        return categoryRepository.findByParentId(parentCategoryId);
+    }
+
+    // 부모 카테고리 아이디가 null인 모든 카테고리 반환
+    public List<Category> getAllCategoriesWithNullParent() {
+        return categoryRepository.findByParentIdIsNull();
     }
 
     // 카테고리 생성
     @Transactional
     public Category createCategory(CategoryRequestDto categoryRequestDto) {
         Category category = Category.builder()
-                .categoryName(categoryRequestDto.getName())
-                .parent(categoryRequestDto.getParent())
-                .children(categoryRequestDto.getChildren())
+                .categoryName(categoryRequestDto.getCategoryName())
+                .parentId(categoryRequestDto.getParentId())
                 .content(categoryRequestDto.getContent())
                 .build();
         return categoryRepository.save(category);
@@ -61,6 +70,4 @@ public class CategoryService {
             throw new IllegalArgumentException("유효하지 않은 상품 ID입니다.");
         }
     }
-
-
 }
