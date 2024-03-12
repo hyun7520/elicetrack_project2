@@ -97,7 +97,7 @@ async function handleSubmit(e) {
     return alert("비밀번호가 일치하지 않습니다.");
   }
 
-  // 이메일 중복 확인
+  //이메일 중복 확인
   try {
     const duplicateCheckResult = await Api.get(`http://localhost:8080/users/checkEmail?email=${email}`);
     console.log(duplicateCheckResult);
@@ -114,7 +114,7 @@ async function handleSubmit(e) {
   try {
     const data = { nickname, email, password, postcode, address1, address2, phoneNumber };
 
-    await Api.post("/users/sign-up", data);
+    await Api.post("http://localhost:8080/users/sign-up", data);
 
     alert(`정상적으로 회원가입되었습니다.`);
     // 로그인 페이지 이동
