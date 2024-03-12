@@ -1,10 +1,7 @@
 package io.elice.shoppingmall.product.entity;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import io.elice.shoppingmall.cart.entity.Cart;
+import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.cart.entity.CartItem;
-import io.elice.shoppingmall.order.model.OrderDetail;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,8 +56,10 @@ public class Product {
     @Column(name="discount_price")
     private int discountPrice; //할인 가격
 
-    @OneToOne(mappedBy = "product")
-    private OrderDetail orderDetail;
+    // 상품 개수
+
+//    @OneToOne(mappedBy = "product")
+//    private OrderDetail orderDetail;
 
 //    @OneToMany(mappedBy = "product")
 //    private List<UserLike> userLikes;
@@ -68,9 +67,9 @@ public class Product {
 //    @OneToMany(mappedBy = "product")
 //    private List<UserScrap> userScrap;
 
-//    @ManyToOne
-//    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-//    private Category categoryid;
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    private Category category;
 
     @OneToMany(mappedBy = "product", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference

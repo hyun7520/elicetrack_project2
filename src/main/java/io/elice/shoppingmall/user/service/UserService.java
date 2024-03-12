@@ -8,6 +8,8 @@ import io.elice.shoppingmall.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -106,8 +108,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     public User updateRole(Long id, boolean isAdmin) {
@@ -115,5 +117,13 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
         user.setAdmin(isAdmin);
         return userRepository.save(user);
+    }
+
+    public int getUserCount() {
+        return (int) userRepository.count();
+    }
+
+    public int getAdminCount() {
+        return userRepository.countByIsAdmin(true);
     }
 }
