@@ -18,6 +18,7 @@ public class OrderRequestDto {
     @Min(1)
     private Long userId;
 
+    // 디폴트 주문값으로 자동으로 채워줌
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date orderDate;
     
@@ -28,7 +29,6 @@ public class OrderRequestDto {
     private String receiver;
 
     @NotBlank(message = "주소는 비어있을 수 없습니다!")
-    @Pattern(regexp = "[A-Za-z0-9가-힣]*")
     private String address;
 
     private String deliveryProcess;

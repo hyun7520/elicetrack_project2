@@ -18,6 +18,8 @@ const deliveryFeeElem = document.querySelector("#deliveryFee");
 const orderTotalElem = document.querySelector("#orderTotal");
 const purchaseButton = document.querySelector("#purchaseButton");
 
+const checked = [];
+
 addAllElements();
 addAllEvents();
 
@@ -25,59 +27,56 @@ addAllEvents();
 function addAllElements() {
   createNavbar();
   insertProductsfromCart();
-  insertOrderSummary();
-  updateAllSelectCheckbox();
+  // insertOrderSummary();
+  // updateAllSelectCheckbox();
 }
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  allSelectCheckbox.addEventListener("change", toggleAll);
-  partialDeleteLabel.addEventListener("click", deleteSelectedItems);
   purchaseButton.addEventListener("click", navigate("/order"));
 }
 
 // indexedDB의 cart와 order에서 필요한 정보를 가져온 후
 // 요소(컴포넌트)를 만들어 html에 삽입함.
 async function insertProductsfromCart() {
-  const products = await getFromDb("cart");
-  const { selectedIds } = await getFromDb("order", "summary");
+  const response = await fetch('http://localhost:8080/carts/user/1/items');
+  const products = await response.json();
+  console.log(products);
 
-  products.forEach(async (product) => {
+  let i = 0;
+
+  while (i < products.length) {
+
+    const list = [];
+    const product = products[i]
+
     // 객체 destructuring
-    const { _id, title, quantity, imageKey, price } = product;
-    const imageUrl = await getImageUrl(imageKey);
+    const { id, amount, productName, price, brandName, productId } = product;
 
-    const isSelected = selectedIds.includes(_id);
+    // const imageUrl = await getImageUrl(imageKey);
+    // const isSelected = selectedIds.includes(_id);
 
     cartProductsContainer.insertAdjacentHTML(
       "beforeend",
       `
-        <div class="cart-product-item" id="productItem-${_id}">
+        <div class="cart-product-item" id="productItem-${id}">
           <label class="checkbox">
-            <input type="checkbox" id="checkbox-${_id}" ${
-        isSelected ? "checked" : ""
-      } />
+            
           </label>
-          <button class="delete-button" id="delete-${_id}">
-            <span class="icon">
-              <i class="fas fa-trash-can"></i>
-            </span>
-          </button>
           <figure class="image is-96x96">
             <img
-              id="image-${_id}"
-              src="${imageUrl}"
+              id="image-${id}"
               alt="product-image"
             />
           </figure>
           <div class="content">
-            <p id="title-${_id}">${compressString(title)}</p>
+            <p id="title-${id}">${productName}</p>
             <div class="quantity">
               <button 
                 class="button is-rounded" 
-                id="minus-${_id}" 
-                ${quantity <= 1 ? "disabled" : ""}
-                ${isSelected ? "" : "disabled"}
+                id="minus-${id}" 
+                ${amount <= 1 ? "disabled" : ""}
+                
               >
                 <span class="icon is-small">
                   <i class="fas fa-thin fa-minus"></i>
@@ -85,18 +84,18 @@ async function insertProductsfromCart() {
               </button>
               <input
                 class="input"
-                id="quantityInput-${_id}"
+                id="quantityInput-${id}"
                 type="number"
                 min="1"
                 max="99"
-                value="${quantity}"
-                ${isSelected ? "" : "disabled"}
+                value="${amount}"
+                
               />
               <button 
                 class="button is-rounded" 
-                id="plus-${_id}"
-                ${quantity >= 99 ? "disabled" : ""}
-                ${isSelected ? "" : "disabled"}
+                id="plus-${id}"
+                ${amount >= 99 ? "disabled" : ""}
+                
               >
                 <span class="icon">
                   <i class="fas fa-lg fa-plus"></i>
@@ -105,53 +104,152 @@ async function insertProductsfromCart() {
             </div>
           </div>
           <div class="calculation">
-            <p id="unitPrice-${_id}">${addCommas(price)}원</p>
+            <p id="unitPrice-${id}">${addCommas(price)}원</p>
             <p>
               <span class="icon">
                 <i class="fas fa-thin fa-xmark"></i>
               </span>
             </p>
-            <p id="quantity-${_id}">${quantity}</p>
+            <p id="quantity-${id}">${amount}</p>
             <p>
               <span class="icon">
                 <i class="fas fa-thin fa-equals"></i>
               </span>
             </p>
-            <p id="total-${_id}">${addCommas(quantity * price)}원</p>
+            <p id="total-${id}">${addCommas(amount * price)}원</p>
           </div>
         </div>
       `
     );
 
+    // <input type="checkbox" class="product-checkbox" />
+
+    const itemCheck = document.createElement('input');
+    itemCheck.setAttribute('type', 'checkbox');
+    itemCheck.setAttribute('value', id);
+    itemCheck.setAttribute('name', 'item');
+    itemCheck.setAttribute('class', 'product-checkbox');
+    itemCheck.addEventListener("click", function () {
+      if (this.checked) {
+        checked.push(id);
+      } else {
+        checked.splice(checked.indexOf(id), 1);
+      }
+      console.log(checked);
+    })
+
+    // < button class="delete-button" id = "delete" >
+    //   <span class="icon">
+    //     <i class="fas fa-trash-can"></i>
+    //   </span>
+    //     </button >
+
+    const itemCheckbox = document.querySelector(`#productItem-${id}`);
+    itemCheckbox.insertBefore(itemCheck, itemCheckbox.firstChild);
+
+    const deleteOneButton = document.createElement('button');
+    deleteOneButton.setAttribute('class', 'delete-button');
+    deleteOneButton.setAttribute('id', 'delete');
+    const deletespan = document.createElement('span');
+    deletespan.setAttribute('class', 'icon');
+    const deleteicon = document.createElement('i');
+    deleteicon.setAttribute('class', 'fas fa-trash-can');
+
+    deletespan.appendChild(deleteicon);
+    deleteOneButton.appendChild(deletespan);
+
+    deleteOneButton.addEventListener("click", async function () {
+      if (window.confirm("해당 제품을 장바구니에서 삭제할까요?")) {
+        try {
+          list.push(id);
+          await deleteData(list);
+          location.reload();
+        } catch (error) {
+          window.alert("다음 오류가 발생했습니다. : ", error)
+        }
+      }
+
+    })
+
+    itemCheckbox.insertBefore(deleteOneButton, itemCheckbox.lastChild);
+
+    i++;
+
     // 각종 이벤트 추가
-    document
-      .querySelector(`#delete-${_id}`)
-      .addEventListener("click", () => deleteItem(_id));
+    // document
+    //   .querySelector(`#delete`)
+    //   .addEventListener("click", () => deleteItem(_id));
 
-    document
-      .querySelector(`#checkbox-${_id}`)
-      .addEventListener("change", () => toggleItem(_id));
+    // document
+    //   .querySelector(`#checkbox-${_id}`)
+    //   .addEventListener("change", () => toggleItem(_id));
 
-    document
-      .querySelector(`#image-${_id}`)
-      .addEventListener("click", navigate(`/product/detail?id=${_id}`));
+    // document
+    //   .querySelector(`#image-${_id}`)
+    //   .addEventListener("click", navigate(`/product/detail?id=${_id}`));
 
-    document
-      .querySelector(`#title-${_id}`)
-      .addEventListener("click", navigate(`/product/detail?id=${_id}`));
+    // document
+    //   .querySelector(`#title-${_id}`)
+    //   .addEventListener("click", navigate(`/product/detail?id=${_id}`));
 
-    document
-      .querySelector(`#plus-${_id}`)
-      .addEventListener("click", () => increaseItemQuantity(_id));
+    // document
+    //   .querySelector(`#plus-${_id}`)
+    //   .addEventListener("click", () => increaseItemQuantity(_id));
 
-    document
-      .querySelector(`#minus-${_id}`)
-      .addEventListener("click", () => decreaseItemQuantity(_id));
+    // document
+    //   .querySelector(`#minus-${_id}`)
+    //   .addEventListener("click", () => decreaseItemQuantity(_id));
 
-    document
-      .querySelector(`#quantityInput-${_id}`)
-      .addEventListener("change", () => handleQuantityInput(_id));
-  });
+    // document
+    //   .querySelector(`#quantityInput-${_id}`)
+    //   .addEventListener("change", () => handleQuantityInput(_id));
+  };
+
+  allSelectCheckbox.addEventListener('click', function selectAll() {
+    let itemboxes = document.getElementsByName('item');
+    console.log(allSelectCheckbox.checked);
+    if (allSelectCheckbox.checked) {
+      for (let i = 0; i < itemboxes.length; i++) {
+        console.log(itemboxes[i]);
+        itemboxes[i].checked = true;
+        checked.push(itemboxes[i].value)
+      }
+    } else {
+      for (let i = 0; i < itemboxes.length; i++) {
+        console.log(itemboxes[i]);
+        itemboxes[i].checked = false;
+      }
+      checked.splice(0, checked.length);
+    }
+    console.log(checked);
+  })
+
+  document.querySelector('#partialDeleteLabel').addEventListener("click", deleteSelectedData);
+}
+
+// 선택된 제품들 모두 삭제
+async function deleteSelectedData() {
+  if (checked.length > 0) {
+    try {
+      if (window.confirm("선택된 제품들을 모두 삭제할까요?") == true) {
+        await deleteData(checked);
+        location.reload();
+      }
+    } catch (error) {
+      window.alert("다음 오류가 발생했습니다. :", error);
+    }
+  }
+}
+
+// 제품 삭제 기능
+async function deleteData(list) {
+  await fetch(`http://localhost:8080/carts/user/1/items`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(list)
+  })
 }
 
 async function toggleItem(id) {
@@ -310,11 +408,11 @@ function setQuantityBox(id, type) {
   }
 }
 
-async function deleteSelectedItems() {
-  const { selectedIds } = await getFromDb("order", "summary");
+// async function deleteSelectedItems() {
+//   const { selectedIds } = await getFromDb("order", "summary");
 
-  selectedIds.forEach((id) => deleteItem(id));
-}
+//   selectedIds.forEach((id) => deleteItem(id));
+// }
 
 // 전체선택 체크박스를, 현재 상황에 맞추어
 // 체크 또는 언체크 상태로 만듦

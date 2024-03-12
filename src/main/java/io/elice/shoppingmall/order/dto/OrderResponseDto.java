@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 public class OrderResponseDto {
 
+    private Long id;
     private Date orderDate;
     private Date deliveryDate;
     private String orderProcess;
@@ -27,8 +28,9 @@ public class OrderResponseDto {
     private String message;
 
     @Builder
-    public OrderResponseDto(Orders order, String message, String userName) {
+    public OrderResponseDto(Long id, Orders order, String message, String userName) {
 
+        this.id = order.getId();
         this.orderDate = order.getOrderDate();
         this.deliveryDate = order.getDeliveryDate();
         this.orderProcess = String.valueOf(order.getOrderProcess());

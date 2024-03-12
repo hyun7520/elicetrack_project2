@@ -35,19 +35,27 @@ async function insertProductData() {
 
   // 객체 destructuring
   const {
-    productName,
-    content,
-    brandName,
-    productImageUrl,
+    title,
+    detailDescription,
+    menufacturer,
+    imageKey,
+    isRecommended,
     price,
   } = product;
-  const imageUrl = await getImageUrl(productImageUrl);
+  const imageUrl = await getImageUrl(imageKey);
 
   productImageTag.src = imageUrl;
-  titleTag.innerText = productName;
-  detailDescriptionTag.innerText = content;
-  manufacturerTag.innerText = brandName;
+  titleTag.innerText = title;
+  detailDescriptionTag.innerText = detailDescription;
+  manufacturerTag.innerText = menufacturer;
   priceTag.innerText = `${addCommas(price)}원`;
+
+  if (isRecommended) {
+    titleTag.insertAdjacentHTML(
+      "beforeend",
+      '<span class="tag is-success is-rounded">추천</span>'
+    );
+  }
 
   addToCartButton.addEventListener("click", async () => {
     try {
@@ -81,11 +89,11 @@ async function insertProductData() {
 
 async function insertDb(product) {
   // 객체 destructuring
-  const { id: productId , price } = product;
+  const { id: id, price } = product;
 
   // 장바구니 추가 시, indexedDB에 제품 데이터 및
   // 주문수량 (기본값 1)을 저장함.
-  await addToDb("cart", { ...product, quantity: 1 }, productId );
+  await addToDb("cart", { ...product, quantity: 1 }, id);
 
   // 장바구니 요약(=전체 총합)을 업데이트함.
   await putToDb("order", "summary", (data) => {
@@ -102,9 +110,9 @@ async function insertDb(product) {
     data.productsTotal = total ? total + price : price;
 
     // 기존 데이터(배열)가 있다면 id만 추가하고, 없다면 배열 새로 만듦
-    data.ids = ids ? [...ids, productId ] : [productId ];
+    data.ids = ids ? [...ids, id] : [id];
 
     // 위와 마찬가지 방식
-    data.selectedIds = selectedIds ? [...selectedIds, productId ] : [productId ];
+    data.selectedIds = selectedIds ? [...selectedIds, id] : [id];
   });
 }

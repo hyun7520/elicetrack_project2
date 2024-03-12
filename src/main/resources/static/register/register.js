@@ -49,7 +49,7 @@ function searchAddress(e) {
         }
         if (data.buildingName !== "" && data.apartment === "Y") {
           extraAddr +=
-              extraAddr !== "" ? ", " + data.buildingName : data.buildingName;
+            extraAddr !== "" ? ", " + data.buildingName : data.buildingName;
         }
         if (extraAddr !== "") {
           extraAddr = " (" + extraAddr + ")";
@@ -99,7 +99,7 @@ async function handleSubmit(e) {
 
   // 이메일 중복 확인
   try {
-    const duplicateCheckResult = await Api.get(`/users/checkEmail?email=${email}`);
+    const duplicateCheckResult = await Api.get(`http://localhost:8080/users/checkEmail?email=${email}`);
     console.log(duplicateCheckResult);
     if (duplicateCheckResult) {
       return alert("이미 사용 중인 이메일입니다.");
@@ -112,7 +112,7 @@ async function handleSubmit(e) {
 
   // 회원가입 api 요청
   try {
-    const data = { nickname, email, password, postcode, address1, address2 ,phoneNumber};
+    const data = { nickname, email, password, postcode, address1, address2, phoneNumber };
 
     await Api.post("/users/sign-up", data);
 

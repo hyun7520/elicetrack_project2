@@ -61,6 +61,7 @@ public class CartItemService {
 
             CartItemResponseDto dto = CartItemResponseDto.builder()
                     .id(item.getId())
+                    .productId(item.getProduct().getProductId())
                     .createdAt(item.getCreatedAt())
                     .amount(item.getAmount())
                     .productName(item.getProduct().getProductName())
