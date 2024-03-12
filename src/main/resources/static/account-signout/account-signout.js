@@ -46,9 +46,7 @@ async function deleteUserData(e) {
     alert("회원 정보가 안전하게 삭제되었습니다.");
 
     // 토큰 삭제
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('id');
-    sessionStorage.removeItem('isAdmin');
+    sessionStorage.clear();
 
     window.location.href = "/";
   } catch (err) {
