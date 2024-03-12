@@ -227,15 +227,15 @@ async function insertUsers(page = 0, size = 10) {
         <div class="column is-2">
           <div class="select" >
             <select id="roleSelectBox-${id}">
-              <option 
+              <option
                 class="has-background-link-light has-text-link"
-                ${admin ? "selected" : ""} 
+                ${admin ? "selected" : ""}
                 value="USER">
                 일반사용자
               </option>
-              <option 
+              <option
                 class="has-background-danger-light has-text-danger"
-                ${admin ? "selected" : ""} 
+                ${admin ? "selected" : ""}
                 value="ADMIN">
                 관리자
               </option>
