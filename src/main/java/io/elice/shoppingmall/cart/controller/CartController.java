@@ -22,10 +22,10 @@ public class CartController {
     // REST 설계 상 동사를 사용하면 좋지 않다고 알고 있고, "/create"는 POST와 중복되는 것 같아 삭제했습니다.
     // 아래의 GET 매핑에서도 같은 이유로 "/find"를 삭제했습니다.
     @PostMapping("/{userId}")
-    public ResponseEntity<CartResponseDto> createCart(@PathVariable("userId") Long id) {
+    public ResponseEntity<CartResponseDto> createCart(@PathVariable("userId") Long userId) {
 
 
-        Cart createdCart = cartService.createCart(id);
+        Cart createdCart = cartService.createCart(userId);
         return ResponseEntity.ok(CartResponseDto.builder()
                 .userName(createdCart.getUser().getNickname())
                 .message("장바구니 생성 완료!")

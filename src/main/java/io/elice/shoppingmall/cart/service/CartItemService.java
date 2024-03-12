@@ -28,10 +28,11 @@ public class CartItemService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CartItem addItemToCart(Long id, Long productId, int qty) {
+    public CartItem addItemToCart(Long userId, Long productId, int qty) {
 
-        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
+        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
         Optional<Product> foundProduct = productRepository.findById(productId);
+        List<CartItem> foundItems = cartItemRepository.findAllByCart_User_Id(userId);
 
         if(foundCart.isEmpty()) {
             throw new IllegalArgumentException("장바구니가 존재하지 않습니다!");
@@ -39,6 +40,12 @@ public class CartItemService {
         if(foundProduct.isEmpty()) {
             throw new IllegalArgumentException("추가하려는 제품이 존재하지 않습니다!");
         }
+        for(CartItem item : foundItems) {
+            if(item.getProduct().getProductId() == productId) {
+                throw new IllegalArgumentException("이미 제품이 장바구니에 담겨 있습니다!");
+            }
+        }
+
 
         CartItem cartItem = CartItem.builder()
                 .amount(qty)
@@ -52,9 +59,9 @@ public class CartItemService {
         return cartItem;
     }
 
-    public List<CartItemResponseDto> getAllItemsInCart(Long id) {
+    public List<CartItemResponseDto> getAllItemsInCart(Long userId) {
 
-        List<CartItem> foundItems = cartItemRepository.findAllByCart_User_Id(id);
+        List<CartItem> foundItems = cartItemRepository.findAllByCart_User_Id(userId);
         List<CartItemResponseDto> returnItems = new ArrayList<>();
 
         for(CartItem item : foundItems) {
@@ -76,9 +83,9 @@ public class CartItemService {
     }
 
     @Transactional
-    public CartItem updateItemQuantity(Long id, Long cartItemId, CartItemUpdateDto cartItemUpdateDto) {
+    public CartItem updateItemQuantity(Long userId, Long cartItemId, CartItemUpdateDto cartItemUpdateDto) {
 
-        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(id);
+        Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
         Optional<CartItem> foundCartItem = cartItemRepository.findById(cartItemId);
 
         if(foundCart.isEmpty()) {

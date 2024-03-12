@@ -77,23 +77,33 @@ public class UserService {
     public User updateUser(Long id, SignUpDto signUpDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. id=" + id));
-        if(!user.getNickname().equals(signUpDto.getNickname())){
-            user.setNickname(signUpDto.getNickname());
+        if(signUpDto.getNickname() != null) {
+            if (!user.getNickname().equals(signUpDto.getNickname())) {
+                user.setNickname(signUpDto.getNickname());
+            }
         }
         if(signUpDto.getPassword() != null){
             user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         }
-        if(!user.getPostcode().equals(signUpDto.getPostcode())){
-            user.setPostcode(signUpDto.getPostcode());
+        if(signUpDto.getPostcode() != null) {
+            if (!user.getPostcode().equals(signUpDto.getPostcode())) {
+                user.setPostcode(signUpDto.getPostcode());
+            }
         }
-        if(!user.getAddress1().equals(signUpDto.getAddress1())){
-            user.setAddress1(signUpDto.getAddress1());
+        if(signUpDto.getAddress1() != null) {
+            if (!user.getAddress1().equals(signUpDto.getAddress1())) {
+                user.setAddress1(signUpDto.getAddress1());
+            }
         }
-        if(!user.getAddress2().equals(signUpDto.getAddress2())){
-            user.setAddress2(signUpDto.getAddress2());
+        if(signUpDto.getAddress2() != null){
+            if(!user.getAddress2().equals(signUpDto.getAddress2())){
+                user.setAddress2(signUpDto.getAddress2());
+            }
         }
-        if(!user.getPhoneNumber().equals(signUpDto.getPhoneNumber())){
-            user.setPhoneNumber(signUpDto.getPhoneNumber());
+        if(signUpDto.getPhoneNumber() != null) {
+            if (!user.getPhoneNumber().equals(signUpDto.getPhoneNumber())) {
+                user.setPhoneNumber(signUpDto.getPhoneNumber());
+            }
         }
         return userRepository.save(user);
     }

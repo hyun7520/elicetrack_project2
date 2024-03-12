@@ -27,6 +27,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:")
 @RequestMapping("/users")
 public class UserController {
 
