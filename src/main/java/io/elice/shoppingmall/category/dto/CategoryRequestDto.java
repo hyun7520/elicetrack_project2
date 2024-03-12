@@ -16,6 +16,8 @@ public class CategoryRequestDto {
     private String name;
     private String code;
     private Category parent;
+    private String content;
+    private String imageUrl;
 
     private List<Category> children;
 }

@@ -4,7 +4,6 @@ import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,5 +50,11 @@ public class CategoryController{
     public Category updateById(@PathVariable("categoryId") Long id, @RequestBody CategoryRequestDto categoryRequestDto) {
         return categoryService.updateById(id, categoryRequestDto);
     }
+
+    // 카테고리 이미지 업로드
+//    @PostMapping("/{categoryId}/image")
+//    public Category uploadCategoryImage(@PathVariable("categoryId") Long id, @RequestParam("image_url") String imageUrl) {
+//        return categoryService.uploadCategoryImage(id, imageUrl);
+//    }
 
 }

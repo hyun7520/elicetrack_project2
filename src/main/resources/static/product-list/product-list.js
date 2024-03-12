@@ -19,16 +19,15 @@ addAllEvents();
 async function addAllElements() {
   createNavbar();
 
-  const { categoryId } = getUrlParams();
+  const categoryId = getCategoryParams();
 
   if (categoryId) {
     await addProductItemsToContainer(categoryId);
-    await addPagination(categoryId); // 페이지네이션을 추가합니다.
+    await addPagination(categoryId);
   } else {
     console.error("카테고리 ID가 제공되지 않았습니다.");
   }
 }
-
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {}
@@ -41,9 +40,9 @@ function getCategoryParams() {
 
 async function addProductItemsToContainer(categoryId) {
   try {
-    const response = await fetch(`http://localhost/products/category/${categoryId}`);
+    const response = await fetch(`http://localhost:8080/products/category/${categoryId}`);
     if (!response.ok) {
-      throw new Error('네트워크 오류: ' + response.status);
+      throw new Error("Failed to fetch products");
     }
     const products = await response.json();
 
@@ -83,36 +82,67 @@ async function addProductItemsToContainer(categoryId) {
 }
 
 
+async function addPagination(categoryId) {
+  const paginationContainer = document.querySelector("#pagination");
+
+  try {
+    const response = await fetch(`http://localhost:8080/products/category/${categoryId}?page=1&size=10`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch pagination data");
+    }
+    const data = await response.json();
+    const totalPages = data.totalPages;
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageLink = document.createElement("a");
+      pageLink.textContent = i;
+      pageLink.href = `javascript:void(0);`;
+      pageLink.addEventListener("click", () => loadProductsByPage(categoryId, i));
+
+      paginationContainer.appendChild(pageLink);
+    }
+  } catch (error) {
+    console.error('페이지네이션을 생성하는 중 오류가 발생했습니다:', error.message);
+  }
+}
+
 async function loadProductsByPage(categoryId, page) {
   productItemContainer.innerHTML = "";
 
-  const response = await fetch(`http://localhost/products/category/${categoryId}?page=${page}&size=10`);
-  const products = await response.json();
+  try {
+    const response = await fetch(`http://localhost:8080/products/category/${categoryId}?page=${page}&size=10`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch products");
+    }
+    const products = await response.json();
 
-  for (const product of products.content) {
-    const random = randomId();
-    const imageUrl = await getImageUrl(product.productImageUrl);
+    for (const product of products.content) {
+      const random = randomId();
+      const imageUrl = await getImageUrl(product.productImageUrl);
 
-    const productItem = document.createElement("div");
-    productItem.classList.add("message", "media", "product-item");
-    productItem.id = `a${random}`;
-    productItem.innerHTML = `
-      <div class="media-left">
-        <figure class="image">
-          <img src="${imageUrl}" alt="제품 이미지" />
-        </figure>
-      </div>
-      <div class="media-content">
-        <div class="content">
-          <p class="title">${product.productName}</p>
-          <p class="description">${product.content}</p>
-          <p class="price">${addCommas(product.price)}원</p>
+      const productItem = document.createElement("div");
+      productItem.classList.add("message", "media", "product-item");
+      productItem.id = `a${random}`;
+      productItem.innerHTML = `
+        <div class="media-left">
+          <figure class="image">
+            <img src="${imageUrl}" alt="제품 이미지" />
+          </figure>
         </div>
-      </div>
-    `;
+        <div class="media-content">
+          <div class="content">
+            <p class="title">${product.productName}</p>
+            <p class="description">${product.content}</p>
+            <p class="price">${addCommas(product.price)}원</p>
+          </div>
+        </div>
+      `;
 
-    productItem.addEventListener("click", () => navigate(`/product/detail?id=${product.productId}`));
+      productItem.addEventListener("click", () => navigate(`/product/detail?id=${product.productId}`));
 
-    productItemContainer.appendChild(productItem);
+      productItemContainer.appendChild(productItem);
+    }
+  } catch (error) {
+    console.error('데이터를 불러오는 중 오류가 발생했습니다:', error.message);
   }
 }

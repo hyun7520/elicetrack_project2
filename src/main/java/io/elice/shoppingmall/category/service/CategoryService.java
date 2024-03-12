@@ -33,6 +33,7 @@ public class CategoryService {
                 .categoryName(categoryRequestDto.getName())
                 .parent(categoryRequestDto.getParent())
                 .children(categoryRequestDto.getChildren())
+                .content(categoryRequestDto.getContent())
                 .build();
         return categoryRepository.save(category);
     }

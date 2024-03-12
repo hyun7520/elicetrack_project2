@@ -2,6 +2,7 @@ package io.elice.shoppingmall.product.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,12 +33,13 @@ public class ProductRequestDto {
     private LocalDate createdDate;
     private String productImageUrl;
 
-    @NotBlank(message = "배달 가격이 명시되어야합니다.")
-    private int deliveryPrice;
+    @NotNull(message = "배달 가격이 명시되어야합니다.")
+    private Integer deliveryPrice;
+
     private int averageScore;
     private int reviewCount;
     private int discountPrice;
 
-    @NotBlank(message = "소속 카테고리가 있어야합니다..")
+    @NotNull
     private Long categoryId;
 }
