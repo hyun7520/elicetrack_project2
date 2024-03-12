@@ -102,8 +102,8 @@ function toggleTargets(e) {
 // 나중에 사용자가 데이터를 변경했는지 확인하기 위해, 전역 변수로 userData 설정
 let userData;
 async function insertUserData() {
-  let id = sessionStorage.getItem('id');
-  let url = `/users/${id}`;
+  const id = sessionStorage.getItem('id');
+  const url = `http://localhost:8080/users/${id}`;
   userData = await Api.get(url);
 
   // 객체 destructuring
@@ -254,7 +254,7 @@ async function saveUserData(e) {
     const { id } = userData;
     console.log(data)
     // db에 수정된 정보 저장
-    await Api.patch("/users", id, data);
+    await Api.patch("http://localhost:8080/users", id, data);
 
     alert("회원정보가 안전하게 저장되었습니다.");
     disableForm();
