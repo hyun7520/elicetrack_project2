@@ -71,8 +71,7 @@ export const checkAdmin = async () => {
 
   //const { result } = await res.json();
   console.log(sessionStorage.getItem('isAdmin'));
-  const isAdmin = JSON.parse(sessionStorage.getItem('isAdmin'));
-  if (isAdmin === true) {
+  if (sessionStorage.getItem('isAdmin') === 'true') {
     window.document.body.style.display = "block";
 
     return;

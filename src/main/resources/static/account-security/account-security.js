@@ -102,8 +102,8 @@ function toggleTargets(e) {
 // 나중에 사용자가 데이터를 변경했는지 확인하기 위해, 전역 변수로 userData 설정
 let userData;
 async function insertUserData() {
-  const id = sessionStorage.getItem('id');
-  const url = `/users/${id}`;
+  let id = sessionStorage.getItem('id');
+  let url = `/users/${id}`;
   userData = await Api.get(url);
 
   // 객체 destructuring

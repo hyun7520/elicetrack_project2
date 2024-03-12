@@ -16,12 +16,13 @@ public class CartItemResponseDto {
     private String productName;
     private int price;
     private String brandName;
+    private Long productId;
 
     private HttpStatus httpStatus;
     private String message;
 
     @Builder
-    public CartItemResponseDto(Long id, Date createdAt, int amount, String productName,
+    public CartItemResponseDto(Long id, Date createdAt, int amount, String productName, Long productId,
                                int price, String brandName, HttpStatus httpStatus, String message) {
         this.id = id;
         this.createdAt = createdAt;
@@ -31,6 +32,7 @@ public class CartItemResponseDto {
         this.brandName = brandName;
         this.httpStatus = httpStatus;
         this.message = message;
+        this.productId = productId;
     }
 
 }
