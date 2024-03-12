@@ -62,7 +62,7 @@ async function addImageCardsToBlocks() {
     cards.forEach(card => {
       card.addEventListener('click', () => {
         const categoryId = card.getAttribute('data-categoryId');
-        window.location.href = `http://localhost:8080/products/category/${categoryId}`;
+        window.location.href = (`/product-list/product-list.html?categoryId=${categoryId}`);
       });
     });
   } catch (error) {

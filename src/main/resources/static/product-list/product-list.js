@@ -1,5 +1,3 @@
-import { getImageUrl } from "../../aws-s3.js";
-import * as Api from "../../api.js";
 import {
   randomId,
   getUrlParams,
@@ -19,7 +17,9 @@ addAllEvents();
 async function addAllElements() {
   createNavbar();
 
-  const categoryId = getCategoryParams();
+  // URL 파라미터에서 categoryId를 추출합니다. (여기부분 수정!!!!!! restcontroller문제)
+  const params = new URLSearchParams(window.location.search);
+  const categoryId = params.get("categoryId");
 
   if (categoryId) {
     await addProductItemsToContainer(categoryId);
@@ -45,10 +45,13 @@ async function addProductItemsToContainer(categoryId) {
       throw new Error("Failed to fetch products");
     }
     const products = await response.json();
+    console.log(products);
+
+    let blockHTML = ''; // 블록의 HTML을 저장할 변수
 
     for (const product of products.content) {
       const random = randomId();
-      const imageUrl = await getImageUrl(product.productImageUrl);
+      const imageUrl = `http://localhost:8080/attach/images/${product.productImageUrl}`;
 
       productItemContainer.insertAdjacentHTML(
           "beforeend",
@@ -56,7 +59,7 @@ async function addProductItemsToContainer(categoryId) {
         <div class="message media product-item" id="a${random}">
           <div class="media-left">
             <figure class="image">
-              <img src="${imageUrl}" alt="제품 이미지" />
+              <img src="${imageUrl}" alt="제품 이미지"/>
             </figure>
           </div>
           <div class="media-content">
@@ -73,7 +76,10 @@ async function addProductItemsToContainer(categoryId) {
       const productItem = document.querySelector(`#a${random}`);
       productItem.addEventListener(
           "click",
-          () => navigate(`/product/detail?id=${product.productId}`)
+          () => {
+            const productId = productItem.getAttribute('data-productId');
+            window.location.href = `/product-detail/product-detail.html?productId=${productId}`;
+          }
       );
     }
   } catch (error) {
@@ -83,7 +89,9 @@ async function addProductItemsToContainer(categoryId) {
 
 
 async function addPagination(categoryId) {
-  const paginationContainer = document.querySelector("#pagination");
+  // 페이지네이션 컨테이너를 찾을 때 사용되는 쿼리 셀렉터 수정
+  const paginationContainer = document.querySelector(".pagination-list");
+
 
   try {
     const response = await fetch(`http://localhost:8080/products/category/${categoryId}?page=1&size=10`);
@@ -118,7 +126,7 @@ async function loadProductsByPage(categoryId, page) {
 
     for (const product of products.content) {
       const random = randomId();
-      const imageUrl = await getImageUrl(product.productImageUrl);
+      const imageUrl = `http://localhost:8080/attach/images/${product.productImageUrl}`;
 
       const productItem = document.createElement("div");
       productItem.classList.add("message", "media", "product-item");
@@ -138,7 +146,7 @@ async function loadProductsByPage(categoryId, page) {
         </div>
       `;
 
-      productItem.addEventListener("click", () => navigate(`/product/detail?id=${product.productId}`));
+      productItem.addEventListener("click", () => navigate(`/product-detail/product-detail.html?id=${product.productId}`));
 
       productItemContainer.appendChild(productItem);
     }

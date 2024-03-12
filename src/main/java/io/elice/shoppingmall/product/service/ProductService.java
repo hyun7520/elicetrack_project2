@@ -43,6 +43,7 @@ public class ProductService {
                 .commentCount(productRequestDto.getCommentCount())
                 .createdDate(LocalDate.parse(dateNow))
                 .productImageUrl(productRequestDto.getProductImageUrl())
+                .productImageUrl(productRequestDto.getProductImageUrl())
                 .deliveryPrice(productRequestDto.getDeliveryPrice())
                 .averageScore(productRequestDto.getAverageScore())
                 .reviewCount(productRequestDto.getReviewCount())
