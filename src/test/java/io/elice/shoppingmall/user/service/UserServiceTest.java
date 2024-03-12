@@ -3,6 +3,7 @@ package io.elice.shoppingmall.user.service;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import io.elice.shoppingmall.user.Dto.DeleteDto;
 import io.elice.shoppingmall.user.Dto.SignUpDto;
 import io.elice.shoppingmall.user.entity.User;
 import io.elice.shoppingmall.user.repository.UserRepository;
@@ -33,6 +34,7 @@ public class UserServiceTest {
 
     private User user;
     private SignUpDto signUpDto;
+    private DeleteDto deleteDto;
 
     @BeforeEach
     public void setUp() {
@@ -41,17 +43,42 @@ public class UserServiceTest {
         user.setEmail("test@example.com");
         user.setPassword("password");
         user.setNickname("nickname");
+        user.setPostcode("12345");
+        user.setAddress1("asd");
+        user.setAddress2("qwe");
+        user.setPhoneNumber("01012341234");
 
-        signUpDto = new SignUpDto();
-        signUpDto.setEmail("test@example.com");
-        signUpDto.setPassword("password");
-        signUpDto.setNickname("nickname");
+        signUpDto = new SignUpDto( "test@example.com",
+                "password",
+                "nickname",
+                "12345",
+                "asd",
+                "qwe",
+                "01012341234",
+        false);
+
+        deleteDto = new DeleteDto(1L, "password");
 
         given(userRepository.save(any(User.class))).willReturn(user);
         given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
         given(userRepository.findByEmail(anyString())).willReturn(user);
-        given(passwordEncoder.encode(anyString())).willReturn("encodedPassword");
+        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
     }
+
+    @Test
+    public void testGetUserById() {
+        // given
+        Optional<User> optionalUser = Optional.of(user);
+        given(userRepository.findById(1L)).willReturn(optionalUser);
+
+        // when
+        Optional<User> foundUser = userService.getUserById(1L);
+
+        // then
+        assertTrue(foundUser.isPresent());
+        assertEquals(foundUser.get().getId(), user.getId());
+    }
+
 
     @Test
     public void testSignUp() {
@@ -66,6 +93,20 @@ public class UserServiceTest {
         assertEquals(signUpDto.getEmail(), createdUser.getEmail());
         then(passwordEncoder).should().encode(signUpDto.getPassword());
     }
+
+    @Test
+    public void testCheckEmail() {
+        // given
+        String email = "test@example.com";
+        given(userRepository.existsByEmail(email)).willReturn(true);
+
+        // when
+        boolean exists = userService.checkEmail(email);
+
+        // then
+        assertTrue(exists);
+    }
+
 
     @Test
     public void testAuthenticate() {
@@ -94,6 +135,14 @@ public class UserServiceTest {
     }
 
     @Test
+    public void testCheckPassword() {
+        boolean result = userService.checkPassword(deleteDto);
+        assertTrue(result, "Password should match");
+    }
+
+
+
+    @Test
     public void testDeleteUser() {
         // Given
 
@@ -102,6 +151,20 @@ public class UserServiceTest {
 
         // Then
         then(userRepository).should().deleteById(1L);
+    }
+
+    @Test
+    public void testGetUserCount() {
+        given(userRepository.count()).willReturn(10L); // 가정: 저장소에 10명의 사용자가 있음
+        int count = userService.getUserCount();
+        assertEquals(10, count, "The count should be 10");
+    }
+
+    @Test
+    public void testGetAdminCount() {
+        given(userRepository.countByIsAdmin(true)).willReturn(5); // 가정: 저장소에 5명의 관리자가 있음
+        int adminCount = userService.getAdminCount();
+        assertEquals(5, adminCount, "The admin count should be 5");
     }
 
 

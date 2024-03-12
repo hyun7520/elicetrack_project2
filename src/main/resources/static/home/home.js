@@ -1,5 +1,13 @@
-// home.js
+import * as Api from "../api.js";
+import { getImageUrl } from "../aws-s3.js";
 import { navigate, createNavbar } from "../useful-functions.js";
+// import {attach} from "bulma-carousel/src/js";
+
+
+// 요소(element), input 혹은 상수
+const sliderDiv = document.querySelector("#slider");
+const sliderArrowLeft = document.querySelector("#sliderArrowLeft");
+const sliderArrowRight = document.querySelector("#sliderArrowRight");
 
 addAllElements();
 addAllEvents();
@@ -69,3 +77,18 @@ async function addImageCardsToBlocks() {
     console.error("Error fetching categories:", error);
   }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // 세션 스토리지에서 isAdmin 값을 가져옵니다.
+    const isAdmin = sessionStorage.getItem('isAdmin');
+
+    // isAdmin이 "true" 문자열로 저장되어 있다면 버튼을 표시합니다.
+    if (isAdmin === "true") {
+        const adminBtn = document.getElementById('adminPageBtn');
+        adminBtn.style.display = 'block'; // 버튼을 보이게 합니다.
+
+        // 버튼 클릭 이벤트를 추가합니다.
+        adminBtn.addEventListener('click', function() {
+            window.location.href = "/admin"; // "/admin" 페이지로 이동합니다.
+        });
+    }
+});
