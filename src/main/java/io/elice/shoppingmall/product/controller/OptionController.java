@@ -3,6 +3,7 @@ package io.elice.shoppingmall.product.controller;
 import io.elice.shoppingmall.product.dto.OptionRequestDto;
 import io.elice.shoppingmall.product.entity.Option;
 import io.elice.shoppingmall.product.service.OptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +15,8 @@ import java.util.List;
 public class OptionController {
     private final OptionService optionService;
 
-    // 모든 옵션 목록 조회 (없어도 될듯)
-    @GetMapping
-    public ResponseEntity<List<Option>> getAllOptions() {
-        List<Option> options = optionService.getAllOptions();
-        return ResponseEntity.ok(options);
-    }
-
     // 특정 상품의 옵션 조회
-    @GetMapping("/{productId}")
+    @GetMapping("/product/{productId}")
     public ResponseEntity<List<Option>> getOptionsByProductId(@PathVariable("productId") Long productId) {
         List<Option> options = optionService.getOptionByProductId(productId);
         if (options.isEmpty()) {
@@ -33,11 +27,7 @@ public class OptionController {
 
     // 옵션 등록
     @PostMapping
-    public Option createOption(@RequestBody OptionRequestDto optionRequestDto){
-        Long productId = optionRequestDto.getProductId();
-        if (productId == null) {
-            throw new IllegalArgumentException("상품 ID가 필요합니다.");
-        }
+    public Option createOption(@Valid @RequestBody OptionRequestDto optionRequestDto){
         return optionService.createOption(optionRequestDto);
     }
 

@@ -20,7 +20,8 @@ public class Category {
     private Long categoryId;
 
     @Column(nullable = false)
-    private String CategoryName;
+    @JoinColumn(name = "category_name")
+    private String categoryName;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -30,15 +31,24 @@ public class Category {
     @JsonIgnore
     private List<Category> children;
 
+    @Column(nullable = false)
+    @JoinColumn(name = "content")
+    private String content;
+
+    @Column(name = "image_url") // 이미지 경로 저장
+    private String imageUrl;
+
     @Builder
     public Category(String name, Category parent) {
-        this.CategoryName = name;
+        this.categoryName = name;
         this.parent = parent;
+        this.imageUrl = imageUrl;
     }
 
     public void updateCategory(CategoryRequestDto categoryRequestDto){
-        this.CategoryName = categoryRequestDto.getName();
+        this.categoryName = categoryRequestDto.getName();
         this.parent = categoryRequestDto.getParent();
         this.children = categoryRequestDto.getChildren();
+        this.imageUrl = categoryRequestDto.getImageUrl();
     }
 }

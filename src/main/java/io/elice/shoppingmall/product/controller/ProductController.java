@@ -3,9 +3,9 @@ package io.elice.shoppingmall.product.controller;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +17,13 @@ public class ProductController {
 
     // 상품 등록
     @PostMapping
-    public Product createProduct(@RequestBody ProductRequestDto productRequestDto){
+    public Product createProduct(@Valid @RequestBody ProductRequestDto productRequestDto){
         return productService.createProduct(productRequestDto);
     }
 
     // 상품 정보 수정
     @PutMapping("/{productId}")
-    public Product updateProduct(@PathVariable("productId") Long id, @RequestBody ProductRequestDto productRequestDto){
+    public Product updateProduct(@PathVariable("productId") Long id, @Valid @RequestBody ProductRequestDto productRequestDto){
         return productService.updateProduct(id, productRequestDto);
     }
 
@@ -36,13 +36,13 @@ public class ProductController {
 
     // 상품 상세 페이지 조회
     @GetMapping("/{productId}")
-    public ResponseEntity<?> getProductDetail(@PathVariable("productId") Long id) {
+    public ResponseEntity<Product> getProductDetail(@PathVariable("productId") Long id) {
         Product product = productService.getProductById(id);
 
         if (product != null) {
             return ResponseEntity.ok(product);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product with ID " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
     }
 

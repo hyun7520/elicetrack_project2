@@ -10,6 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -26,13 +30,18 @@ public class ProductService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: " + categoryId));
 
+
+        LocalDateTime now = LocalDateTime.now();
+        String dateNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+
         Product product = Product.builder()
                 .productName(productRequestDto.getProductName())
                 .price(productRequestDto.getPrice())
                 .brandName(productRequestDto.getBrandName())
                 .content(productRequestDto.getContent())
                 .commentCount(productRequestDto.getCommentCount())
-                .createdDate(productRequestDto.getCreatedDate())
+                .createdDate(LocalDate.parse(dateNow))
                 .productImageUrl(productRequestDto.getProductImageUrl())
                 .deliveryPrice(productRequestDto.getDeliveryPrice())
                 .averageScore(productRequestDto.getAverageScore())

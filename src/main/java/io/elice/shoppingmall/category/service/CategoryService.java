@@ -30,9 +30,10 @@ public class CategoryService {
     @Transactional
     public Category createCategory(CategoryRequestDto categoryRequestDto) {
         Category category = Category.builder()
-                .CategoryName(categoryRequestDto.getName())
+                .categoryName(categoryRequestDto.getName())
                 .parent(categoryRequestDto.getParent())
                 .children(categoryRequestDto.getChildren())
+                .content(categoryRequestDto.getContent())
                 .build();
         return categoryRepository.save(category);
     }

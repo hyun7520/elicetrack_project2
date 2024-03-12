@@ -1,13 +1,14 @@
 spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        password: ${PASSWORD}
-        url: jdbc:mysql://localhost:3306/project
-        username: ${USER}
+        password:
+        url: jdbc:mysql://localhost:3306/comfohouse
+        username: root
     jpa:
         database: mysql
         hibernate:
-            ddl-auto: create
+            ddl-auto: none
             dialect: org.hibernate.dialect.MySQLDialect
+            database: mysql
             format_sql: true
             show_sql: true

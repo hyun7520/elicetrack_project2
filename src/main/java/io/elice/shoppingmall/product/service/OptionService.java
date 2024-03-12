@@ -42,11 +42,6 @@ public class OptionService {
         return optionRepository.findByProductProductId(productId);
     }
 
-    // 모든 옵션 조회
-    public List<Option> getAllOptions(){
-        return optionRepository.findAll();
-    }
-
     // 옵션 수정
     @Transactional
     public Option updateOption(Long id, OptionRequestDto optionRequestDto){
