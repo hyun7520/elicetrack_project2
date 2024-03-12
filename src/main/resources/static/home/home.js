@@ -78,4 +78,18 @@ function attachSlider() {
     });
   });
 }
+document.addEventListener('DOMContentLoaded', function() {
+  // 세션 스토리지에서 isAdmin 값을 가져옵니다.
+  const isAdmin = sessionStorage.getItem('isAdmin');
 
+  // isAdmin이 "true" 문자열로 저장되어 있다면 버튼을 표시합니다.
+  if (isAdmin === "true") {
+    const adminBtn = document.getElementById('adminPageBtn');
+    adminBtn.style.display = 'block'; // 버튼을 보이게 합니다.
+
+    // 버튼 클릭 이벤트를 추가합니다.
+    adminBtn.addEventListener('click', function() {
+      window.location.href = "/admin"; // "/admin" 페이지로 이동합니다.
+    });
+  }
+});
