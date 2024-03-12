@@ -197,13 +197,13 @@ let userIdToDelete;
 // }
 
 async function insertUsers(page = 0, size = 10) {
-  const usersResponse = await Api.get(`/users?page=${page}&size=${size}`);
+  const usersResponse = await Api.get(`http://localhost:8080/users?page=${page}&size=${size}`);
   const users = usersResponse.content;
 
   // 총 사용자 수와 관리자 수는 한 번만 불러오면 되므로, 첫 페이지 로드 시에만 호출
   if (page === 0) {
-    const usersCount = await Api.get(`/users/count-user`);
-    const adminCount = await Api.get(`/users/count-admin`);
+    const usersCount = await Api.get(`http://localhost:8080/users/count-user`);
+    const adminCount = await Api.get(`http://localhost:8080/users/count-admin`);
 
     // 총 요약에 값 삽입
     document.getElementById('usersCount').innerText = addCommas(usersCount);
@@ -263,7 +263,7 @@ async function insertUsers(page = 0, size = 10) {
       const isAdmin = true;
 
       // api 요청
-      await Api.patch(`/users/${id}/role`,"", isAdmin);
+      await Api.patch(`http://localhost:8080/users/${id}/role`,"", isAdmin);
     });
 
     deleteButton.addEventListener("click", () => {
@@ -299,7 +299,7 @@ async function deleteUserData(e) {
   e.preventDefault();
 
   try {
-    await Api.delete("/users", userIdToDelete);
+    await Api.delete("http://localhost:8080/users", userIdToDelete);
 
     // 삭제 성공
     alert("회원 정보가 삭제되었습니다.");
