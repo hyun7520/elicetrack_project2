@@ -11,7 +11,7 @@ async function addAllElements() {
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
-function addAllEvents() { }
+function addAllEvents() {}
 
 // api에서 카테고리 정보 및 사진 가져와서 블록으로 사용
 async function addImageCardsToBlocks() {
@@ -161,7 +161,7 @@ function showNoSubcategoriesAlert() {
     navigate('/home.html');
   });
 }
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   // 세션 스토리지에서 isAdmin 값을 가져옵니다.
   const isAdmin = sessionStorage.getItem('isAdmin');
 
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
     adminBtn.style.display = 'block'; // 버튼을 보이게 합니다.
 
     // 버튼 클릭 이벤트를 추가합니다.
-    adminBtn.addEventListener('click', function () {
+    adminBtn.addEventListener('click', function() {
       window.location.href = "/admin"; // "/admin" 페이지로 이동합니다.
     });
   }
