@@ -8,11 +8,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "order_detail")
 @Getter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class OrderDetail {
 
     @Id
@@ -20,10 +26,13 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private Long id;
 
-    // 상품 아이디
-//    @NotNull
-//    @Column(name = "product_id")
-//    private Long productId;
+    @Column(name = "created_at")
+    @CreatedDate
+    private Date createdAt;
+
+    @Column(name = "modified_at")
+    @LastModifiedDate
+    private Date modifiedAt;
 
     // 상품 구매 개수
     @NotNull
@@ -42,14 +51,14 @@ public class OrderDetail {
     private Orders order;
     
     // 상품과 1:1 매핑
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
 
     @Builder
     public OrderDetail(Orders order, Product product, Long quantity, Long price) {
-        //에러로 관련된 매핑 삭제
+
         this.product = product;
         this.order = order;
         this.quantity = quantity;

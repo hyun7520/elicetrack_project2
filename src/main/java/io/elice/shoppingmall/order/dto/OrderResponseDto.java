@@ -10,8 +10,10 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@Data
 public class OrderResponseDto {
 
+    private Long id;
     private Date orderDate;
     private Date deliveryDate;
     private String orderProcess;
@@ -22,9 +24,13 @@ public class OrderResponseDto {
     private Long totalCost;
 
     private List<OrderDetail> orderDetails;
+    private String userName;
+    private String message;
 
-    public OrderResponseDto(Orders order) {
+    @Builder
+    public OrderResponseDto(Long id, Orders order, String message, String userName) {
 
+        this.id = order.getId();
         this.orderDate = order.getOrderDate();
         this.deliveryDate = order.getDeliveryDate();
         this.orderProcess = String.valueOf(order.getOrderProcess());
@@ -33,7 +39,8 @@ public class OrderResponseDto {
         this.address = order.getAddress();
         this.request = order.getRequest();
         this.totalCost = order.getTotalCost();
-
         this.orderDetails = order.getOrderDetails();
+        this.message = message;
+        this.userName = userName;
     }
 }

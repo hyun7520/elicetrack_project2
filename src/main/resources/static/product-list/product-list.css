@@ -59,3 +59,31 @@
     margin: 0.5rem auto;
   }
 }
+
+.pagination-list {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  justify-content: center; /* 페이지네이션을 가운데 정렬합니다. */
+}
+
+.pagination-list a {
+  margin: 0 0.5rem; /* 페이지 버튼 간격을 조정합니다. */
+  color: black;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  transition: background-color 0.3s;
+}
+
+.pagination-list a:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination-list a.active {
+  background-color: #007bff;
+  color: white;
+}
+

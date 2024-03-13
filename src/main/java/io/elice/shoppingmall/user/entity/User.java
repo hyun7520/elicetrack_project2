@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.elice.shoppingmall.cart.entity.Cart;
 import io.elice.shoppingmall.order.model.Orders;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,23 +27,24 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
+    @Email(message = "이메일 형식이 유효하지 않습니다.")
     private String email;
 
     @Column(nullable = false)
+    @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
     private String password;
 
     @Column(nullable = false)
+    @Size(min = 2, message = "닉네임은 최소 2자 이상이어야 합니다.")
     private String nickname;
 
     private String phoneNumber;
 
     private String postcode;
 
-    private String address;
+    private String address1;
 
-    private String detailAddress;
-
-    private String extraAddress;
+    private String address2;
 
     private boolean isAdmin;
 
@@ -53,8 +56,8 @@ public class User {
         createdAt = LocalDateTime.now();
     }
 
-    @OneToOne
-    @JoinColumn(name = "cart_id")
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private Cart cart;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
