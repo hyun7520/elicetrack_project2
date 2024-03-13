@@ -1,58 +1,81 @@
 package io.elice.shoppingmall.cart.controller;
 
+import io.elice.shoppingmall.cart.dto.CartItemResponseDto;
+import io.elice.shoppingmall.cart.dto.CartItemUpdateDto;
 import io.elice.shoppingmall.cart.entity.CartItem;
 import io.elice.shoppingmall.cart.service.CartItemService;
 import io.elice.shoppingmall.product.entity.Product;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cart/items")
+@RequestMapping("/carts")
 public class CartItemController {
 
     private final CartItemService cartItemService;
-    
-    // TODO RequestBody를 사용한 생성, 업데이트 방식에는 DTO를 사용하여 넣기
 
     // 카트에 아이템 추가
-    // postman에서 잘 추가가 됐는지 바로 확인하기 위해 리턴값은 Product로 설정
-    @PostMapping("/{id}")
-    public Product addItemToCart(@RequestBody Long id) {
+    @PostMapping("/user/{userId}/items")
+    public ResponseEntity<CartItemResponseDto> addItemToCart(@PathVariable("userId") Long userId,
+                                  @RequestParam("product") @Min(1) Long productId,
+                                  @RequestParam("qty") @Min(1) int qty) {
 
-        Product checkIfAdded = cartItemService.addItemToCart(id);
 
-        return checkIfAdded;
+        CartItem createdCartItem = cartItemService.addItemToCart(userId, productId, qty);
+        Product product = createdCartItem.getProduct();
+        return ResponseEntity.ok(CartItemResponseDto.builder()
+                .message(product.getProductName()+", "+createdCartItem.getAmount()+"개 가 장바구니에 담겼습니다!")
+                .httpStatus(HttpStatus.CREATED)
+                .build()
+        );
+    }
+
+    @GetMapping("/user/{userId}/items")
+    public ResponseEntity<List<CartItemResponseDto>> getAllItemsInCart(@PathVariable("userId") Long userId) {
+
+        List<CartItemResponseDto> foundItems = cartItemService.getAllItemsInCart(userId);
+        return ResponseEntity.ok(foundItems);
     }
 
     // 카트에 담긴 아이템의 수량을 수정
-    @PutMapping("/{id}")
-    public String updateItemQuantity(// 수정할 cartItem 아이디와 변경할 수량 값을 받아오기
-                                     @RequestBody Long id ) {
+    @PutMapping("/user/{userId}/items/{cartItemId}")
+    public ResponseEntity<CartItemResponseDto> updateItemQuantity(@PathVariable("userId") Long userId,
+                                       @PathVariable("cartItemId") Long cartItemId,
+                                     @RequestBody @Valid CartItemUpdateDto cartItemUpdateDto) {
 
-        cartItemService.updateItemQuantity(id);
 
-        return null;
-    }
+        CartItem updateItem = cartItemService.updateItemQuantity(userId, cartItemId, cartItemUpdateDto);
+        return ResponseEntity.ok(CartItemResponseDto.builder()
+                .message("수정이 완료되었습니다.")
+                .build());
 
-    // 카트에서 아이템 삭제
-    @DeleteMapping("/{id}")
-    public String deleteItemFromCart(@RequestBody Long id) {
-
-        cartItemService.deleteItemFromCart(id);
-
-        return null;
     }
 
     // 선택된 아이템을 카트에서 모두 삭제
-    @DeleteMapping
-    public String deleteItemsFromCart(@RequestBody List<Long> selectedItemIds) {
+    @DeleteMapping("/user/{userId}/items")
+    public ResponseEntity<CartItemResponseDto> deleteItemsFromCart(@PathVariable("userId") Long userId,
+                                      @RequestBody @NotEmpty String selectedItemIds) throws ParseException {
 
-        // 리스트 형태로 삭제할 아이템의 아이디를 받아와 서비스단에 전달
-        cartItemService.deleteAllSelected(selectedItemIds);
+        JSONParser parser = new JSONParser();
+        JSONArray param = null;
+        param = (JSONArray) parser.parse(selectedItemIds);
 
-        return null;
+        // 받아온 json 스트링을 파싱하여 전달
+        String userName = cartItemService.deleteAllSelected(userId, param);
+        return ResponseEntity.ok(CartItemResponseDto.builder()
+                .message(userName + "님 삭제가 완료되었습니다.")
+                .build());
+
     }
 }

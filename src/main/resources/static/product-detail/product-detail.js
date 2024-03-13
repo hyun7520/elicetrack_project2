@@ -1,5 +1,4 @@
-import { getImageUrl } from "../../aws-s3.js";
-import * as Api from "../../api.js";
+
 import {
   getUrlParams,
   addCommas,
@@ -16,75 +15,91 @@ const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
 const addToCartButton = document.querySelector("#addToCartButton");
 const purchaseButton = document.querySelector("#purchaseButton");
 
-checkUrlParams("id");
+checkUrlParams("productId");
 addAllElements();
 addAllEvents();
 
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
-function addAllElements() {
+async function addAllElements() {
   createNavbar();
-  insertProductData();
+
+  // URL 파라미터에서 categoryId를 추출합니다.
+  const { productId } = getUrlParams();
+
+  if (productId) {
+    await insertProductData(productId);
+  } else {
+    console.error("카테고리 ID가 제공되지 않았습니다.");
+  }
 }
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {}
 
-async function insertProductData() {
-  const { id } = getUrlParams();
-  const product = await Api.get(`/products/${id}`);
+async function insertProductData(productId) {
+  try {
+    const response = await fetch(`http://localhost:8080/products/${productId}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch product details");
+    }
+    const product = await response.json();
+    console.log(product);
 
-  // 객체 destructuring
-  const {
-    title,
-    detailDescription,
-    menufacturer,
-    imageKey,
-    isRecommended,
-    price,
-  } = product;
-  const imageUrl = await getImageUrl(imageKey);
+    // 객체 destructuring
+    const {
+      title,
+      detailDescription,
+      menufacturer,
+      imageKey,
+      isRecommended,
+      price,
+    } = product;
+    const imageUrl = `http://localhost:8080/attach/images/${product.productImageUrl}`;
 
-  productImageTag.src = imageUrl;
-  titleTag.innerText = title;
-  detailDescriptionTag.innerText = detailDescription;
-  manufacturerTag.innerText = menufacturer;
-  priceTag.innerText = `${addCommas(price)}원`;
+    productImageTag.src = imageUrl;
+    titleTag.innerText = title;
+    detailDescriptionTag.innerText = detailDescription;
+    manufacturerTag.innerText = menufacturer;
+    priceTag.innerText = `${addCommas(price)}원`;
 
-  if (isRecommended) {
-    titleTag.insertAdjacentHTML(
-      "beforeend",
-      '<span class="tag is-success is-rounded">추천</span>'
-    );
-  }
+    if (isRecommended) {
+      titleTag.insertAdjacentHTML(
+          "beforeend",
+          '<span class="tag is-success is-rounded">추천</span>'
+      );
+    }
 
-  addToCartButton.addEventListener("click", async () => {
-    try {
-      await insertDb(product);
+    addToCartButton.addEventListener("click", async () => {
+      try {
+        await insertDb(product);
 
-      alert("장바구니에 추가되었습니다.");
-    } catch (err) {
-      // Key already exists 에러면 아래와 같이 alert함
-      if (err.message.includes("Key")) {
-        alert("이미 장바구니에 추가되어 있습니다.");
+        alert("장바구니에 추가되었습니다.");
+      } catch (err) {
+        // Key already exists 에러면 아래와 같이 alert함
+        if (err.message.includes("Key")) {
+          alert("이미 장바구니에 추가되어 있습니다.");
+        }
+
+        console.log(err);
       }
+    });
 
-      console.log(err);
-    }
-  });
+    purchaseButton.addEventListener("click", async () => {
+      try {
+        await insertDb(product);
 
-  purchaseButton.addEventListener("click", async () => {
-    try {
-      await insertDb(product);
+        window.location.href = "/order";
+      } catch (err) {
+        console.log(err);
 
-      window.location.href = "/order";
-    } catch (err) {
-      console.log(err);
-
-      //insertDb가 에러가 되는 경우는 이미 제품이 장바구니에 있던 경우임
-      //따라서 다시 추가 안 하고 바로 order 페이지로 이동함
-      window.location.href = "/order";
-    }
-  });
+        //insertDb가 에러가 되는 경우는 이미 제품이 장바구니에 있던 경우임
+        //따라서 다시 추가 안 하고 바로 order 페이지로 이동함
+        window.location.href = "/order";
+      }
+    });
+  } catch (error) {
+    console.error('데이터를 불러오는 중 오류가 발생했습니다:', error.message);
+  }
 }
 
 async function insertDb(product) {
