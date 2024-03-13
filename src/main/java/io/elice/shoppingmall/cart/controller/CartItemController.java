@@ -29,7 +29,7 @@ public class CartItemController {
     @PostMapping("/user/{userId}/items")
     public ResponseEntity<CartItemResponseDto> addItemToCart(@PathVariable("userId") Long userId,
                                   @RequestParam("product") @Min(1) Long productId,
-                                  @RequestParam("qty") @Min(1) int qty) {
+                                  @RequestParam(value = "qty", required = false, defaultValue = "1") @Min(1) int qty) {
 
 
         CartItem createdCartItem = cartItemService.addItemToCart(userId, productId, qty);
