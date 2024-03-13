@@ -17,8 +17,13 @@ const productsTotalElem = document.querySelector("#productsTotal");
 const deliveryFeeElem = document.querySelector("#deliveryFee");
 const orderTotalElem = document.querySelector("#orderTotal");
 const purchaseButton = document.querySelector("#purchaseButton");
+const deliveryFeeWarn = document.querySelector("#deliveryFeeWarn");
+
+const sessionUser = sessionStorage.getItem("id");
 
 let checked = [];
+let finalPrice = 0;
+let finalAmount = 0;
 
 addAllElements();
 addAllEvents();
@@ -39,10 +44,17 @@ function addAllEvents() {
 // indexedDB의 cart와 order에서 필요한 정보를 가져온 후
 // 요소(컴포넌트)를 만들어 html에 삽입함.
 async function insertProductsfromCart() {
-  const response = await fetch('http://localhost:8080/carts/user/1/items');
+  const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`);
   const products = await response.json();
 
   let i = 0;
+  let finalAmount = 0;
+  let finalPrice = 0
+
+  if (products.length == 0) {
+    window.confirm("장바구니가 비어있습니다!");
+    window.location.href = '/home';
+  }
 
   while (i < products.length) {
 
@@ -134,7 +146,6 @@ async function insertProductsfromCart() {
       } else {
         checked = checked.filter(toDelete => toDelete != id)
       }
-      console.log(checked);
     })
 
     // < button class="delete-button" id = "delete" >
@@ -159,26 +170,61 @@ async function insertProductsfromCart() {
     let amountInput = document.querySelector(`#quantityInput-${id}`);
     let amountCalculate = document.querySelector(`#quantity-${id}`);
     let totalCal = document.querySelector(`#total-${id}`);
+    finalAmount += convertToNumber(amountInput.value);
+    finalPrice += convertToNumber(totalCal.innerHTML);
 
     const unit = "원";
+    const deleiveryFee = "3000원"
 
     plusqButton.addEventListener('click', async function () {
-      if (amount < 100) {
+      if (amount < 99) {
+        if (minusqButton.hasAttribute("disabled")) {
+          minusqButton.removeAttribute("disabled");
+        }
         amount += 1;
+        await updateQuantity(id, amount);
         amountInput.value = amountCalculate.innerHTML = amount;
         totalCal.innerHTML = `${addCommas(amount * price)}` + unit;
-      } else {
-        window.alert("최대 구매 가능 개수는 99개입니다!");
+        finalAmount += 1;
+        finalPrice += price;
+        productsCountElem.innerText = finalAmount;
+        productsTotalElem.innerText = `${addCommas(finalPrice)}` + unit;
+        if (finalPrice < 50000) {
+          deliveryFeeElem.innerText = deleiveryFee;
+          deliveryFeeWarn.innerText = '50,000원 이상은 무료배송!';
+        } else {
+          deliveryFeeElem.innerText = "0원";
+          deliveryFeeWarn.innerText = '';
+        }
+      }
+      if (amount == 99) {
+        plusqButton.setAttribute("disabled", "");
       }
     })
 
     minusqButton.addEventListener('click', async function () {
-      if (amount != 1) {
+      if (amount >= 2) {
+        if (plusqButton.hasAttribute("disabled")) {
+          plusqButton.removeAttribute("disabled");
+        }
         amount -= 1;
+        await updateQuantity(id, amount);
         amountInput.value = amountCalculate.innerHTML = amount;
         totalCal.innerHTML = `${addCommas(amount * price)}` + unit;
-      } else {
-        window.alert("1개 이상 구매하셔야 합니다!");
+        finalAmount -= 1;
+        finalPrice -= price;
+        productsCountElem.innerText = finalAmount;
+        productsTotalElem.innerText = `${addCommas(finalPrice)}` + unit;
+        if (finalPrice < 50000) {
+          deliveryFeeElem.innerText = deleiveryFee;
+          deliveryFeeWarn.innerText = '50,000원 이상은 무료배송!';
+        } else {
+          deliveryFeeElem.innerText = "0원";
+          deliveryFeeWarn.innerText = '';
+        }
+      }
+      if (amount == 1) {
+        minusqButton.setAttribute("disabled", "");
       }
     })
 
@@ -201,7 +247,6 @@ async function insertProductsfromCart() {
     itemCheckbox.insertBefore(deleteOneButton, itemCheckbox.lastChild);
 
     i++;
-
     // 각종 이벤트 추가
     // document
     //   .querySelector(`#delete`)
@@ -232,24 +277,32 @@ async function insertProductsfromCart() {
     //   .addEventListener("change", () => handleQuantityInput(_id));
   };
 
+  productsCountElem.innerText = finalAmount;
+  productsTotalElem.innerText = `${addCommas(finalPrice)}` + '원';
+
+  if (finalPrice < 50000) {
+    deliveryFeeElem.innerText = deleiveryFee;
+  } else {
+    deliveryFeeElem.innerText = "0원";
+  }
+
+
   allSelectCheckbox.addEventListener('click', function selectAll() {
     let itemboxes = document.getElementsByName('item');
-    console.log(allSelectCheckbox.checked);
     if (allSelectCheckbox.checked) {
       for (let i = 0; i < itemboxes.length; i++) {
-        console.log(itemboxes[i]);
         itemboxes[i].checked = true;
         checked.push(itemboxes[i].value)
       }
     } else {
       for (let i = 0; i < itemboxes.length; i++) {
-        console.log(itemboxes[i]);
         itemboxes[i].checked = false;
       }
       checked.splice(0, checked.length);
     }
-    console.log(checked);
   })
+
+  updateOrderSummary();
 
   document.querySelector('#partialDeleteLabel').addEventListener("click", deleteSelectedData);
 }
@@ -270,13 +323,23 @@ async function deleteSelectedData() {
 
 // 제품 삭제 기능
 async function deleteData(list) {
-  await fetch(`http://localhost:8080/carts/user/1/items`, {
+  await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(list)
   })
+}
+
+async function updateQuantity(cartId, amount) {
+  const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items/${cartId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ "quantity": amount })
+  });
 }
 
 async function toggleItem(id) {
@@ -380,83 +443,83 @@ async function handleQuantityInput(id) {
 }
 
 // -버튼, 숫자입력칸, +버튼 활성화 여부 및 값을 세팅함.
-function setQuantityBox(id, type) {
-  // 세팅 방식 결정을 위한 변수들
-  const isPlus = type.includes("plus");
-  const isMinus = type.includes("minus");
-  const isInput = type.includes("input");
-  const isDisableAll = type.includes("disable");
+// function setQuantityBox(id, type) {
+//   // 세팅 방식 결정을 위한 변수들
+//   const isPlus = type.includes("plus");
+//   const isMinus = type.includes("minus");
+//   const isInput = type.includes("input");
+//   const isDisableAll = type.includes("disable");
 
-  // 세팅을 위한 요소들
-  const minusButton = document.querySelector(`#minus-${id}`);
-  const quantityInput = document.querySelector(`#quantityInput-${id}`);
-  const plusButton = document.querySelector(`#plus-${id}`);
+//   // 세팅을 위한 요소들
+//   const minusButton = document.querySelector(`#minus-${id}`);
+//   const quantityInput = document.querySelector(`#quantityInput-${id}`);
+//   const plusButton = document.querySelector(`#plus-${id}`);
 
-  // 우선 기본적으로 활성화시킴
-  minusButton.removeAttribute("disabled");
-  quantityInput.removeAttribute("disabled");
-  plusButton.removeAttribute("disabled");
+//   // 우선 기본적으로 활성화시킴
+//   minusButton.removeAttribute("disabled");
+//   quantityInput.removeAttribute("disabled");
+//   plusButton.removeAttribute("disabled");
 
-  // 전체 비활성화 시키는 타입일 경우 (제품 체크를 해제했을 때 등)
-  if (isDisableAll) {
-    minusButton.setAttribute("disabled", "");
-    quantityInput.setAttribute("disabled", "");
-    plusButton.setAttribute("disabled", "");
-    return;
-  }
+//   // 전체 비활성화 시키는 타입일 경우 (제품 체크를 해제했을 때 등)
+//   if (isDisableAll) {
+//     minusButton.setAttribute("disabled", "");
+//     quantityInput.setAttribute("disabled", "");
+//     plusButton.setAttribute("disabled", "");
+//     return;
+//   }
 
-  // input칸 값을 업데이트하기 위한 변수 설정
-  let quantityUpdate;
-  if (isPlus) {
-    quantityUpdate = +1;
-  } else if (isMinus) {
-    quantityUpdate = -1;
-  } else if (isInput) {
-    quantityUpdate = 0;
-  } else {
-    quantityUpdate = 0;
-  }
+//   // input칸 값을 업데이트하기 위한 변수 설정
+//   let quantityUpdate;
+//   if (isPlus) {
+//     quantityUpdate = +1;
+//   } else if (isMinus) {
+//     quantityUpdate = -1;
+//   } else if (isInput) {
+//     quantityUpdate = 0;
+//   } else {
+//     quantityUpdate = 0;
+//   }
 
-  // input칸 값 업데이트
-  const currentQuantity = parseInt(quantityInput.value);
-  const newQuantity = currentQuantity + quantityUpdate;
-  quantityInput.value = newQuantity;
+//   // input칸 값 업데이트
+//   const currentQuantity = parseInt(quantityInput.value);
+//   const newQuantity = currentQuantity + quantityUpdate;
+//   quantityInput.value = newQuantity;
 
-  // 숫자는 1~99만 가능
-  const isMin = newQuantity === 1;
-  const isMax = newQuantity === 99;
+//   // 숫자는 1~99만 가능
+//   const isMin = newQuantity === 1;
+//   const isMax = newQuantity === 99;
 
-  if (isMin) {
-    minusButton.setAttribute("disabled", "");
-  }
+//   if (isMin) {
+//     minusButton.setAttribute("disabled", "");
+//   }
 
-  if (isMax) {
-    plusButton.setAttribute("disabled", "");
-  }
-}
-
-// async function deleteSelectedItems() {
-//   const { selectedIds } = await getFromDb("order", "summary");
-
-//   selectedIds.forEach((id) => deleteItem(id));
+//   if (isMax) {
+//     plusButton.setAttribute("disabled", "");
+//   }
 // }
 
-// 전체선택 체크박스를, 현재 상황에 맞추어
-// 체크 또는 언체크 상태로 만듦
-async function updateAllSelectCheckbox() {
-  const { ids, selectedIds } = await getFromDb("order", "summary");
+// // async function deleteSelectedItems() {
+// //   const { selectedIds } = await getFromDb("order", "summary");
 
-  const isOrderEmpty = ids.length === 0;
-  const isAllItemSelected = ids.length === selectedIds.length;
+// //   selectedIds.forEach((id) => deleteItem(id));
+// // }
 
-  // 장바구니 아이템(제품) 수가 0이 아니고,
-  // 또 전체 아이템들이 선택된 상태라면 체크함.
-  if (!isOrderEmpty && isAllItemSelected) {
-    allSelectCheckbox.checked = true;
-  } else {
-    allSelectCheckbox.checked = false;
-  }
-}
+// // 전체선택 체크박스를, 현재 상황에 맞추어
+// // 체크 또는 언체크 상태로 만듦
+// async function updateAllSelectCheckbox() {
+//   const { ids, selectedIds } = await getFromDb("order", "summary");
+
+//   const isOrderEmpty = ids.length === 0;
+//   const isAllItemSelected = ids.length === selectedIds.length;
+
+//   // 장바구니 아이템(제품) 수가 0이 아니고,
+//   // 또 전체 아이템들이 선택된 상태라면 체크함.
+//   if (!isOrderEmpty && isAllItemSelected) {
+//     allSelectCheckbox.checked = true;
+//   } else {
+//     allSelectCheckbox.checked = false;
+//   }
+// }
 
 async function deleteItem(id) {
   // indexedDB의 cart 목록에서 id를 key로 가지는 데이터를 삭제함.
@@ -473,129 +536,126 @@ async function deleteItem(id) {
 }
 
 // 결제정보 카드 업데이트 및, indexedDB 업데이트를 진행함.
-async function updateOrderSummary(id, type) {
+async function updateOrderSummary() {
   // 업데이트 방식 결정을 위한 변수들
-  const isCheckbox = type.includes("checkbox");
-  const isInput = type.includes("input");
-  const isDeleteButton = type.includes("deleteButton");
-  const isMinusButton = type.includes("minusButton");
-  const isPlusButton = type.includes("plusButton");
-  const isAdd = type.includes("add");
-  const isRemoveTemp = type.includes("removeTemp");
-  const isRemovePermanent = type.includes("removePermanent");
-  const isRemove = isRemoveTemp || isRemovePermanent;
-  // const isItemChecked = document.querySelector(`#checkbox-${id}`).checked;
-  const isDeleteWithoutChecked = isDeleteButton && !isItemChecked;
+  // const isCheckbox = type.includes("checkbox");
+  // const isInput = type.includes("input");
+  // const isDeleteButton = type.includes("deleteButton");
+  // const isMinusButton = type.includes("minusButton");
+  // const isPlusButton = type.includes("plusButton");
+  // const isAdd = type.includes("add");
+  // const isRemoveTemp = type.includes("removeTemp");
+  // const isRemovePermanent = type.includes("removePermanent");
+  // const isRemove = isRemoveTemp || isRemovePermanent;
+  // // const isItemChecked = document.querySelector(`#checkbox-${id}`).checked;
+  // const isDeleteWithoutChecked = isDeleteButton && !isItemChecked;
 
-  // 업데이트에 사용될 변수
-  let price;
-  let quantity;
 
   // 체크박스 혹은 삭제 버튼 클릭으로 인한 업데이트임.
-  if (isCheckbox || isDeleteButton) {
-    const priceElem = document.querySelector(`#total-${id}`);
-    price = convertToNumber(priceElem.innerText);
+  // if (isCheckbox || isDeleteButton) {
+  //   const priceElem = document.querySelector(`#total-${id}`);
+  //   price = convertToNumber(priceElem.innerText);
 
-    quantity = 1;
-  }
+  //   quantity = 1;
+  // }
 
-  // - + 버튼 클릭으로 인한 업데이트임.
-  if (isMinusButton || isPlusButton) {
-    const unitPriceElem = document.querySelector(`#unitPrice-${id}`);
-    price = convertToNumber(unitPriceElem.innerText);
+  // // - + 버튼 클릭으로 인한 업데이트임.
+  // if (isMinusButton || isPlusButton) {
+  //   const unitPriceElem = document.querySelector(`#unitPrice-${id}`);
+  //   price = convertToNumber(unitPriceElem.innerText);
 
-    quantity = 0;
-  }
+  //   quantity = 0;
+  // }
 
-  // input 박스 입력으로 인한 업데이트임
-  if (isInput) {
-    const unitPriceElem = document.querySelector(`#unitPrice-${id}`);
-    const unitPrice = convertToNumber(unitPriceElem.innerText);
+  // // input 박스 입력으로 인한 업데이트임
+  // if (isInput) {
+  //   const unitPriceElem = document.querySelector(`#unitPrice-${id}`);
+  //   const unitPrice = convertToNumber(unitPriceElem.innerText);
 
-    const inputElem = document.querySelector(`#quantityInput-${id}`);
-    const inputQuantity = convertToNumber(inputElem.value);
+  //   const inputElem = document.querySelector(`#quantityInput-${id}`);
+  //   const inputQuantity = convertToNumber(inputElem.value);
 
-    const quantityElem = document.querySelector(`#quantity-${id}`);
-    const currentQuantity = convertToNumber(quantityElem.innerText);
+  //   const quantityElem = document.querySelector(`#quantity-${id}`);
+  //   const currentQuantity = convertToNumber(quantityElem.innerText);
 
-    price = unitPrice * (inputQuantity - currentQuantity);
+  //   price = unitPrice * (inputQuantity - currentQuantity);
 
-    quantity = 0;
-  }
+  //   quantity = 0;
+  // }
 
-  // 업데이트 방식
-  const priceUpdate = isAdd ? +price : -price;
-  const countUpdate = isAdd ? +quantity : -quantity;
+  // // 업데이트 방식
+  // const priceUpdate = isAdd ? +price : -price;
+  // const countUpdate = isAdd ? +quantity : -quantity;
 
-  // 현재 결제정보의 값들을 가져오고 숫자로 바꿈.
-  const currentCount = convertToNumber(productsCountElem.innerText);
-  const currentProductsTotal = convertToNumber(productsTotalElem.innerText);
-  const currentFee = convertToNumber(deliveryFeeElem.innerText);
-  const currentOrderTotal = convertToNumber(orderTotalElem.innerText);
+  // // 현재 결제정보의 값들을 가져오고 숫자로 바꿈.
+  // const currentCount = convertToNumber(productsCountElem.innerText);
+  // const currentProductsTotal = convertToNumber(productsTotalElem.innerText);
+  // const currentFee = convertToNumber(deliveryFeeElem.innerText);
+  // const currentOrderTotal = convertToNumber(orderTotalElem.innerText);
 
-  // 결제정보 관련 요소들 업데이트
-  if (!isDeleteWithoutChecked) {
-    productsCountElem.innerText = `${currentCount + countUpdate}개`;
-    productsTotalElem.innerText = `${addCommas(
-      currentProductsTotal + priceUpdate
-    )}원`;
-  }
+  // // 결제정보 관련 요소들 업데이트
+  // if (!isDeleteWithoutChecked) {
+  //   productsCountElem.innerText = `${currentCount + countUpdate}개`;
+  //   productsTotalElem.innerText = `${addCommas(
+  //     currentProductsTotal + priceUpdate
+  //   )}원`;
+  // }
 
-  // 기존 결제정보가 비어있었어서, 배송비 또한 0인 상태였던 경우
-  const isFeeAddRequired = isAdd && currentFee === 0;
+  // // 기존 결제정보가 비어있었어서, 배송비 또한 0인 상태였던 경우
+  // const isFeeAddRequired = isAdd && currentFee === 0;
 
-  if (isFeeAddRequired) {
-    deliveryFeeElem.innerText = `3000원`;
-    orderTotalElem.innerText = `${addCommas(
-      currentOrderTotal + priceUpdate + 3000
-    )}원`;
-  }
+  // if (isFeeAddRequired) {
+  //   deliveryFeeElem.innerText = `3000원`;
+  //   orderTotalElem.innerText = `${addCommas(
+  //     currentOrderTotal + priceUpdate + 3000
+  //   )}원`;
+  // }
 
-  if (!isFeeAddRequired && !isDeleteWithoutChecked) {
-    orderTotalElem.innerText = `${addCommas(
-      currentOrderTotal + priceUpdate
-    )}원`;
-  }
+  // if (!isFeeAddRequired && !isDeleteWithoutChecked) {
+  //   orderTotalElem.innerText = `${addCommas(
+  //     currentOrderTotal + priceUpdate
+  //   )}원`;
+  // }
 
-  // 이 업데이트로 인해 결제정보가 비게 되는 경우
-  const isCartNowEmpty = currentCount === 1 && isRemove;
+  // // 이 업데이트로 인해 결제정보가 비게 되는 경우
+  // const isCartNowEmpty = currentCount === 1 && isRemove;
 
-  if (!isDeleteWithoutChecked && isCartNowEmpty) {
-    deliveryFeeElem.innerText = `0원`;
+  // if (!isDeleteWithoutChecked && isCartNowEmpty) {
+  //   deliveryFeeElem.innerText = `0원`;
 
-    // 다시 한 번, 현재 값을 가져와서 3000을 빼 줌
-    const currentOrderTotal = convertToNumber(orderTotalElem.innerText);
-    orderTotalElem.innerText = `${addCommas(currentOrderTotal - 3000)}원`;
+  //   // 다시 한 번, 현재 값을 가져와서 3000을 빼 줌
+  //   const currentOrderTotal = convertToNumber(orderTotalElem.innerText);
+  //   orderTotalElem.innerText = `${addCommas(currentOrderTotal - 3000)}원`;
 
-    // 전체선택도 언체크되도록 함.
-    updateAllSelectCheckbox();
-  }
+  //   // 전체선택도 언체크되도록 함.
+  //   updateAllSelectCheckbox();
+  // }
 
-  // indexedDB의 order.summary 업데이트
-  await putToDb("order", "summary", (data) => {
-    const hasId = data.selectedIds.includes(id);
+  // // indexedDB의 order.summary 업데이트
+  // await putToDb("order", "summary", (data) => {
+  //   const hasId = data.selectedIds.includes(id);
 
-    if (isAdd && !hasId) {
-      data.selectedIds.push(id);
-    }
+  //   if (isAdd && !hasId) {
+  //     data.selectedIds.push(id);
+  //   }
 
-    if (isRemoveTemp) {
-      data.selectedIds = data.selectedIds.filter((_id) => _id !== id);
-    }
+  //   if (isRemoveTemp) {
+  //     data.selectedIds = data.selectedIds.filter((_id) => _id !== id);
+  //   }
 
-    if (isRemovePermanent) {
-      data.ids = data.ids.filter((_id) => _id !== id);
-      data.selectedIds = data.selectedIds.filter((_id) => _id !== id);
-    }
+  //   if (isRemovePermanent) {
+  //     data.ids = data.ids.filter((_id) => _id !== id);
+  //     data.selectedIds = data.selectedIds.filter((_id) => _id !== id);
+  //   }
 
-    if (!isDeleteWithoutChecked) {
-      data.productsCount += countUpdate;
-      data.productsTotal += priceUpdate;
-    }
-  });
+  //   if (!isDeleteWithoutChecked) {
+  //     data.productsCount += countUpdate;
+  //     data.productsTotal += priceUpdate;
+  //   }
+  // });
 
-  // 전체선택 체크박스 업데이트
-  updateAllSelectCheckbox();
+  // // 전체선택 체크박스 업데이트
+  // updateAllSelectCheckbox();
 }
 
 // 아이템(제품)카드의 수량, 금액 등을 업데이트함

@@ -10,6 +10,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
+const sessionUser = sessionStorage.getItem("id");
 
 addAllElements();
 addAllEvents();
@@ -32,22 +33,33 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
 async function insertOrders() {
-  const orders = await Api.get("/orders/orderlist/user");
+  const orders = await Api.get(`http://localhost:8080/orders/user/${sessionUser}`);
+  console.log(orders.content);
 
-  for (const order of orders) {
-    const { id, createdAt, summaryTitle, status } = order;
-    // const date = createdAt.split("T")[0];
-    const date = new Date(createdAt).toLocaleDateString('ko-KR');
-    console.log(date);
+  for (const order of orders.content) {
+    const { id, orderDate, firstProductName, deliveryProcess } = order;
+    // const date = orderDate.split("T")[0];
+    const date = new Date(orderDate).toLocaleDateString('ko-KR');
 
+    let process = '';
+
+    if (deliveryProcess == 'preparing') {
+      process = '준비중';
+    }
+    if (deliveryProcess == 'shipping') {
+      process = '배송중';
+    }
+    if (deliveryProcess == 'complete') {
+      process = '배달완료';
+    }
 
     ordersContainer.insertAdjacentHTML(
       "beforeend",
       `
         <div class="columns orders-item" id="order-${id}">
           <div class="column is-2">${date}</div>
-          <div class="column is-6 order-summary">${summaryTitle}</div>
-          <div class="column is-2">${status}</div>
+          <div class="column is-6 order-summary">${firstProductName}</div>
+          <div class="column is-2">${process}</div>
           <div class="column is-2">
             <button class="button" id="deleteButton-${id}" >주문 취소</button>
           </div>
@@ -65,13 +77,21 @@ async function insertOrders() {
   }
 }
 
+async function deleteData() {
+  await fetch(`http://localhost:8080/orders/${orderIdToDelete}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
+}
+
 // db에서 주문정보 삭제
 async function deleteOrderData(e) {
   e.preventDefault();
 
   try {
-    await Api.delete("/orders", orderIdToDelete);
-
+    await deleteData();
     // 삭제 성공
     alert("주문 정보가 삭제되었습니다.");
 

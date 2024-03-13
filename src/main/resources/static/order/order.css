@@ -30,7 +30,7 @@
   cursor: pointer;
 }
 
-.title:not(.is-spaced) + .subtitle {
+.title:not(.is-spaced)+.subtitle {
   margin-top: 0;
 }
 
@@ -159,6 +159,13 @@ input[type="number"]::-webkit-outer-spin-button {
 .total .total-price {
   font-weight: bold;
   font-size: 2rem;
+}
+
+.purchase #delivery-info {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 .purchase {
