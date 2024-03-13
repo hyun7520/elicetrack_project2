@@ -1,3 +1,4 @@
+import { addImageToS3 } from "../../aws-s3.js";
 import * as Api from "../../api.js";
 import { checkLogin, createNavbar } from "../../useful-functions.js";
 
@@ -49,12 +50,8 @@ async function handleSubmit(e) {
   }
 
   try {
-    const formData = new FormData();
-    formData.append('image', image);
-    const response = await Api.postFormData("/upload-image", formData); // 이미지를 서버로 업로드
-    const imageUrl = response.data; // 저장된 이미지의 URL
-
-    const data = { title, description, themeClass, imageUrl };
+    const imageKey = await addImageToS3(imageInput, "category");
+    const data = { title, description, themeClass, imageKey };
 
     await Api.post("/categories", data);
 
@@ -71,35 +68,15 @@ async function handleSubmit(e) {
   }
 }
 
-
 // 사용자가 사진을 업로드했을 때, 파일 이름이 화면에 나타나도록 함.
-async function handleImageUpload() {
-  const imageInput = document.querySelector("#imageInput");
+function handleImageUpload() {
   const file = imageInput.files[0];
   if (file) {
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch("http://localhost:8080/categories/upload-image", {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        throw new Error('이미지를 업로드하는 중에 문제가 발생했습니다.');
-      }
-
-      const imageUrl = await response.json(); // 저장된 이미지의 URL
-
-      // 이미지 업로드에 성공하면 필요한 후속 작업 수행
-    } catch (error) {
-      console.error("이미지 업로드 중에 오류가 발생했습니다.", error);
-      // 오류 처리
-    }
+    fileNameSpan.innerText = file.name;
+  } else {
+    fileNameSpan.innerText = "";
   }
 }
-
 
 // 색상 선택 시, 선택박스에 해당 색상 반영되게 함.
 function handleColorChange() {
