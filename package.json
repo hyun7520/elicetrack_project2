@@ -3,5 +3,6 @@
     "aws-sdk": "^2.1556.0",
     "bulma": "^0.9.4",
     "bulma-carousel": "^4.0.24"
-  }
+  },
+  "type": "module"
 }
