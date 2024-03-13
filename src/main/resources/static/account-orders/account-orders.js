@@ -41,8 +41,8 @@ async function insertOrders(page = 0, size = 5) {
   ordersContainer.innerHTML = "";
 
   for (const order of orders.content) {
-    const { id, orderDate, firstProductName, deliveryProcess } = order;
-    // const date = orderDate.split("T")[0];
+    const { id, orderDate, deliveryProcess } = order;
+    let productName = order.orderDetails[0].productName;
     const date = new Date(orderDate).toLocaleDateString('ko-KR');
 
     let process = '';
@@ -62,7 +62,7 @@ async function insertOrders(page = 0, size = 5) {
       `
         <div class="columns orders-item" id="order-${id}">
           <div class="column is-2">${date}</div>
-          <div class="column is-6 order-summary">${firstProductName}</div>
+          <div class="column is-6 order-summary">${productName} 외 ${order.orderDetails.length - 1} 개의 제품</div>
           <div class="column is-2">${process}</div>
           <div class="column is-2">
             <button class="button" id="deleteButton-${id}" >주문 취소</button>
