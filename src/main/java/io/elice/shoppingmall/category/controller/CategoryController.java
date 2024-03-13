@@ -4,16 +4,25 @@ import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/categories")
 public class CategoryController{
     private final CategoryService categoryService;
+
+//    @Value("${image.upload.path}")
+//    private String imageUploadPath;
 
     // 카테고리 모두 조회
     @GetMapping
@@ -60,4 +69,19 @@ public class CategoryController{
     public List<Category> getSubcategories(@PathVariable("categoryId") Long categoryId) {
         return categoryService.findByParentCategoryId(categoryId);
     }
+
+//    // 이미지 업로드
+//    @PostMapping("/upload-image")
+//    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile image) {
+//        try {
+//            String imageName = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
+//            File targetFile = new File(imageUploadPath + imageName);
+//            image.transferTo(targetFile);
+//            String imageUrl = "http://your-domain.com/images/" + imageName;
+//            return ResponseEntity.ok(imageUrl);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 중에 오류가 발생했습니다.");
+//        }
+//    }
 }
