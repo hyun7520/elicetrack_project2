@@ -1,4 +1,3 @@
-
 import {
   getUrlParams,
   addCommas,
@@ -112,6 +111,7 @@ async function insertDb(product) {
 
   // 장바구니 요약(=전체 총합)을 업데이트함.
   await putToDb("order", "summary", (data) => {
+
     // 기존 데이터를 가져옴
     const count = data.productsCount;
     const total = data.productsTotal;
