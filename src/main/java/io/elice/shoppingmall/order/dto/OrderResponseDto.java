@@ -26,9 +26,10 @@ public class OrderResponseDto {
     private List<OrderDetail> orderDetails;
     private String userName;
     private String message;
+    private String firstProductName;
 
     @Builder
-    public OrderResponseDto(Long id, Orders order, String message, String userName) {
+    public OrderResponseDto(Long id, Orders order, String message, String userName, String firstProductName) {
 
         this.id = order.getId();
         this.orderDate = order.getOrderDate();
@@ -42,5 +43,6 @@ public class OrderResponseDto {
         this.orderDetails = order.getOrderDetails();
         this.message = message;
         this.userName = userName;
+        this.firstProductName = firstProductName;
     }
 }

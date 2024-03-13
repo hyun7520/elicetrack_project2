@@ -35,6 +35,8 @@ public class OrderRequestDto {
 
     private String request;
 
+    private int postalCode;
+
     @Min(value = 1000, message = "가격은 1000원 이하일 수 없습니다!")
     private Long totalCost;
 

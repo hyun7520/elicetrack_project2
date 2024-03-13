@@ -31,11 +31,12 @@ public class CartItemService {
     public CartItem addItemToCart(Long userId, Long productId, int qty) {
 
         Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
+        Optional<User> foundUser = userRepository.findById(userId);
         Optional<Product> foundProduct = productRepository.findById(productId);
         List<CartItem> foundItems = cartItemRepository.findAllByCart_User_Id(userId);
 
-        if(foundCart.isEmpty()) {
-            throw new IllegalArgumentException("장바구니가 존재하지 않습니다!");
+        if(foundUser.isEmpty()) {
+            throw new IllegalArgumentException("사용자가 존재하지 않습니다");
         }
         if(foundProduct.isEmpty()) {
             throw new IllegalArgumentException("추가하려는 제품이 존재하지 않습니다!");
@@ -46,6 +47,23 @@ public class CartItemService {
             }
         }
 
+        if(foundCart.isEmpty()) {
+            Cart newCart = Cart.builder()
+                    .user(foundUser.get())
+                    .build();
+            cartRepository.save(newCart);
+
+            CartItem cartItem = CartItem.builder()
+                    .amount(qty)
+                    .cart(newCart)
+                    .product(foundProduct.get())
+                    .build();
+
+            cartItemRepository.save(cartItem);
+            newCart.addCartItem(cartItem);
+
+            return cartItem;
+        }
 
         CartItem cartItem = CartItem.builder()
                 .amount(qty)
