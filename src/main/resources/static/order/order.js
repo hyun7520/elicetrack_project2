@@ -26,8 +26,11 @@ const productsTotalElem = document.querySelector("#productsTotal");
 const deliveryFeeElem = document.querySelector("#deliveryFee");
 const orderTotalElem = document.querySelector("#orderTotal");
 const checkoutButton = document.querySelector("#checkoutButton");
+const deliveryInfo = document.querySelector('#delivery-info');
 
 const result = [];
+const sessionUser = sessionStorage.getItem("id");
+
 
 const requestOption = {
   1: "직접 수령하겠습니다.",
@@ -48,7 +51,6 @@ function addAllElements() {
   insertOrderSummary();
 }
 
-
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
   subtitleCart.addEventListener("click", navigate("/cart"));
@@ -60,7 +62,7 @@ function addAllEvents() {
 // 데이터 가져오기
 async function fetchData() {
   try {
-    const response = await fetch('http://localhost:8080/carts/user/1/items');
+    const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -70,12 +72,12 @@ async function fetchData() {
 
 // 장바구니 데이터 출력 및 삭제 기능 추가
 async function deleteFunctions() {
-
   const orderList = document.querySelector('.order-list');
   const data = await fetchData();
 
   if (data.length == 0) {
-    window.location.href = 'http://localhost:8080/home/home.html';
+    window.confirm("장바구니가 비어있습니다!");
+    window.location.href = '/home';
   }
 
   let i = 0;
@@ -146,7 +148,7 @@ async function deleteSelectedData() {
 
 // 제품 삭제 기능
 async function deleteData(list) {
-  await fetch(`http://localhost:8080/carts/user/1/items`, {
+  await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -193,52 +195,27 @@ function searchAddress() {
 
 // 페이지 로드 시 실행되며, 결제정보 카드에 값을 삽입함.
 async function insertOrderSummary() {
-  const { ids, selectedIds, productsTotal } = await getFromDb(
-    "orders",
-    "summary"
-  );
+  const data = await fetchData();
 
-  // 구매할 아이템이 없다면 다른 페이지로 이동시킴
-  const hasItemInCart = ids.length !== 0;
-  const hasItemToCheckout = selectedIds.length !== 0;
+  let productsTitle = '';
+  let productsTotal = 0;
 
-  if (!hasItemInCart) {
-    const categorys = await Api.get("/api/categorylist");
-    const categoryTitle = randomPick(categorys).title;
-
-    alert(`구매할 제품이 없습니다. 제품을 선택해 주세요.`);
-
-    return window.location.replace(`/product/list?category=${categoryTitle}`);
-  }
-
-  if (!hasItemToCheckout) {
-    alert("구매할 제품이 없습니다. 장바구니에서 선택해 주세요.");
-
-    return window.location.replace("/cart");
-  }
-
-  // 화면에 보일 상품명
-  let productsTitle = "";
-
-  for (const id of selectedIds) {
-    const { title, quantity } = await getFromDb("cart", id);
-    // 첫 제품이 아니라면, 다음 줄에 출력되도록 \n을 추가함
-    if (productsTitle) {
-      productsTitle += "\n";
-    }
-
-    productsTitle += `${title} / ${quantity}개`;
-  }
+  data.forEach(item => {
+    productsTitle += (item.productName + "\n");
+    productsTotal += (item.price * item.amount);
+    console.log(productsTotal);
+  });
 
   productsTitleElem.innerText = productsTitle;
   productsTotalElem.innerText = `${addCommas(productsTotal)}원`;
 
-  if (hasItemToCheckout) {
+  if (productsTotal < 50000) {
     deliveryFeeElem.innerText = `3,000원`;
     orderTotalElem.innerText = `${addCommas(productsTotal + 3000)}원`;
+    deliveryInfo.innerText = '50,000원 이상은 무료배송!';
   } else {
     deliveryFeeElem.innerText = `0원`;
-    orderTotalElem.innerText = `0원`;
+    orderTotalElem.innerText = `${addCommas(productsTotal)}원`;
   }
 
   receiverNameInput.focus();
@@ -293,8 +270,8 @@ async function doCheckout() {
   const requestType = requestSelectBox.value;
   const customRequest = customRequestInput.value;
   // const summaryTitle = productsTitleElem.innerText;
-  // const totalPrice = convertToNumber(orderTotalElem.innerText);
-  const selectedItems = await fetchData("http://localhost:8080/carts/user/1/items");
+  const totalPrice = convertToNumber(orderTotalElem.innerText);
+  const selectedItems = await fetchData(`http://localhost:8080/carts/user/${sessionUser}/items`);
 
   if (!receiverName || !receiverPhoneNumber || !postalCode || !address2) {
     return alert("배송지 정보를 모두 입력해 주세요.");
@@ -313,7 +290,7 @@ async function doCheckout() {
     request = requestOption[requestType];
   }
 
-  const address = postalCode + address2 + receiverName + receiverPhoneNumber;
+  const address = address1 + " " + address2;
 
   try {
     // 전체 주문을 등록함
@@ -325,7 +302,8 @@ async function doCheckout() {
         "receiver": receiverName,
         "address": address,
         "request": request,
-        "totalCost": 30000
+        "postalCode": postalCode,
+        "totalCost": totalPrice
       })
     });
 
@@ -335,7 +313,6 @@ async function doCheckout() {
         console.log(product);
 
         const { productId, amount, price } = product;
-        const totalPrice = amount * price;
 
         console.log(productId, amount, price);
 
@@ -351,7 +328,7 @@ async function doCheckout() {
       }
     })
 
-    await fetch('http://localhost:8080/carts/user/1', {
+    await fetch(`http://localhost:8080/carts/user/${sessionUser}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })

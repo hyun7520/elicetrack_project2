@@ -107,12 +107,10 @@ public class OrderController {
 
     // 주문 삭제 - 관리자권한
     @DeleteMapping("/{id}")
-    public ResponseEntity<OrderResponseDto> deleteOrder(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteOrder(@PathVariable("id") Long id) {
 
         String userName = orderService.deleteOrder(id);
-        return ResponseEntity.ok(OrderResponseDto.builder()
-                .message(userName + "님에게 배송할 주문이 정상적으로 취소되었습니다!")
-                .build());
+        return ResponseEntity.ok(userName + "님에게 배송할 주문이 정상적으로 취소되었습니다!");
 
     }
 }
