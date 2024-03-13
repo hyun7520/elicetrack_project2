@@ -19,6 +19,8 @@ public class OrderDetailRequestDto {
     @Min(value = 1, message = "수량은 1개 이상이어야 합니다!")
     private Long quantity;
 
+    private String productName;
+
     @Min(value = 1000, message = "가격은 1000원 미만일 수 없습니다!")
     private Long price;
 }
