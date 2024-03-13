@@ -1,3 +1,4 @@
+
 import {
   getUrlParams,
   addCommas,
@@ -18,6 +19,9 @@ checkUrlParams("productId");
 addAllElements();
 addAllEvents();
 
+// 고상현 추가: 현재 로그인한 유저의 아이디를 가져옵니다.
+const sessionUser = sessionStorage.getItem("id");
+
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 async function addAllElements() {
   createNavbar();
@@ -33,7 +37,7 @@ async function addAllElements() {
 }
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
-function addAllEvents() {}
+function addAllEvents() { }
 
 async function insertProductData(productId) {
   try {
@@ -63,23 +67,23 @@ async function insertProductData(productId) {
 
     if (isRecommended) {
       titleTag.insertAdjacentHTML(
-          "beforeend",
-          '<span class="tag is-success is-rounded">추천</span>'
+        "beforeend",
+        '<span class="tag is-success is-rounded">추천</span>'
       );
     }
 
     addToCartButton.addEventListener("click", async () => {
-      try {
-        await insertDb(product);
 
+      const result = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items?product=${productId}`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      // Key already exists 에러면 아래와 같이 alert함
+      if (result.status === 400) {
+        alert("이미 장바구니에 추가되어 있습니다.");
+      } else {
         alert("장바구니에 추가되었습니다.");
-      } catch (err) {
-        // Key already exists 에러면 아래와 같이 alert함
-        if (err.message.includes("Key")) {
-          alert("이미 장바구니에 추가되어 있습니다.");
-        }
-
-        console.log(err);
       }
     });
 
@@ -111,7 +115,6 @@ async function insertDb(product) {
 
   // 장바구니 요약(=전체 총합)을 업데이트함.
   await putToDb("order", "summary", (data) => {
-
     // 기존 데이터를 가져옴
     const count = data.productsCount;
     const total = data.productsTotal;
