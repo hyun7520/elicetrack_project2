@@ -1,4 +1,4 @@
-import { checkLogin, createNavbar } from "../navbar.js";
+import { checkLogin, createNavbar } from "../../useful-functions.js";
 import * as Api from "../../api.js";
 
 
@@ -32,9 +32,13 @@ function addAllEvents() {
 
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
-async function insertOrders() {
-  const orders = await Api.get(`http://localhost:8080/orders/user/${sessionUser}`);
-  console.log(orders.content);
+let totalPages = 0;
+async function insertOrders(page = 0, size = 5) {
+  const orders = await Api.get(`http://localhost:8080/orders/user/${sessionUser}?page=${page}&size=${size}`);
+
+  totalPages = orders.totalPages;
+
+  ordersContainer.innerHTML = "";
 
   for (const order of orders.content) {
     const { id, orderDate, firstProductName, deliveryProcess } = order;
@@ -72,41 +76,74 @@ async function insertOrders() {
     // Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
       orderIdToDelete = id;
-      openModal();
+      if (deliveryProcess === 'preparing') {
+        openModal();
+      } else {
+        alert("배송중이거나 배송이 완료된 제품은 취소가 불가능합니다!");
+      }
     });
   }
 }
 
-async function deleteData() {
+function paging(newPage) {
+  insertOrders(newPage, 5);
+}
+
+const prevPage = document.querySelector('#before');
+const nextPage = document.querySelector('#next');
+let curPage = 0;
+
+prevPage.addEventListener('click', function () {
+  if (curPage > 0) {
+    curPage -= 1;
+    paging(curPage);
+  }
+})
+
+nextPage.addEventListener('click', function () {
+  console.log(totalPages);
+  if (curPage + 1 === totalPages) {
+    alert("마지막 페이지입니다!");
+  } else {
+    curPage += 1;
+    paging(curPage);
+  }
+});
+
+// db에서 주문정보 삭제
+async function deleteOrderData(e) {
+  e.preventDefault();
+
   await fetch(`http://localhost:8080/orders/${orderIdToDelete}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     }
   });
+
+  // 삭제 성공
+  alert("주문 정보가 삭제되었습니다.");
+
+  // 삭제한 아이템 화면에서 지우기
+  const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
+  deletedItem.remove();
+
+  // 전역변수 초기화
+  orderIdToDelete = "";
+
+  closeModal();
 }
 
-// db에서 주문정보 삭제
-async function deleteOrderData(e) {
-  e.preventDefault();
+// async function deleteData() {
+//   try {
+//   }await fetch(`http://localhost:8080/orders/${orderIdToDelete}`, {
+//     method: "DELETE",
+//     headers: {
+//       "Content-Type": "application/json",
+//     }
+//   });
+// }
 
-  try {
-    await deleteData();
-    // 삭제 성공
-    alert("주문 정보가 삭제되었습니다.");
-
-    // 삭제한 아이템 화면에서 지우기
-    const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
-    deletedItem.remove();
-
-    // 전역변수 초기화
-    orderIdToDelete = "";
-
-    closeModal();
-  } catch (err) {
-    alert(`주문정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
-  }
-}
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.
 function cancelDelete() {
