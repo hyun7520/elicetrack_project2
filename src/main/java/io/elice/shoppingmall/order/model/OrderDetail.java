@@ -34,6 +34,9 @@ public class OrderDetail {
     @LastModifiedDate
     private Date modifiedAt;
 
+    @Column(name = "product_Name")
+    private String productName;
+
     // 상품 구매 개수
     @NotNull
     @Min(1)
@@ -57,10 +60,11 @@ public class OrderDetail {
     private Product product;
 
     @Builder
-    public OrderDetail(Orders order, Product product, Long quantity, Long price) {
+    public OrderDetail(Orders order, Product product, Long quantity, Long price, String productName) {
 
         this.product = product;
         this.order = order;
+        this.productName = productName;
         this.quantity = quantity;
         this.price = price;
     }

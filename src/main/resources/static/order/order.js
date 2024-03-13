@@ -310,9 +310,7 @@ async function doCheckout() {
     order.json().then(async function (result) {
       for (const product of selectedItems) {
 
-        console.log(product);
-
-        const { productId, amount, price } = product;
+        const { productId, productName, amount, price } = product;
 
         console.log(productId, amount, price);
 
@@ -321,6 +319,7 @@ async function doCheckout() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             "productId": productId,
+            "productName": productName,
             "quantity": amount,
             "price": totalPrice
           })
