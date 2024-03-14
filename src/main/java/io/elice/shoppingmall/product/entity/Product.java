@@ -42,7 +42,7 @@ public class Product {
     private LocalDate createdDate; // 생성일
 
     @Column(name = "product_image_url", length = 1000)
-    private String productImageUrl; // 상품 이미지 URL
+    private String imageUrl; // 상품 이미지 URL
 
     @Column(name = "delivery_price")
     private int deliveryPrice; // 배송 비용
@@ -56,7 +56,14 @@ public class Product {
     @Column(name="discount_price")
     private int discountPrice; //할인 가격
 
-    // 상품 개수
+    private String originalFileName;
+
+    private String storedFileName;
+
+    private long fileSize;
+
+    @Column(name="product_count")
+    private long productCount;
 
 //    @OneToOne(mappedBy = "product")
 //    private OrderDetail orderDetail;
@@ -85,7 +92,7 @@ public class Product {
         this.content = content;
         this.commentCount = commentCount;
         this.createdDate = createdDate;
-        this.productImageUrl = productImageUrl;
+        this.imageUrl = productImageUrl;
         this.deliveryPrice = deliveryPrice;
         this.averageScore = averageScore;
         this.reviewCount = reviewCount;
@@ -99,7 +106,7 @@ public class Product {
         this.content = productRequestDto.getContent();
         this.commentCount = productRequestDto.getCommentCount();
         this.createdDate = productRequestDto.getCreatedDate();
-        this.productImageUrl = productRequestDto.getProductImageUrl();
+        this.imageUrl = productRequestDto.getProductImageUrl();
         this.deliveryPrice = productRequestDto.getDeliveryPrice();
         this.averageScore = productRequestDto.getAverageScore();
         this.reviewCount = productRequestDto.getReviewCount();

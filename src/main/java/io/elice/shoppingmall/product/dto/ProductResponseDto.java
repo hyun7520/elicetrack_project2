@@ -32,7 +32,7 @@ public class ProductResponseDto {
         this.content = product.getContent();
         this.commentCount = product.getCommentCount();
         this.createdDate = product.getCreatedDate();
-        this.productImageUrl = product.getProductImageUrl();
+        this.productImageUrl = product.getImageUrl();
         this.deliveryPrice = product.getDeliveryPrice();
         this.averageScore = product.getAverageScore();
         this.reviewCount = product.getReviewCount();

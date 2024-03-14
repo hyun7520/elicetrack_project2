@@ -3,6 +3,7 @@ package io.elice.shoppingmall.category.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.util.List;
 
@@ -32,6 +33,12 @@ public class Category {
 
     @Column(name = "image_url") // 이미지 경로 저장
     private String imageUrl;
+
+    private String originalFileName;
+
+    private String storedFileName;
+
+    private long fileSize;
 
     @Builder
     public Category(String categoryName, Long parentId) {
