@@ -27,7 +27,7 @@ async function addProductItemsToContainer(categoryId, page = 1) {
   productItemContainer.innerHTML = "";
 
   try {
-    const response = await fetch(`http://34.64.249.249.228:8080/products/category/${categoryId}?page=${page}&size=10`);
+    const response = await fetch(`http://34.64.249.228:8080/products/category/${categoryId}?page=${page}&size=10`);
     if (!response.ok) {
       throw new Error("Failed to fetch products");
     }
@@ -113,7 +113,7 @@ async function addPagination(categoryId) {
 
 
   try {
-    const response = await fetch(`http://34.64.249.228.228:8080/products/category/${categoryId}?page=1&size=10`);
+    const response = await fetch(`http://34.64.249.228:8080/products/category/${categoryId}?page=1&size=10`);
     if (!response.ok) {
       throw new Error("Failed to fetch pagination data");
     }

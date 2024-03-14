@@ -133,7 +133,7 @@ async function handleImageUpload() {
       formData.append('description', description);
       formData.append('themeClass', themeClass);
 
-      const response = await fetch("http://34.64.249.228.228:8080/categories/upload-image", {
+      const response = await fetch("http://34.64.249.228:8080/categories/upload-image", {
         method: 'POST',
         body: formData
       });
