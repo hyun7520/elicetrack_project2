@@ -20,6 +20,10 @@ const purchaseButton = document.querySelector("#purchaseButton");
 const deliveryFeeWarn = document.querySelector("#deliveryFeeWarn");
 
 const sessionUser = sessionStorage.getItem("id");
+if (sessionUser == null) {
+  window.alert("로그인 해주세요!");
+  window.location.href = '/home';
+}
 
 let checked = [];
 let finalPrice = 0;
@@ -44,7 +48,7 @@ function addAllEvents() {
 // indexedDB의 cart와 order에서 필요한 정보를 가져온 후
 // 요소(컴포넌트)를 만들어 html에 삽입함.
 async function insertProductsfromCart() {
-  const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`);
+  const response = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`);
   const products = await response.json();
 
   let i = 0;
@@ -323,7 +327,7 @@ async function deleteSelectedData() {
 
 // 제품 삭제 기능
 async function deleteData(list) {
-  await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`, {
+  await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -333,7 +337,7 @@ async function deleteData(list) {
 }
 
 async function updateQuantity(cartId, amount) {
-  const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items/${cartId}`, {
+  const response = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items/${cartId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

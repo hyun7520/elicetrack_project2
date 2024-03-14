@@ -30,6 +30,10 @@ const deliveryInfo = document.querySelector('#delivery-info');
 
 const result = [];
 const sessionUser = sessionStorage.getItem("id");
+if (sessionUser == null) {
+  window.alert("로그인 해주세요!");
+  window.location.href = '/home';
+}
 
 
 const requestOption = {
@@ -62,7 +66,7 @@ function addAllEvents() {
 // 데이터 가져오기
 async function fetchData() {
   try {
-    const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`);
+    const response = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -148,7 +152,7 @@ async function deleteSelectedData() {
 
 // 제품 삭제 기능
 async function deleteData(list) {
-  await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`, {
+  await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -271,7 +275,7 @@ async function doCheckout() {
   const customRequest = customRequestInput.value;
   // const summaryTitle = productsTitleElem.innerText;
   const totalPrice = convertToNumber(orderTotalElem.innerText);
-  const selectedItems = await fetchData(`http://localhost:8080/carts/user/${sessionUser}/items`);
+  const selectedItems = await fetchData(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`);
 
   if (!receiverName || !receiverPhoneNumber || !postalCode || !address2) {
     return alert("배송지 정보를 모두 입력해 주세요.");
@@ -294,7 +298,7 @@ async function doCheckout() {
 
   try {
     // 전체 주문을 등록함
-    const order = await fetch("http://localhost:8080/orders", {
+    const order = await fetch("http://34.64.249.228:8080/orders", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -314,7 +318,7 @@ async function doCheckout() {
 
         console.log(productId, amount, price);
 
-        await fetch(`http://localhost:8080/orders/${result.id}/details`, {
+        await fetch(`http://34.64.249.228:8080/orders/${result.id}/details`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -327,13 +331,13 @@ async function doCheckout() {
       }
     })
 
-    await fetch(`http://localhost:8080/carts/user/${sessionUser}`, {
+    await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
 
     alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
-    window.location.href = "http://localhost/order-complete";
+    document.location.href = "/order-complete";
   } catch (err) {
     console.log(err);
     alert(`결제 중 문제가 발생하였습니다: ${err.message}`);

@@ -21,17 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OrderServiceTest {
 
 
-    private final OrderRepository orderRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     private final Date date = new Date();
     private final LocalDateTime localDateTime = LocalDateTime.now();
 
     private static Long userId = 1L;
-
-    @Autowired
-    OrderServiceTest(OrderRepository orderRepository, OrderService orderService) {
-        this.orderRepository = orderRepository;
-    }
 
     @Test
     @DisplayName("주문 생성")
