@@ -9,30 +9,29 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
+@SpringBootTest
 class OrderServiceTest {
 
-    @Mock
-    private OrderRepository orderRepository;
 
-    @InjectMocks
-    private OrderService orderService;
+    private final OrderRepository orderRepository;
 
-    Date date = new Date();
-    LocalDateTime localDateTime = LocalDateTime.now();
+    private final Date date = new Date();
+    private final LocalDateTime localDateTime = LocalDateTime.now();
 
     private static Long userId = 1L;
+
+    @Autowired
+    OrderServiceTest(OrderRepository orderRepository, OrderService orderService) {
+        this.orderRepository = orderRepository;
+    }
 
     @Test
     @DisplayName("주문 생성")
@@ -41,8 +40,9 @@ class OrderServiceTest {
     public void createOrder() {
 
         //given
-        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, date, "received", "test receiver",
-                "test address", "preparing", "none", 112323, 10000L);
+        OrderRequestDto orderRequestDto = new OrderRequestDto(userId, date, "received",
+                "test receiver", "test address", "preparing",
+                "none", 112323, 10000L);
 
         User user = User.builder()
                 .id(1L)
