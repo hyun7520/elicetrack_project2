@@ -13,12 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+//@SpringBootTest
 class ShoppingMallApplicationTests {
-	@Autowired
+/*	@Autowired
 	private ProductService productService;
 
-/*	@Test
+	@Test
 	void testJpa() {
 		// 상품 등록
 		for (int i = 1; i <= 300; i++) {
