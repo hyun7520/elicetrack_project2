@@ -30,6 +30,13 @@ async function addImageCardsToBlocks() {
       // 객체 destructuring
       const { categoryId, categoryName, content, imageUrl } = category;
 
+      // 이미지 파일 이름 추출
+      const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
+
+
+      // 이미지 URL 생성
+      const imageURL = `http://localhost:8080/${filename}`;
+
       // 각 카테고리에 대한 블록 HTML 생성
       if (i % 3 === 0) {
         blockHTML += '<div class="columns">';
@@ -43,7 +50,7 @@ async function addImageCardsToBlocks() {
             </div>
             <div class="card-image">
               <figure class="image is-3by2">
-                <img src="http://localhost:8080${imageUrl}" alt="카테고리 이미지" />
+                <img src="${imageURL}" alt="카테고리 이미지" />
               </figure>
             </div>
           </div>

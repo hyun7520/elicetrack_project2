@@ -27,7 +27,7 @@ public class CartService {
 
         Optional<Cart> foundCart = cartRepository.findCartByUser_Id(userId);
         if(foundCart.isPresent()) {
-            throw new IllegalArgumentException("이미 장바구니가 존재합니다!");
+            return foundCart.get();
         }
 
         Cart newCart = Cart.builder()

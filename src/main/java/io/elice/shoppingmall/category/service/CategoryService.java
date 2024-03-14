@@ -3,11 +3,15 @@ package io.elice.shoppingmall.category.service;
 import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.repository.CategoryRepository;
-import io.elice.shoppingmall.product.entity.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +19,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryFileService categoryFileService;
+
+    public String uploadImage(MultipartFile file) throws IOException {
+        // 카테고리 이미지를 저장하고 이미지의 URL을 반환
+        List<Category> fileList = categoryFileService.saveCategoryImages(List.of(file));
+        // 저장된 이미지의 URL을 반환합니다. 이 예제에서는 첫 번째 이미지만 반환합니다.
+        return fileList.isEmpty() ? null : fileList.get(0).getStoredFileName();
+    }
 
     // 모든 카테고리 반환
-    public List<Category> getAllcategory() {
+    public List<Category> getAllcategory(Long id) {
         return categoryRepository.findAll();
     }
 
@@ -43,6 +55,7 @@ public class CategoryService {
                 .categoryName(categoryRequestDto.getCategoryName())
                 .parentId(categoryRequestDto.getParentId())
                 .content(categoryRequestDto.getContent())
+                .imageUrl(categoryRequestDto.getImageUrl())
                 .build();
         return categoryRepository.save(category);
     }
@@ -70,4 +83,6 @@ public class CategoryService {
             throw new IllegalArgumentException("유효하지 않은 상품 ID입니다.");
         }
     }
+
+
 }
