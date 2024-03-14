@@ -16,7 +16,7 @@ function addAllEvents() {}
 // api에서 카테고리 정보 및 사진 가져와서 블록으로 사용
 async function addImageCardsToBlocks() {
   try {
-    const response = await fetch("http://localhost:8080/categories");
+    const response = await fetch("http://34.64.249.228.228:8080/categories");
     if (!response.ok) {
       throw new Error("Failed to fetch categories");
     }
@@ -34,7 +34,7 @@ async function addImageCardsToBlocks() {
       const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
 
       // 이미지 URL 생성
-      const imageURL = `http://localhost:8080/${filename}`;
+      const imageURL = `http://34.64.249.228.228:8080/${filename}`;
 
       // 각 카테고리에 대한 블록 HTML 생성
       if (i % 3 === 0) {
@@ -69,7 +69,7 @@ async function addImageCardsToBlocks() {
       card.addEventListener('click', async () => {
         const categoryId = card.getAttribute('data-categoryId');
         try {
-          const response = await fetch(`http://localhost:8080/categories/${categoryId}/subcategories`);
+          const response = await fetch(`http://34.64.249.228.228:8080/categories/${categoryId}/subcategories`);
           if (!response.ok) {
             throw new Error("Failed to fetch subcategories");
           }
