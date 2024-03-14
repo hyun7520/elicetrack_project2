@@ -36,7 +36,7 @@ async function addProductItemsToContainer(categoryId, page = 1) {
 
     for (const product of products.content) {
       const random = randomId();
-      const imageUrl = `http://localhost:8080${product.productImageUrl}`;
+      const imageUrl = `${product.productImageUrl}`;
 
       productItemContainer.insertAdjacentHTML(
           "beforeend",
@@ -44,7 +44,7 @@ async function addProductItemsToContainer(categoryId, page = 1) {
         <div class="message media product-item" id="a${random}" data-productId="${product.productId}">
             <div class="media-left">
                 <figure class="image">
-                    <img src="${imageUrl}" alt="제품 이미지"/>
+                    <img src="http://localhost:8080${imageUrl}" alt="제품 이미지"/>
                 </figure>
             </div>
             <div class="media-content">
