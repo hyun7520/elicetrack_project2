@@ -55,10 +55,16 @@ async function insertProductData(productId) {
       brandName,
       isRecommended,
       price,
+      category: { imageUrl }
     } = product;
-    const imageUrl = `http://localhost:8080${product.productImageUrl}`;
 
-    productImageTag.src = imageUrl;
+    // 이미지 파일 이름 추출
+    const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
+
+    // 이미지 URL 생성
+    const imageURL = `http://localhost:8080/${filename}`;
+
+    productImageTag.src = imageURL;
     titleTag.innerText = productName;
     detailDescriptionTag.innerText = content;
     manufacturerTag.innerText = brandName;

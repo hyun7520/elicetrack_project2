@@ -5,13 +5,11 @@ import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +27,7 @@ public class CategoryService {
     }
 
     // 모든 카테고리 반환
-    public List<Category> getAllcategory(Long id) {
+    public List<Category> getAllcategory() {
         return categoryRepository.findAll();
     }
 
@@ -85,4 +83,7 @@ public class CategoryService {
     }
 
 
+    public List<Category> getAllCategoriesWithNonNullParent() {
+        return categoryRepository.findByParentIdIsNotNull();
+    }
 }

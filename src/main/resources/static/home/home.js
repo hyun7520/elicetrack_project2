@@ -16,7 +16,7 @@ function addAllEvents() {}
 // api에서 카테고리 정보 및 사진 가져와서 블록으로 사용
 async function addImageCardsToBlocks() {
   try {
-    const response = await fetch("http://localhost:8080/categories?parentId=null");
+    const response = await fetch("http://localhost:8080/categories");
     if (!response.ok) {
       throw new Error("Failed to fetch categories");
     }
@@ -32,7 +32,6 @@ async function addImageCardsToBlocks() {
 
       // 이미지 파일 이름 추출
       const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
-
 
       // 이미지 URL 생성
       const imageURL = `http://localhost:8080/${filename}`;

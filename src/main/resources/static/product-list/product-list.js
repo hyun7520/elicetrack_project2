@@ -35,8 +35,15 @@ async function addProductItemsToContainer(categoryId, page = 1) {
     console.log(products);
 
     for (const product of products.content) {
+      console.log(product);
       const random = randomId();
-      const imageUrl = `${product.productImageUrl}`;
+      const imageUrl = product.category.imageUrl;
+
+      // 이미지 파일 이름 추출
+      const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
+
+      // 이미지 URL 생성
+      const imageURL = `http://localhost:8080/${filename}`;
 
       productItemContainer.insertAdjacentHTML(
           "beforeend",
@@ -44,7 +51,7 @@ async function addProductItemsToContainer(categoryId, page = 1) {
         <div class="message media product-item" id="a${random}" data-productId="${product.productId}">
             <div class="media-left">
                 <figure class="image">
-                    <img src="http://localhost:8080${imageUrl}" alt="제품 이미지"/>
+                    <img src="${imageURL}" alt="제품 이미지"/>
                 </figure>
             </div>
             <div class="media-content">
@@ -92,7 +99,7 @@ async function addAllElements() {
 
   if (categoryId) {
     const params = new URLSearchParams(window.location.search);
-    const page = params.get("page") || 1;
+    const page = params.get("page") || 0;
     await addProductItemsToContainer(categoryId, page);
     await addPagination(categoryId);
   } else {
