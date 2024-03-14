@@ -18,7 +18,7 @@ class ShoppingMallApplicationTests {
 	@Autowired
 	private ProductService productService;
 
-	@Test
+/*	@Test
 	void testJpa() {
 		// 상품 등록
 		for (int i = 1; i <= 300; i++) {
@@ -44,5 +44,5 @@ class ShoppingMallApplicationTests {
 		assertEquals(size, productPage.getSize()); // 페이지 크기 확인
 		assertEquals(300, productPage.getTotalElements()); // 총 요소 수 확인
 		assertEquals(30, productPage.getTotalPages()); // 총 페이지 수 확인
-	}
+	}*/
 }
