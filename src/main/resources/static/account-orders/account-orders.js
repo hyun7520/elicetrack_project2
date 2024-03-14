@@ -38,11 +38,14 @@ function addAllEvents() {
 let orderIdToDelete;
 let totalPages = 0;
 async function insertOrders(page = 0, size = 5) {
-  const orders = await Api.get(`http://34.64.249.228:8080/orders/user/${sessionUser}?page=${page}&size=${size}`);
+  const orders = await Api.get(`http://localhost:8080/orders/user/${sessionUser}?page=${page}&size=${size}`);
 
   totalPages = orders.totalPages;
 
   ordersContainer.innerHTML = "";
+
+  console.log(orders);
+
 
   for (const order of orders.content) {
     const { id, orderDate, deliveryProcess } = order;
@@ -118,7 +121,7 @@ nextPage.addEventListener('click', function () {
 async function deleteOrderData(e) {
   e.preventDefault();
 
-  await fetch(`http://34.64.249.228:8080/orders/${orderIdToDelete}`, {
+  await fetch(`http://localhost:8080/orders/${orderIdToDelete}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
