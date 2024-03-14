@@ -36,7 +36,7 @@ async function deleteUserData(e) {
 
   try {
     // 우선 입력된 비밀번호가 맞는지 확인 (틀리면 에러 발생함)
-    const userToDelete = await Api.post("http://localhost:8080/users/password-check", data);
+    const userToDelete = await Api.post("http://34.64.249.228.228:8080/users/password-check", data);
     //const { id } = userToDelete;
 
     // 삭제 진행
