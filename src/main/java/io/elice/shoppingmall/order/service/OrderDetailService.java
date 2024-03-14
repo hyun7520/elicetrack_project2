@@ -44,6 +44,7 @@ public class OrderDetailService {
                 .product(foundProduct.get())
                 .order(order)
                 .quantity(orderDetailRequestDto.getQuantity())
+                .productName(foundProduct.get().getProductName())
                 .price(orderDetailRequestDto.getPrice())
                 .build();
 
