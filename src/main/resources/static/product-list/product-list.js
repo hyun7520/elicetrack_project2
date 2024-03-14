@@ -27,7 +27,7 @@ async function addProductItemsToContainer(categoryId, page = 1) {
   productItemContainer.innerHTML = "";
 
   try {
-    const response = await fetch(`http://localhost:8080/products/category/${categoryId}?page=${page}&size=10`);
+    const response = await fetch(`http://34.64.249.249.228:8080/products/category/${categoryId}?page=${page}&size=10`);
     if (!response.ok) {
       throw new Error("Failed to fetch products");
     }
@@ -39,11 +39,11 @@ async function addProductItemsToContainer(categoryId, page = 1) {
       const random = randomId();
       const imageUrl = product.category.imageUrl;
 
-      // 이미지 파일 이름 추출
+      // 이미지 파일 이름 추출 (로컬에 따라서 변경 필요!!, 특히 리눅스나 맥이면!!!!!)
       const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
 
       // 이미지 URL 생성
-      const imageURL = `http://localhost:8080/${filename}`;
+      const imageURL = `http://34.64.249.228.228:8080/${filename}`;
 
       productItemContainer.insertAdjacentHTML(
           "beforeend",
@@ -113,7 +113,7 @@ async function addPagination(categoryId) {
 
 
   try {
-    const response = await fetch(`http://localhost:8080/products/category/${categoryId}?page=1&size=10`);
+    const response = await fetch(`http://34.64.249.228.228:8080/products/category/${categoryId}?page=1&size=10`);
     if (!response.ok) {
       throw new Error("Failed to fetch pagination data");
     }
