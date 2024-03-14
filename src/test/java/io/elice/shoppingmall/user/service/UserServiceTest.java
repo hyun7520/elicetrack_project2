@@ -17,10 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.security.Key;
 import java.util.Optional;
 
-//@SpringBootTest
+@SpringBootTest
 public class UserServiceTest {
 
-/*    @Mock
+   @Mock
     private UserRepository userRepository;
 
     @Mock
@@ -165,7 +165,7 @@ public class UserServiceTest {
         given(userRepository.countByIsAdmin(true)).willReturn(5); // 가정: 저장소에 5명의 관리자가 있음
         int adminCount = userService.getAdminCount();
         assertEquals(5, adminCount, "The admin count should be 5");
-    }*/
+    }
 
 
 }
