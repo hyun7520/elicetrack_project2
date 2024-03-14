@@ -10,10 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductFileService productFileService;
 
     // 등록
     @Transactional
@@ -42,8 +46,7 @@ public class ProductService {
                 .content(productRequestDto.getContent())
                 .commentCount(productRequestDto.getCommentCount())
                 .createdDate(LocalDate.parse(dateNow))
-                .productImageUrl(productRequestDto.getProductImageUrl())
-                .productImageUrl(productRequestDto.getProductImageUrl())
+                .imageUrl(productRequestDto.getProductImageUrl())
                 .deliveryPrice(productRequestDto.getDeliveryPrice())
                 .averageScore(productRequestDto.getAverageScore())
                 .reviewCount(productRequestDto.getReviewCount())
@@ -88,5 +91,12 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    public String uploadImage(MultipartFile file) throws IOException {
+        // 카테고리 이미지를 저장하고 이미지의 URL을 반환
+        List<Product> fileList = productFileService.saveCategoryImages(List.of(file));
+        // 저장된 이미지의 URL을 반환합니다. 이 예제에서는 첫 번째 이미지만 반환합니다.
+        return fileList.isEmpty() ? null : fileList.get(0).getStoredFileName();
     }
 }

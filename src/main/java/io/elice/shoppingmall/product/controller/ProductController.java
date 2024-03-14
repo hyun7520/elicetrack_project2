@@ -1,13 +1,18 @@
 package io.elice.shoppingmall.product.controller;
 
+import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.product.dto.ProductRequestDto;
 import io.elice.shoppingmall.product.entity.Product;
 import io.elice.shoppingmall.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,5 +65,27 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size) {
         Page<Product> products = productService.getProductsByCategoryId(categoryId, page, size);
         return ResponseEntity.ok(products);
+    }
+
+
+    // 이미지 업로드
+    @PostMapping("/upload-image")
+    public ResponseEntity<String> uploadCategoryImage(@RequestParam("file") MultipartFile file) {
+        try {
+            // 이미지를 저장하고 이미지 URL을 반환
+            String imageUrl = productService.uploadImage(file);
+            return ResponseEntity.ok(imageUrl);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
+        }
+    }
+
+    // 이미지 반환
+    @GetMapping("/get-image/{categoryId}")
+    public String getImage(@PathVariable("productId") Long id) {
+        Product product = productService.getProductById(id);
+        String imgPath = product.getStoredFileName();
+        log.info(imgPath);
+        return "<img src=" + imgPath + ">";
     }
 }

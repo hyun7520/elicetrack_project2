@@ -4,18 +4,11 @@ import io.elice.shoppingmall.category.dto.CategoryRequestDto;
 import io.elice.shoppingmall.category.entity.Category;
 import io.elice.shoppingmall.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -27,11 +20,11 @@ public class CategoryController{
 
     // 카테고리 모두 조회
     @GetMapping
-    public List<Category> getAllcategory(@RequestParam(value = "parent", required = false) Long parentId) {
+    public List<Category> getAllcategory(@RequestParam(value = "parentId", required = false) Long parentId) {
         if (parentId == null) {
             return categoryService.getAllCategoriesWithNullParent();
         } else {
-            return categoryService.findByParentId(parentId);
+            return categoryService.getAllCategoriesWithNonNullParent();
         }
     }
 
