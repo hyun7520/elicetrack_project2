@@ -62,8 +62,8 @@ public class Product {
 
     private long fileSize;
 
-//    @Column(name="product_count")
-//    private long productCount;
+    @Column(name="product_count")
+    private long productCount;
 
 //    @OneToOne(mappedBy = "product")
 //    private OrderDetail orderDetail;
