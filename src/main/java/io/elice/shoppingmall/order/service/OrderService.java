@@ -35,6 +35,7 @@ public class OrderService {
 
         Orders order = Orders.builder()
                 .user(foundUser.get())
+                .orderBy(foundUser.get().getNickname())
                 .orderDate(orderRequestDto.getOrderDate())
                 .receiver(orderRequestDto.getReceiver())
                 .address(orderRequestDto.getAddress())
