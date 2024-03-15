@@ -338,7 +338,7 @@ async function deleteData(list) {
 }
 
 async function updateQuantity(cartId, amount) {
-  const response = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items/${cartId}`, {
+  const response = await fetch(`http:/34.64.249.228:8080/carts/user/${sessionUser}/items/${cartId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
