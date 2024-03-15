@@ -17,11 +17,6 @@ function addAllElements() {
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  orderDetailButton.addEventListener("click", function () {
-    if (isAdmin) {
-      document.location.href = '/admin-orders'
-    }
-    document.location.href = '/account-orders'
-  });
+  orderDetailButton.addEventListener("click", function () { document.location.href = '/account-orders' });
   shoppingButton.addEventListener("click", function () { document.location.href = "/home" });
 }
