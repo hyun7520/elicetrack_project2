@@ -45,7 +45,7 @@ function addAllEvents() {
 let orderIdToDelete;
 let totalPages = 0;
 async function insertOrders(page = 0, size = 5) {
-  const orders = await Api.get(`http://localhost:8080/orders?page=${page}&size=${size}`);
+  const orders = await Api.get(`http://34.64.249.228:8080/orders?page=${page}&size=${size}`);
 
   totalPages = orders.totalPages;
 
@@ -147,7 +147,7 @@ async function insertOrders(page = 0, size = 5) {
       statusSelectBox.className = statusSelectBox[index].className;
 
       // api 요청
-      await fetch(`http://localhost:8080/orders/${id}/order-status`, {
+      await fetch(`http://34.64.249.228:8080/orders/${id}/order-status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ async function deleteOrderData(e) {
   e.preventDefault();
 
   try {
-    const result = await fetch(`http://localhost:8080/orders/${orderIdToDelete}`, {
+    const result = await fetch(`http://34.64.249.228:8080/orders/${orderIdToDelete}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

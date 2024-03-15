@@ -89,7 +89,7 @@ async function handleSubmit(e) {
       price,
     };
 
-    const response = await fetch("http://localhost:8080/products", {
+    const response = await fetch("http://34.64.249.228:8080/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +121,7 @@ async function uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch("http://localhost:8080/products/upload-image", {
+    const response = await fetch("http://34.64.249.228:8080/products/upload-image", {
       method: 'POST',
       body: formData
     });
@@ -141,7 +141,7 @@ async function uploadImage(file) {
 // 선택할 수 있는 카테고리 종류를 api로 가져와서, 옵션 태그를 만들어 삽입함.
 async function addOptionsToSelectBox() {
   try {
-    const response = await fetch("http://localhost:8080/categories?parentId=1");
+    const response = await fetch("http://34.64.249.228:8080/categories?parentId=1");
     if (!response.ok) {
       throw new Error("Failed to fetch categories");
     }
