@@ -12,8 +12,8 @@ const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
 const sessionUser = sessionStorage.getItem("id");
 if (sessionUser == null) {
-  window.alert("로그인 해주세요!");
-  window.location.href = '/home';
+  alert("로그인이 필요한 페이지입니다!");
+  checkLogin();
 }
 
 addAllElements();
