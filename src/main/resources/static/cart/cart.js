@@ -5,6 +5,7 @@ import {
   navigate,
   compressString,
   createNavbar,
+  checkLogin
 } from "../useful-functions.js";
 import { deleteFromDb, getFromDb, putToDb } from "../indexed-db.js";
 
@@ -22,7 +23,7 @@ const deliveryFeeWarn = document.querySelector("#deliveryFeeWarn");
 const sessionUser = sessionStorage.getItem("id");
 if (sessionUser == null) {
   window.alert("로그인 해주세요!");
-  window.location.href = '/home';
+  checkLogin();
 }
 
 let checked = [];
