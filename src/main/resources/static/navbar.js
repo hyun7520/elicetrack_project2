@@ -2,25 +2,25 @@ export const createNavbar = () => {
   const pathname = window.location.pathname;
 
   switch (pathname) {
-    case "/":
+    case "/home":
       addNavElements("admin register login account logout");
       break;
-    case "/account/orders/":
+    case "/account-orders/":
       addNavElements("admin account logout");
       break;
-    case "/account/security/":
+    case "/account-security/":
       addNavElements("admin account logout");
       break;
-    case "/account/signout/":
+    case "/account-signout/":
       addNavElements("admin account logout");
       break;
     case "/account/":
       addNavElements("admin logout");
       break;
-    case "/admin/orders/":
+    case "/admin-orders/":
       addNavElements("admin account logout");
       break;
-    case "/admin/users/":
+    case "/admin-users/":
       addNavElements("admin account logout");
       break;
     case "/admin/":
@@ -29,25 +29,25 @@ export const createNavbar = () => {
     case "/cart/":
       addNavElements("admin register login account logout");
       break;
-    case "/category/add/":
+    case "/category-add/":
       addNavElements("admin account productAdd logout");
       break;
     case "/login/":
       addNavElements("register");
       break;
-    case "/order/complete/":
+    case "/order-complete/":
       addNavElements("admin account logout");
       break;
     case "/order/":
       addNavElements("admin account logout");
       break;
-    case "/product/add/":
+    case "/product-add/":
       addNavElements("admin account logout");
       break;
-    case "/product/detail/":
+    case "/product-detail/":
       addNavElements("admin register login account logout");
       break;
-    case "/product/list/":
+    case "/product-list/":
       addNavElements("admin register login account logout");
       break;
     case "/register/":
