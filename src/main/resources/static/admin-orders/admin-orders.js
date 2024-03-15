@@ -16,15 +16,15 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
-const sessionUser = sessionStorage.getItem("id");
-const isAdmin = sessionStorage.getItem("isAdmin");
-if (isAdmin == false) {
-  window.alert("로그인 해주세요!");;
-}
+// const isAdmin = sessionStorage.getItem("isAdmin");
+// if (isAdmin == false) {
+//   window.alert("로그인 해주세요!");;
+// }
 let curPage = 0;
 
 addAllElements();
 addAllEvents();
+checkAdmin();
 
 // 요소 삽입 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
@@ -45,7 +45,7 @@ function addAllEvents() {
 let orderIdToDelete;
 let totalPages = 0;
 async function insertOrders(page = 0, size = 5) {
-  const orders = await Api.get(`http://34.64.249.228:8080/orders/user/${sessionUser}?page=${page}&size=${size}`);
+  const orders = await Api.get(`http://34.64.249.228:8080/orders?page=${page}&size=${size}`);
 
   totalPages = orders.totalPages;
 
@@ -60,9 +60,19 @@ async function insertOrders(page = 0, size = 5) {
 
   for (const order of orders.content) {
     console.log(order);
-    const { id, orderDate, deliveryProcess, totalCost } = order;
+    const { id, orderBy, orderDate, deliveryProcess, totalCost } = order;
 
-    let summaryTitle = order.orderDetails[0].productName;
+    let summaryTitle;
+    try {
+      summaryTitle = order.orderDetails[0].productName;
+    }
+    catch {
+      if (summaryTitle == "") {
+        summaryTitle = "undefined";
+      }
+    }
+
+    const date = new Date(orderDate).toLocaleDateString('ko-KR');
 
     console.log(summaryTitle)
     console.log(deliveryProcess)
@@ -82,7 +92,8 @@ async function insertOrders(page = 0, size = 5) {
       "beforeend",
       `
         <div class="columns orders-item" id="order-${id}">
-          <div class="column is-2">${orderDate}</div>
+          <div class="column is-2">${date}</div>
+          <div class="column is-2">${orderBy}</div>
           <div class="column is-4 order-summary">${summaryTitle}</div>
           <div class="column is-2">${addCommas(totalCost)}</div>
           <div class="column is-2">
@@ -143,12 +154,17 @@ async function insertOrders(page = 0, size = 5) {
         },
         body: JSON.stringify(data)
       });
+      location.reload(true);
     });
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
       orderIdToDelete = id;
-      openModal();
+      if (deliveryProcess === 'preparing') {
+        openModal();
+      } else {
+        alert("배송중이거나 배송이 완료된 제품은 취소가 불가능합니다!");
+      }
     });
   }
 
@@ -164,7 +180,7 @@ async function deleteOrderData(e) {
   e.preventDefault();
 
   try {
-    await fetch(`http://34.64.249.228:8080/orders/${orderIdToDelete}`, {
+    const result = await fetch(`http://34.64.249.228:8080/orders/${orderIdToDelete}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
