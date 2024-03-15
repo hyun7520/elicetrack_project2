@@ -5,6 +5,7 @@ import {
   navigate,
   randomPick,
   createNavbar,
+  checkLogin,
 } from "../useful-functions.js";
 import { deleteFromDb, getFromDb, putToDb } from "../indexed-db.js";
 
@@ -32,7 +33,7 @@ const result = [];
 const sessionUser = sessionStorage.getItem("id");
 if (sessionUser == null) {
   window.alert("로그인 해주세요!");
-  window.location.href = '/home';
+  checkLogin();
 }
 
 
@@ -70,7 +71,7 @@ async function fetchData() {
     const data = await response.json();
     return data;
   } catch (error) {
-    window.alert("오류가 발생했습니다!", error)
+    console.log(error);
   }
 }
 

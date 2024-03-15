@@ -16,9 +16,15 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
-checkAdmin();
+// const isAdmin = sessionStorage.getItem("isAdmin");
+// if (isAdmin == false) {
+//   window.alert("로그인 해주세요!");;
+// }
+let curPage = 0;
+
 addAllElements();
 addAllEvents();
+checkAdmin();
 
 // 요소 삽입 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
@@ -37,8 +43,13 @@ function addAllEvents() {
 
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
-async function insertOrders() {
-  const orders = await Api.get("/orders");
+let totalPages = 0;
+async function insertOrders(page = 0, size = 5) {
+  const orders = await Api.get(`http://34.64.249.228:8080/orders?page=${page}&size=${size}`);
+
+  totalPages = orders.totalPages;
+
+  ordersContainer.innerHTML = "";
 
   const summary = {
     ordersCount: 0,
@@ -47,19 +58,33 @@ async function insertOrders() {
     completeCount: 0,
   };
 
-  for (const order of orders) {
-    const { id, totalPrice, createdAt, summaryTitle, status } = order;
+  for (const order of orders.content) {
+    console.log(order);
+    const { id, orderBy, orderDate, deliveryProcess, totalCost } = order;
+
+    let summaryTitle;
+    try {
+      summaryTitle = order.orderDetails[0].productName;
+    }
+    catch {
+      if (summaryTitle == "") {
+        summaryTitle = "undefined";
+      }
+    }
+
+    const date = new Date(orderDate).toLocaleDateString('ko-KR');
+
     console.log(summaryTitle)
-    console.log(status)
-    const date = createdAt;
+    console.log(deliveryProcess)
+
 
     summary.ordersCount += 1;
 
-    if (status === "상품 준비중") {
+    if (deliveryProcess === "preparing") {
       summary.prepareCount += 1;
-    } else if (status === "상품 배송중") {
+    } else if (deliveryProcess === "shipping") {
       summary.deliveryCount += 1;
-    } else if (status === "배송완료") {
+    } else if (deliveryProcess === "complete") {
       summary.completeCount += 1;
     }
 
@@ -68,28 +93,29 @@ async function insertOrders() {
       `
         <div class="columns orders-item" id="order-${id}">
           <div class="column is-2">${date}</div>
+          <div class="column is-2">${orderBy}</div>
           <div class="column is-4 order-summary">${summaryTitle}</div>
-          <div class="column is-2">${addCommas(totalPrice)}</div>
+          <div class="column is-2">${addCommas(totalCost)}</div>
           <div class="column is-2">
             <div class="select" >
               <select id="statusSelectBox-${id}">
                 <option 
                   class="has-background-danger-light has-text-danger"
-                  ${status === "상품 준비중" ? "selected" : ""} 
-                  value="상품 준비중">
-                  상품 준비중
+                  ${deliveryProcess === "preparing" ? "selected" : ""} 
+                  value="preparing">
+                  preparing
                 </option>
                 <option 
                   class="has-background-primary-light has-text-primary"
-                  ${status === "상품 배송중" ? "selected" : ""} 
-                  value="상품 배송중">
-                  상품 배송중
+                  ${deliveryProcess === "shipping" ? "selected" : ""} 
+                  value="shipping">
+                  shipping
                 </option>
                 <option 
                   class="has-background-grey-light"
-                  ${status === "배송완료" ? "selected" : ""} 
-                  value="배송완료">
-                  배송완료
+                  ${deliveryProcess === "complete" ? "selected" : ""} 
+                  value="complete">
+                  complete
                 </option>
               </select>
             </div>
@@ -112,20 +138,33 @@ async function insertOrders() {
     // 이벤트 - 상태관리 박스 수정 시 바로 db 반영
     statusSelectBox.addEventListener("change", async () => {
       const newStatus = statusSelectBox.value;
-      const data = { status: newStatus };
+      const data = { "orderProcess": "confirmed", "deliveryProcess": `${newStatus}` };
+
+      console.log(data);
 
       // 선택한 옵션의 배경색 반영
       const index = statusSelectBox.selectedIndex;
       statusSelectBox.className = statusSelectBox[index].className;
 
       // api 요청
-      await Api.patch("/orders", id, data);
+      await fetch(`http://34.64.249.228:8080/orders/${id}/order-status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+      });
+      location.reload(true);
     });
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
       orderIdToDelete = id;
-      openModal();
+      if (deliveryProcess === 'preparing') {
+        openModal();
+      } else {
+        alert("배송중이거나 배송이 완료된 제품은 취소가 불가능합니다!");
+      }
     });
   }
 
@@ -141,7 +180,12 @@ async function deleteOrderData(e) {
   e.preventDefault();
 
   try {
-    await Api.delete("/orders", orderIdToDelete);
+    const result = await fetch(`http://34.64.249.228:8080/orders/${orderIdToDelete}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
 
     // 삭제 성공
     alert("주문 정보가 삭제되었습니다.");
@@ -158,6 +202,30 @@ async function deleteOrderData(e) {
     alert(`주문정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
   }
 }
+
+function paging(newPage) {
+  insertOrders(newPage, 5);
+}
+
+const prevPage = document.querySelector('#before');
+const nextPage = document.querySelector('#next');
+
+prevPage.addEventListener('click', function () {
+  if (curPage > 0) {
+    curPage -= 1;
+    paging(curPage);
+  }
+})
+
+nextPage.addEventListener('click', function () {
+  console.log(totalPages);
+  if (curPage + 1 === totalPages) {
+    alert("마지막 페이지입니다!");
+  } else {
+    curPage += 1;
+    paging(curPage);
+  }
+});
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.
 function cancelDelete() {

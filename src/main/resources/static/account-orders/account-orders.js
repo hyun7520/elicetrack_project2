@@ -12,8 +12,8 @@ const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
 const sessionUser = sessionStorage.getItem("id");
 if (sessionUser == null) {
-  window.alert("로그인 해주세요!");
-  window.location.href = '/home';
+  alert("로그인이 필요한 페이지입니다!");
+  checkLogin();
 }
 
 addAllElements();
@@ -44,9 +44,20 @@ async function insertOrders(page = 0, size = 5) {
 
   ordersContainer.innerHTML = "";
 
+  console.log(orders);
+
+
   for (const order of orders.content) {
     const { id, orderDate, deliveryProcess } = order;
-    let productName = order.orderDetails[0].productName;
+    let productName;
+    try {
+      productName = order.orderDetails[0].productName;
+    }
+    catch {
+      if (productName == "") {
+        productName = "undefined";
+      }
+    }
     const date = new Date(orderDate).toLocaleDateString('ko-KR');
 
     let process = '';
