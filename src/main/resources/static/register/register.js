@@ -99,7 +99,7 @@ async function handleSubmit(e) {
 
   //이메일 중복 확인
   try {
-    const duplicateCheckResult = await Api.get(`http://localhost:8080/users/checkEmail?email=${email}`);
+    const duplicateCheckResult = await Api.get(`http://34.64.249.228:8080/users/checkEmail?email=${email}`);
     console.log(duplicateCheckResult);
     if (duplicateCheckResult) {
       return alert("이미 사용 중인 이메일입니다.");
@@ -114,7 +114,7 @@ async function handleSubmit(e) {
   try {
     const data = { nickname, email, password, postcode, address1, address2, phoneNumber };
 
-    await Api.post("http://localhost:8080/users/sign-up", data);
+    await Api.post("http://34.64.249.228:8080/users/sign-up", data);
 
     alert(`정상적으로 회원가입되었습니다.`);
     // 로그인 페이지 이동

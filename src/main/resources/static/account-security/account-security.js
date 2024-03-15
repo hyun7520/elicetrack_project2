@@ -103,7 +103,7 @@ function toggleTargets(e) {
 let userData;
 async function insertUserData() {
   const id = sessionStorage.getItem('id');
-  const url = `http://localhost:8080/users/${id}`;
+  const url = `http://34.64.249.228:8080/users/${id}`;
   userData = await Api.get(url);
 
   // 객체 destructuring
@@ -254,7 +254,7 @@ async function saveUserData(e) {
     const { id } = userData;
     console.log(data)
     // db에 수정된 정보 저장
-    await Api.patch("http://localhost:8080/users", id, data);
+    await Api.patch("http://34.64.249.228:8080/users", id, data);
 
     alert("회원정보가 안전하게 저장되었습니다.");
     disableForm();
