@@ -61,28 +61,17 @@ async function addProductItemsToContainer(categoryId, page = 1) {
                     <p class="price">${addCommas(product.price)}원</p>
                 </div>
             </div>
-             <button class="cart-button" data-productId="${product.productId}">장바구니</button>
         </div>
         `
       );
       const productItem = document.querySelector(`#a${random}`);
-      const cartButton = productItem.querySelector('.cart-button');
-      cartButton.addEventListener(
-          "click",
-          () => {
-            //const productId = productItem.getAttribute('data-productId');
-            window.location.href = `/cart`; // 장바구니 페이지로 이동
-          }
-      );
 
       // 장바구니 버튼을 제외한 영역에 대한 클릭 이벤트
       productItem.addEventListener(
           "click",
           (event) => {
-            if (!event.target.classList.contains('cart-button')) {
               const productId = productItem.getAttribute('data-productId');
               window.location.href = `/product-detail/product-detail.html?productId=${productId}`;
-            }
           }
       );
     }
