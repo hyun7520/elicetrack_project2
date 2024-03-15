@@ -181,4 +181,3 @@ async function populateParentCategoriesDropdown() {
     console.error("Error populating parent categories dropdown:", error);
   }
 }
-z
