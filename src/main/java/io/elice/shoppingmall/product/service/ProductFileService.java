@@ -58,7 +58,7 @@ public class ProductFileService {
     }
 
     private String saveFile(MultipartFile file, String fileName) throws IOException {
-        String uploadDir = "C:\\Users\\spnamji\\Desktop\\dev";
+        String uploadDir = System.getProperty("user.dir");
         String filePath = uploadDir + File.separator + fileName;
         File dest = new File(filePath);
 

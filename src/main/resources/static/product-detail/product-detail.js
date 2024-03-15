@@ -41,7 +41,7 @@ function addAllEvents() { }
 
 async function insertProductData(productId) {
   try {
-    const response = await fetch(`http://34.64.249.228:8080/products/${productId}`);
+    const response = await fetch(`http://localhost:8080/products/${productId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch product details");
     }
@@ -99,7 +99,7 @@ async function insertProductData(productId) {
 
     addToCartButton.addEventListener("click", async () => {
 
-      const result = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items?product=${productId}`, {
+      const result = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items?product=${productId}`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' }
       });
@@ -163,7 +163,7 @@ async function insertDb(product) {
 //리뷰 데이터 가져오는 api 호출
 async function fetchReviews(productId) {
   try {
-    const response = await fetch(`http://34.64.249.228:8080/reviews/product/${productId}`);
+    const response = await fetch(`http://localhost:8080/reviews/product/${productId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch reviews");
     }

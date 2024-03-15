@@ -64,7 +64,7 @@ async function handleSubmit(e) {
 
     const data = { categoryName, content, imageUrl, parentId};
     // 백엔드에 POST 요청 보내기
-    const response = await fetch('http://34.64.249.228:8080/categories', {
+    const response = await fetch('http://localhost:8080/categories', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ async function uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch("http://34.64.249.228:8080/categories/upload-image", {
+    const response = await fetch("http://localhost:8080/categories/upload-image", {
       method: 'POST',
       body: formData
     });
@@ -133,7 +133,7 @@ async function handleImageUpload() {
       formData.append('description', description);
       formData.append('themeClass', themeClass);
 
-      const response = await fetch("http://34.64.249.228:8080/categories/upload-image", {
+      const response = await fetch("http://localhost:8080/categories/upload-image", {
         method: 'POST',
         body: formData
       });
@@ -156,7 +156,7 @@ async function handleImageUpload() {
 
 async function populateParentCategoriesDropdown() {
   try {
-    const response = await fetch("http://34.64.249.228:8080/categories");
+    const response = await fetch("http://localhost:8080/categories");
     if (!response.ok) {
       throw new Error("Failed to fetch parent categories");
     }

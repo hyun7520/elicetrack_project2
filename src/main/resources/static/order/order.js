@@ -67,7 +67,7 @@ function addAllEvents() {
 // 데이터 가져오기
 async function fetchData() {
   try {
-    const response = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`);
+    const response = await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -153,7 +153,7 @@ async function deleteSelectedData() {
 
 // 제품 삭제 기능
 async function deleteData(list) {
-  await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`, {
+  await fetch(`http://localhost:8080/carts/user/${sessionUser}/items`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -276,7 +276,7 @@ async function doCheckout() {
   const customRequest = customRequestInput.value;
   // const summaryTitle = productsTitleElem.innerText;
   const totalPrice = convertToNumber(orderTotalElem.innerText);
-  const selectedItems = await fetchData(`http://34.64.249.228:8080/carts/user/${sessionUser}/items`);
+  const selectedItems = await fetchData(`http://localhost:8080/carts/user/${sessionUser}/items`);
 
   if (!receiverName || !receiverPhoneNumber || !postalCode || !address2) {
     return alert("배송지 정보를 모두 입력해 주세요.");
@@ -299,7 +299,7 @@ async function doCheckout() {
 
   try {
     // 전체 주문을 등록함
-    const order = await fetch("http://34.64.249.228:8080/orders", {
+    const order = await fetch("http://localhost:8080/orders", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -319,7 +319,7 @@ async function doCheckout() {
 
         console.log(productId, amount, price);
 
-        await fetch(`http://34.64.249.228:8080/orders/${result.id}/details`, {
+        await fetch(`http://localhost:8080/orders/${result.id}/details`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -332,7 +332,7 @@ async function doCheckout() {
       }
     })
 
-    await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}`, {
+    await fetch(`http://localhost:8080/carts/user/${sessionUser}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
