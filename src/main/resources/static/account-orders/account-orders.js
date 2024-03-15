@@ -49,7 +49,15 @@ async function insertOrders(page = 0, size = 5) {
 
   for (const order of orders.content) {
     const { id, orderDate, deliveryProcess } = order;
-    let productName = order.orderDetails[0].productName;
+    let productName;
+    try {
+      productName = order.orderDetails[0].productName;
+    }
+    catch {
+      if (productName == "") {
+        productName = "undefined";
+      }
+    }
     const date = new Date(orderDate).toLocaleDateString('ko-KR');
 
     let process = '';
