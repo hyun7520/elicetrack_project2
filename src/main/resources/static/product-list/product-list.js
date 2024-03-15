@@ -43,7 +43,7 @@ async function addProductItemsToContainer(categoryId, page = 1) {
       const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
 
       // 이미지 URL 생성
-      const imageURL = `http://34.64.249.228.228:8080/${filename}`;
+      const imageURL = `http://34.64.249.228:8080/${filename}`;
 
       productItemContainer.insertAdjacentHTML(
           "beforeend",
