@@ -10,6 +10,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
-                .addResourceLocations("file:///Users/spnamji/Desktop/dev/");
+                .addResourceLocations("file:///C:/Users/spnamji/comfohouse/src/main/resources/static/"); //   file:/// 하고 현재 파일 경로 넣으면 됨.
     }
 }
