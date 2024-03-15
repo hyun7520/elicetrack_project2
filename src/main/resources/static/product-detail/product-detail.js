@@ -77,26 +77,6 @@ async function insertProductData(productId) {
       );
     }
 
-    // 리뷰 데이터 가져오기
-    const reviews = await fetchReviews(productId);
-    console.log(reviews);
-
-    // 리뷰 데이터 표시
-    const reviewListContainer = document.getElementById("reviewListContainer");
-    reviewListContainer.innerHTML = "";
-    reviews.forEach((review) => {
-      const reviewItem = document.createElement("div");
-      reviewItem.classList.add("review-item");
-      reviewItem.innerHTML = `
-        <div class="review-content">
-          <p>${review.content}</p>
-          <p class="review-author">${review.author}</p>
-        </div>
-        <div class="review-rating">${review.rating}</div>
-      `;
-      reviewListContainer.appendChild(reviewItem);
-    });
-
     addToCartButton.addEventListener("click", async () => {
 
       const result = await fetch(`http://34.64.249.228:8080/carts/user/${sessionUser}/items?product=${productId}`, {
