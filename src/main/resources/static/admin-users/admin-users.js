@@ -197,12 +197,12 @@ let userIdToDelete;
 // }
 
 async function insertUsers(page = 0, size = 10) {
-  const usersResponse = await Api.get(`http://34.64.249.228.228:8080/users?page=${page}&size=${size}`);
+  const usersResponse = await Api.get(`http://34.64.249.228:8080/users?page=${page}&size=${size}`);
   const users = usersResponse.content;
 
 
-    const usersCount = await Api.get(`http://34.64.249.228.228:8080/users/count-user`);
-    const adminCount = await Api.get(`http://34.64.249.228.228:8080/users/count-admin`);
+    const usersCount = await Api.get(`http://34.64.249.228:8080/users/count-user`);
+    const adminCount = await Api.get(`http://34.64.249.228:8080/users/count-admin`);
 
     // 총 요약에 값 삽입
     document.getElementById('usersCount').innerText = addCommas(usersCount);
@@ -262,9 +262,9 @@ async function insertUsers(page = 0, size = 10) {
       const isAdmin = true;
 
       // api 요청
-      await Api.patch(`http://34.64.249.228.228:8080/users/${id}/role`,"", isAdmin);
-      const usersCount = await Api.get(`http://34.64.249.228.228:8080/users/count-user`);
-      const adminCount = await Api.get(`http://34.64.249.228.228:8080/users/count-admin`);
+      await Api.patch(`http://34.64.249.228:8080/users/${id}/role`,"", isAdmin);
+      const usersCount = await Api.get(`http://34.64.249.228:8080/users/count-user`);
+      const adminCount = await Api.get(`http://34.64.249.228:8080/users/count-admin`);
 
       document.getElementById('usersCount').innerText = addCommas(usersCount);
       document.getElementById('adminCount').innerText = addCommas(adminCount);
@@ -308,7 +308,7 @@ async function deleteUserData(e) {
   e.preventDefault();
 
   try {
-    await Api.delete("http://34.64.249.228.228:8080/users", userIdToDelete);
+    await Api.delete("http://34.64.249.228:8080/users", userIdToDelete);
 
     // 삭제 성공
     alert("회원 정보가 삭제되었습니다.");

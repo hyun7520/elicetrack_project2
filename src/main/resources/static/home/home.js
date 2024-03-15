@@ -34,7 +34,7 @@ async function addImageCardsToBlocks() {
       const filename = imageUrl.substring(imageUrl.lastIndexOf('\\') + 1);
 
       // 이미지 URL 생성
-      const imageURL = `http://34.64.249.228.228:8080/${filename}`;
+      const imageURL = `http://34.64.249.228:8080/${filename}`;
 
       // 각 카테고리에 대한 블록 HTML 생성
       if (i % 3 === 0) {
