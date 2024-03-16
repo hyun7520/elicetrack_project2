@@ -56,13 +56,13 @@ public class OrderController {
     }
 
     // 사용자 별로 주문 조회
-    @GetMapping("/user/{id}")
-    public Page<Orders> getOrderByUser(@PathVariable("id") Long id,
+    @GetMapping("/user/{userId}")
+    public Page<Orders> getOrderByUser(@PathVariable("userId") Long userId,
                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                        @RequestParam(name = "size", defaultValue = "5") int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("orderDate").descending());
 
-        return orderService.getOrdersByUserId(id, pageRequest);
+        return orderService.getOrdersByUserId(userId, pageRequest);
     }
 
     // 주문 수정

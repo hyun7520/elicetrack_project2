@@ -29,6 +29,7 @@ if (sessionUser == null) {
 let checked = [];
 let finalPrice = 0;
 let finalAmount = 0;
+let deliveryFee = 3000;
 
 addAllElements();
 addAllEvents();
@@ -179,7 +180,6 @@ async function insertProductsfromCart() {
     finalPrice += convertToNumber(totalCal.innerHTML);
 
     const unit = "원";
-    const deleiveryFee = "3000원"
 
     plusqButton.addEventListener('click', async function () {
       if (amount < 99) {
@@ -195,7 +195,7 @@ async function insertProductsfromCart() {
         productsCountElem.innerText = finalAmount;
         productsTotalElem.innerText = `${addCommas(finalPrice)}` + unit;
         if (finalPrice < 50000) {
-          deliveryFeeElem.innerText = deleiveryFee;
+          deliveryFeeElem.innerText = "3000원";
           deliveryFeeWarn.innerText = '50,000원 이상은 무료배송!';
         } else {
           deliveryFeeElem.innerText = "0원";
@@ -221,7 +221,7 @@ async function insertProductsfromCart() {
         productsCountElem.innerText = finalAmount;
         productsTotalElem.innerText = `${addCommas(finalPrice)}` + unit;
         if (finalPrice < 50000) {
-          deliveryFeeElem.innerText = deleiveryFee;
+          deliveryFeeElem.innerText = "3000원";
           deliveryFeeWarn.innerText = '50,000원 이상은 무료배송!';
         } else {
           deliveryFeeElem.innerText = "0원";
@@ -286,7 +286,7 @@ async function insertProductsfromCart() {
   productsTotalElem.innerText = `${addCommas(finalPrice)}` + '원';
 
   if (finalPrice < 50000) {
-    deliveryFeeElem.innerText = deleiveryFee;
+    deliveryFeeElem.innerText = "3000원";
   } else {
     deliveryFeeElem.innerText = "0원";
   }
