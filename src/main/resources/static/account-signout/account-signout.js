@@ -48,7 +48,7 @@ async function deleteUserData(e) {
     // 토큰 삭제
     sessionStorage.clear();
 
-    window.location.href = "/";
+    window.location.href = "/home";
   } catch (err) {
     alert(`회원정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
 

@@ -60,13 +60,13 @@ async function handleSubmit(e) {
 
 
     // 기존 다른 페이지에서 이 로그인 페이지로 온 경우, 다시 돌아가도록 해 줌.
-    const { previouspage } = getUrlParams();
+/*    const { previouspage } = getUrlParams();
 
     if (previouspage) {
       window.location.href = previouspage;
 
       return;
-    }
+    }*/
 
     // 기존 다른 페이지가 없었던 경우, 그냥 기본 페이지로 이동
     window.location.href = "/home";
