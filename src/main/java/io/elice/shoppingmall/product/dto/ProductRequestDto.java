@@ -31,7 +31,6 @@ public class ProductRequestDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdDate;
-    private String productImageUrl;
 
     @NotNull(message = "배달 가격이 명시되어야합니다.")
     private Integer deliveryPrice;
@@ -39,6 +38,8 @@ public class ProductRequestDto {
     private int averageScore;
     private int reviewCount;
     private int discountPrice;
+
+    private String imageUrl;
 
     @NotNull
     private Long categoryId;

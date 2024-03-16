@@ -106,7 +106,7 @@ public class Product {
         this.content = productRequestDto.getContent();
         this.commentCount = productRequestDto.getCommentCount();
         this.createdDate = productRequestDto.getCreatedDate();
-        this.imageUrl = productRequestDto.getProductImageUrl();
+        this.imageUrl = productRequestDto.getImageUrl();
         this.deliveryPrice = productRequestDto.getDeliveryPrice();
         this.averageScore = productRequestDto.getAverageScore();
         this.reviewCount = productRequestDto.getReviewCount();

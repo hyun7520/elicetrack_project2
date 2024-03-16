@@ -46,11 +46,11 @@ public class ProductService {
                 .content(productRequestDto.getContent())
                 .commentCount(productRequestDto.getCommentCount())
                 .createdDate(LocalDate.parse(dateNow))
-                .imageUrl(productRequestDto.getProductImageUrl())
                 .deliveryPrice(productRequestDto.getDeliveryPrice())
                 .averageScore(productRequestDto.getAverageScore())
                 .reviewCount(productRequestDto.getReviewCount())
                 .discountPrice(productRequestDto.getDiscountPrice())
+                .imageUrl(productRequestDto.getImageUrl())
                 .category(category)
                 .build();
         return productRepository.save(product);
