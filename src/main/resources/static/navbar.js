@@ -95,7 +95,7 @@ const addNavElements = (keyString) => {
           sessionStorage.removeItem('id');
           sessionStorage.removeItem('isAdmin');
 
-          window.location.href = '/';
+          window.location.href = '/home';
         });
       }
   `;
