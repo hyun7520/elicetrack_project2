@@ -1,4 +1,4 @@
-// index.js
+// home.js
 import { navigate, createNavbar } from "../useful-functions.js";
 
 addAllElements();
@@ -129,13 +129,13 @@ async function selectSubcategory(subcategories) {
     // 모달 닫기 버튼 클릭 시 모달 닫기
     modal.querySelector('.modal-close').addEventListener('click', () => {
       modal.remove();
-      navigate('/index.html');
+      navigate('/home.html');
     });
 
     // 모달 배경 클릭 시 모달 닫기
     modal.querySelector('.modal-background').addEventListener('click', () => {
       modal.remove();
-      navigate('/index.html');
+      navigate('/home.html');
     });
   });
 }
@@ -158,13 +158,13 @@ function showNoSubcategoriesAlert() {
   // 닫기 버튼 클릭 시 모달 닫기
   modal.querySelector('.modal-close').addEventListener('click', () => {
     modal.remove();
-    navigate('/index.html');
+    navigate('/home.html');
   });
 
   // 모달 배경 클릭 시 모달 닫기
   modal.querySelector('.modal-background').addEventListener('click', () => {
     modal.remove();
-    navigate('/index.html');
+    navigate('/home.html');
   });
 }
 document.addEventListener('DOMContentLoaded', function() {
